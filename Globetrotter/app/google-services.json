@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1095269790352",
+    "firebase_url": "https://globetrotter-dfd44.firebaseio.com",
+    "project_id": "globetrotter-dfd44",
+    "storage_bucket": "globetrotter-dfd44.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1095269790352:android:2b545ae2fde91b3f",
+        "android_client_info": {
+          "package_name": "upc.fib.victor.globetrotter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1095269790352-kq3v79ttb5abcbb4geirkmchgpa94d9p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "upc.fib.victor.globetrotter",
+            "certificate_hash": "763896a28376eccc44a8b96b55ab36e3066d2832"
+          }
+        },
+        {
+          "client_id": "1095269790352-qb6nja80fp5fib2pj98u9490bnm49uvm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMGciWiS1wgRKkhW_sGioPFmcbeyGgu3U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1095269790352-qb6nja80fp5fib2pj98u9490bnm49uvm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
