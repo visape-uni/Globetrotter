@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import upc.fib.victor.globetrotter.R;
 
@@ -19,14 +21,11 @@ import upc.fib.victor.globetrotter.R;
  * create an instance of this fragment.
  */
 public class RegisterNameFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private EditText nombreTxt;
+    private EditText apellidosTxt;
+
+    private Button siguienteBtn;
 
     private OnFragmentInteractionListener mListener;
 
@@ -34,45 +33,40 @@ public class RegisterNameFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RegisterNameFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RegisterNameFragment newInstance(String param1, String param2) {
+    public static RegisterNameFragment newInstance() {
         RegisterNameFragment fragment = new RegisterNameFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register_name, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_register_name, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        nombreTxt = view.findViewById(R.id.nombreTxt);
+        apellidosTxt = view.findViewById(R.id.apellidosTxt);
+        siguienteBtn = view.findViewById(R.id.siguiente_btn);
+
+        siguienteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String nombre = nombreTxt.getText().toString().trim();
+                String apellidos = apellidosTxt.getText().toString().trim();
+                if (nombre.equals("") || apellidos.equals("")) {
+                    //TODO: Show error message
+                } else {
+
+                }
+            }
+        });
+
+        // Inflate the layout for this fragment
+        return view;
     }
 
     @Override
