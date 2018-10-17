@@ -1,7 +1,6 @@
-package upc.fib.victor.globetrotter.Presentacio.Fragments;
+package upc.fib.victor.globetrotter.Presentation.Fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,26 +14,25 @@ import upc.fib.victor.globetrotter.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RegisterNameFragment.OnFragmentInteractionListener} interface
+ * {@link RegisterEmailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link RegisterNameFragment#newInstance} factory method to
+ * Use the {@link RegisterEmailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegisterNameFragment extends Fragment {
-
-    private EditText nombreTxt;
-    private EditText apellidosTxt;
+public class RegisterEmailFragment extends Fragment {
 
     private Button siguienteBtn;
 
+    private EditText correoTxt;
+
     private OnFragmentInteractionListener mListener;
 
-    public RegisterNameFragment() {
+    public RegisterEmailFragment() {
         // Required empty public constructor
     }
 
-    public static RegisterNameFragment newInstance() {
-        RegisterNameFragment fragment = new RegisterNameFragment();
+    public static RegisterEmailFragment newInstance() {
+        RegisterEmailFragment fragment = new RegisterEmailFragment();
         return fragment;
     }
 
@@ -46,26 +44,23 @@ public class RegisterNameFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_register_name, container, false);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_register_correo, container, false);
 
-        nombreTxt = view.findViewById(R.id.nombreTxt);
-        apellidosTxt = view.findViewById(R.id.apellidosTxt);
+        correoTxt = view.findViewById(R.id.correoTxt);
         siguienteBtn = view.findViewById(R.id.siguiente_btn);
 
         siguienteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String nombre = nombreTxt.getText().toString().trim();
-                String apellidos = apellidosTxt.getText().toString().trim();
-                if (nombre.equals("") || apellidos.equals("")) {
+                String correo = correoTxt.getText().toString().trim();
+                if (correo.equals("") || !correo.contains("@")) {
                     //TODO: Show error message
                 } else {
-
+                    mListener.onSetCorreo(correo);
                 }
             }
         });
-
-        // Inflate the layout for this fragment
         return view;
     }
 
@@ -86,18 +81,8 @@ public class RegisterNameFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onSetCorreo(String correo);
     }
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Presentacio.Fragments.RegisterNameFragment">
+    tools:context=".Presentation.Fragments.RegisterNameFragment">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -40,7 +40,7 @@
                 android:hint="@string/apellidos"/>
         </LinearLayout>
         <Button
-            android:id="@+id/register_btn"
+            android:id="@+id/siguiente_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/siguiente"

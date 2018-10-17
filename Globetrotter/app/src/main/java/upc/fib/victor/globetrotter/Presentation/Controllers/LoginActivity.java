@@ -1,5 +1,6 @@
-package upc.fib.victor.globetrotter.Presentacio.Controladors;
+package upc.fib.victor.globetrotter.Presentation.Controllers;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,14 +44,22 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = emailTxt.getText().toString();
-                String password = passwordTxt.getText().toString();
+                String email = emailTxt.getText().toString().trim();
+                String password = passwordTxt.getText().toString().trim();
                 if (email.trim().equals("") || password.trim().equals("")) {
-                    Toast.makeText(LoginActivity.this, "Porfavor rellena todos los campos.",
+                    Toast.makeText(LoginActivity.this, "Por favor rellena todos los campos.",
                             Toast.LENGTH_SHORT).show();
                 } else {
                     signIn(email, password);
                 }
+            }
+        });
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent registerIntent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivity(registerIntent);
+                finish();
             }
         });
     }
@@ -64,30 +73,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        if (currentUser.equals(null)) {
-            //Todo: show UI to register
-        } else {
+        if (currentUser != null) {
             //Todo: show UI main wall of user
         }
-    }
-
-    private void createAccount (String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
     private void signIn (String email, String password) {
@@ -100,6 +88,11 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             // TODO: move forward to the profile screen
+
+                            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                            startActivity(profileIntent);
+                            finish();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());

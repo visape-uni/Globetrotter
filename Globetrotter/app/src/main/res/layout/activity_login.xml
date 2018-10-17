@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Presentacio.Controladors.LoginActivity"
+    tools:context=".Presentation.Controllers.LoginActivity"
     android:gravity="center">
 
     <ImageView
@@ -52,7 +52,7 @@
             android:background="@android:color/darker_gray"
             android:layout_below="@+id/entrar_btn"/>
         <Button
-            android:id="@+id/siguiente_btn"
+            android:id="@+id/register_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/divider"
