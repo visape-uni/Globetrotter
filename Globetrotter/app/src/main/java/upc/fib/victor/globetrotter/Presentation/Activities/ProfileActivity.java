@@ -1,4 +1,4 @@
-package upc.fib.victor.globetrotter.Presentation.Controllers;
+package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

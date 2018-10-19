@@ -19,32 +19,32 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="40dp"/>
 
-        <Spinner
-            android:id="@+id/daySpinner"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/spinnersLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:layout_below="@id/preguntaLbl"
-            android:entries="@array/days_array"/>
+            android:gravity="center">
+            <Spinner
+                android:id="@+id/daySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:entries="@array/days_array"/>
 
-        <Spinner
-            android:id="@+id/monthSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_below="@id/preguntaLbl"
-            android:layout_toEndOf="@id/daySpinner"
-            android:layout_toRightOf="@id/daySpinner"
-            android:entries="@array/months_array"/>
+            <Spinner
+                android:id="@+id/monthSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/months_array" />
 
-        <Spinner
-            android:id="@+id/yearSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_below="@id/preguntaLbl"
-            android:layout_toEndOf="@id/monthSpinner"
-            android:layout_toRightOf="@id/monthSpinner" />
+            <Spinner
+                android:id="@+id/yearSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:entries="@array/years_array"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/siguiente_btn"
@@ -53,9 +53,10 @@
             android:text="@string/siguiente"
             android:textColor="@android:color/white"
             android:background="@color/colorPrimaryLight"
-            android:layout_below="@id/daySpinner"
+            android:layout_below="@id/spinnersLayout"
             android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="20dp"/>
     </RelativeLayout>
 
 </FrameLayout>

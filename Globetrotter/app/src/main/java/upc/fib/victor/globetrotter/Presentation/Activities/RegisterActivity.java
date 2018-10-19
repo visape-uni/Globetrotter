@@ -1,12 +1,14 @@
-package upc.fib.victor.globetrotter.Presentation.Controllers;
+package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
 
+import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterEmailFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterBornDateFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterNameFragment;
@@ -42,7 +45,9 @@ public class RegisterActivity extends AppCompatActivity implements
     private Fragment fragment;
     protected FragmentManager fragmentManager;
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuthenticationController firebaseAuthenticationController;
+
+    private LinearLayout backgroundLayout;
 
     private int currentFragment; //PUTSER ES POT ELIMINAR
 
@@ -57,13 +62,26 @@ public class RegisterActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mAuth = FirebaseAuth.getInstance();
+        firebaseAuthenticationController = new FirebaseAuthenticationController();
+
+        backgroundLayout = findViewById(R.id.background_layout);
+
+        setBackgroundAnimation();
 
         fragmentManager = getSupportFragmentManager();
 
         fragment = RegisterNameFragment.newInstance();
         displayFragment(R.id.frame_layout, fragment, "name");
         currentFragment = NAME;
+    }
+
+    private void setBackgroundAnimation() {
+
+        backgroundLayout.setBackgroundResource(R.drawable.cascada_gif);
+
+        AnimationDrawable frameAnimator = (AnimationDrawable) backgroundLayout.getBackground();
+        frameAnimator.start();
+
     }
 
     // adds the given fragment to the front of the fragment stack
@@ -111,41 +129,28 @@ public class RegisterActivity extends AppCompatActivity implements
 
     @Override
     public void onSetPassword(String password) {
+
         this.password = password;
-        createAccount(correo, password);
-    }
 
-    private void createAccount (String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        firebaseAuthenticationController.createAccount(correo, password, new FirebaseAuthenticationController.CreateAccountResponse() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "createUserWithEmail:success");
+            public void success() {
+                // Sign in success, update UI with the signed-in user's information
+                Toast.makeText(getApplicationContext(), "Registrado correctamente.", Toast.LENGTH_LONG).show();
+                FirebaseUser user = firebaseAuthenticationController.getCurrentUser();
 
-                    Toast.makeText(getApplicationContext(), "Registrado correctamente.", Toast.LENGTH_LONG).show();
-                    FirebaseUser user = mAuth.getCurrentUser();
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
 
-                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(loginIntent);
-                    finish();
+            }
 
-                } else {
-
-                    try {
-                        throw task.getException();
-                    } catch(FirebaseAuthWeakPasswordException e) {
-                        Toast.makeText(getApplicationContext(), "Error: La contraseña debe ser más larga", Toast.LENGTH_LONG).show();
-                    } catch(FirebaseAuthInvalidCredentialsException e) {
-                        Toast.makeText(getApplicationContext(), "Error: Formato del email incorrecto", Toast.LENGTH_LONG).show();
-                    } catch(FirebaseAuthUserCollisionException e) {
-                        Toast.makeText(getApplicationContext(), "Error: Ya hay una cuenta con este email", Toast.LENGTH_LONG).show();
-                    } catch(Exception e) {
-                        Toast.makeText(getApplicationContext(), "Error interno. Prueba más tarde", Toast.LENGTH_LONG).show();
-                    }
-                }
+            @Override
+            public void error(String message) {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
             }
         });
     }
+
 }
+

@@ -9,15 +9,15 @@
         android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Presentation.Controllers.LoginActivity">
+        <activity android:name=".Presentation.Activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Presentation.Controllers.RegisterActivity" />
-        <activity android:name=".Presentation.Controllers.ProfileActivity"></activity>
+        <activity android:name=".Presentation.Activities.RegisterActivity" />
+        <activity android:name=".Presentation.Activities.ProfileActivity"></activity>
     </application>
 
 </manifest>
