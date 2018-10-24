@@ -21,8 +21,12 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
+import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
+import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterEmailFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterBornDateFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterNameFragment;
@@ -46,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity implements
     protected FragmentManager fragmentManager;
 
     private FirebaseAuthenticationController firebaseAuthenticationController;
+    private FirebaseDatabaseController firebaseDatabaseController;
 
     private LinearLayout backgroundLayout;
 
@@ -63,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_register);
 
         firebaseAuthenticationController = new FirebaseAuthenticationController();
+        firebaseDatabaseController = new FirebaseDatabaseController();
 
         backgroundLayout = findViewById(R.id.background_layout);
 
@@ -136,12 +142,24 @@ public class RegisterActivity extends AppCompatActivity implements
             @Override
             public void success() {
                 // Sign in success, update UI with the signed-in user's information
-                Toast.makeText(getApplicationContext(), "Registrado correctamente.", Toast.LENGTH_LONG).show();
                 FirebaseUser user = firebaseAuthenticationController.getCurrentUser();
 
-                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(loginIntent);
-                finish();
+                //Store user in DB
+                Profile profile = new Profile(user.getUid(), nombre, apellidos, nacimiento, correo);
+                firebaseDatabaseController.storeProfile(profile, new FirebaseDatabaseController.StoreUserResponse() {
+                    @Override
+                    public void success() {
+                        Toast.makeText(getApplicationContext(), "Registrado correctamente.", Toast.LENGTH_LONG).show();
+                        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(loginIntent);
+                        finish();
+                    }
+
+                    @Override
+                    public void error() {
+                        Toast.makeText(getApplicationContext(), "Ha sucedido un error, pruebe más tarde", Toast.LENGTH_LONG).show();
+                    }
+                });
 
             }
 

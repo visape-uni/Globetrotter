@@ -8,15 +8,17 @@ public class Profile {
     private String nombre;
     private String apellidos;
     private Date nacimiento;
+    private String correo;
 
     public Profile() {
     }
 
-    public Profile(String uid, String nombre, String apellidos, Date nacimiento) {
+    public Profile(String uid, String nombre, String apellidos, Date nacimiento, String correo) {
         this.uid = uid;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.nacimiento = nacimiento;
+        this.correo = correo;
     }
 
     public String getUid() {
@@ -51,7 +53,16 @@ public class Profile {
         this.nacimiento = nacimiento;
     }
 
-    public String nombreCompleto() {
+    public String getNombreCompleto() {
         return nombre + " " + apellidos;
     }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
 }

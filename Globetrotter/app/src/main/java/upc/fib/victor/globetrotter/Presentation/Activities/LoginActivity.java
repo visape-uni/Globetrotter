@@ -51,12 +51,17 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
-            //Todo: show UI main wall of user
+            String uid = currentUser.getUid();
+
+            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+            profileIntent.putExtra("uid", uid);
+            startActivity(profileIntent);
+
+            finish();
         }
     }
 
     private void setBackgroundAnimation() {
-
         backgroundLayout.setBackgroundResource(R.drawable.passport_gif);
 
         AnimationDrawable frameAnimator = (AnimationDrawable) backgroundLayout.getBackground();
@@ -89,9 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = firebaseAuthenticationController.getCurrentUser();
 
-                            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                            startActivity(profileIntent);
-                            finish();
+                            updateUI(user);
                         }
 
                         @Override
@@ -115,6 +118,4 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-
-
 }
