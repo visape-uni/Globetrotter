@@ -75,8 +75,11 @@ public class RegisterBornDateFragment extends Fragment {
         siguienteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onSetNacimiento(new Date(Integer.valueOf(yearSpinner.getSelectedItem().toString()), Integer.valueOf(monthSpinner.getSelectedItem().toString()),
-                        Integer.valueOf(daySpinner.getSelectedItem().toString())));
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, Integer.valueOf(yearSpinner.getSelectedItem().toString()));
+                cal.set(Calendar.MONTH, Integer.valueOf(monthSpinner.getSelectedItem().toString()));
+                cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(daySpinner.getSelectedItem().toString()));
+                mListener.onSetNacimiento(cal.getTime());
             }
         });
 

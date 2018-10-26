@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
+import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -34,8 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        firebaseAuthenticationController = new FirebaseAuthenticationController();
 
+        setFirebaseAuthenticationController();
         findViews();
         setBackgroundAnimation();
         setListeners();
@@ -44,12 +45,33 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) & updateUI
-        FirebaseUser currentUser = firebaseAuthenticationController.getCurrentUser();
-        updateUI(currentUser);
+        firebaseAuthenticationController.attachAuthListener();
+        updateUI();
     }
 
-    private void updateUI(FirebaseUser currentUser) {
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseAuthenticationController.removeAuthListener();
+    }
+
+    private void setFirebaseAuthenticationController() {
+        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
+        firebaseAuthenticationController.setAuthListener(new FirebaseAuthenticationController.AuthListenerResponse() {
+            @Override
+            public void signedIn() {
+                updateUI();
+            }
+
+            @Override
+            public void signedOut() {
+
+            }
+        });
+    }
+
+    private void updateUI() {
+        FirebaseUser currentUser = firebaseAuthenticationController.getCurrentUser();
         if (currentUser != null) {
             String uid = currentUser.getUid();
 
@@ -82,8 +104,10 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String email = emailTxt.getText().toString().trim();
                 String password = passwordTxt.getText().toString().trim();
+
                 if (email.trim().equals("") || password.trim().equals("")) {
                     Toast.makeText(LoginActivity.this, "Por favor rellena todos los campos.",
                             Toast.LENGTH_SHORT).show();
@@ -92,9 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void success() {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = firebaseAuthenticationController.getCurrentUser();
-
-                            updateUI(user);
+                            updateUI();
                         }
 
                         @Override

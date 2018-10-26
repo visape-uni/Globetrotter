@@ -67,8 +67,8 @@ public class RegisterActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        firebaseAuthenticationController = new FirebaseAuthenticationController();
-        firebaseDatabaseController = new FirebaseDatabaseController();
+        setFirebaseAuthenticationController();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
 
         backgroundLayout = findViewById(R.id.background_layout);
 
@@ -79,6 +79,23 @@ public class RegisterActivity extends AppCompatActivity implements
         fragment = RegisterNameFragment.newInstance();
         displayFragment(R.id.frame_layout, fragment, "name");
         currentFragment = NAME;
+    }
+
+    private void setFirebaseAuthenticationController() {
+        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
+        firebaseAuthenticationController.setAuthListener(new FirebaseAuthenticationController.AuthListenerResponse() {
+            @Override
+            public void signedIn() {
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+            }
+
+            @Override
+            public void signedOut() {
+
+            }
+        });
     }
 
     private void setBackgroundAnimation() {

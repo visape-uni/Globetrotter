@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="102" />
+                                                <entry key="scalingPercent" value="99" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -33,6 +33,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
+                                      <entry key="backgroundColor" value="000000" />
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
                                       <entry key="foregroundImage" value="D:\Windows\Visape\Uni\TFG\Projecte\logo.png" />
                                       <entry key="foregroundLayerName" value="ic_globe_logo" />
@@ -42,6 +43,25 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                            <entry key="launcherLegacy">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="D:\Windows\Visape\Uni\TFG\Projecte\logo.png" />
+                                      <entry key="outputName" value="ic_logo" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>

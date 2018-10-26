@@ -22,10 +22,33 @@ import upc.fib.victor.globetrotter.Presentation.Activities.ProfileActivity;
 
 public class FirebaseAuthenticationController {
 
-    private FirebaseAuth mAuth;
+    private static FirebaseAuthenticationController instance;
 
-    public FirebaseAuthenticationController() {
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
+
+    private FirebaseAuthenticationController() {
         this.mAuth = FirebaseAuth.getInstance();
+    }
+
+    public static FirebaseAuthenticationController getInstance() {
+        if (instance == null) instance = new FirebaseAuthenticationController();
+        return instance;
+    }
+
+    public void setAuthListener(final AuthListenerResponse authListenerResponse) {
+        this.mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    authListenerResponse.signedIn();
+                } else {
+                    authListenerResponse.signedOut();
+                }
+            }
+        };
     }
 
     public FirebaseUser getCurrentUser() {
@@ -70,6 +93,16 @@ public class FirebaseAuthenticationController {
                 });
     }
 
+    public void attachAuthListener() {
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    public void removeAuthListener() {
+        if(mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
     public interface SignInResponse {
         void success();
         void error();
@@ -78,5 +111,10 @@ public class FirebaseAuthenticationController {
     public interface CreateAccountResponse {
         void success();
         void error(String message);
+    }
+
+    public interface AuthListenerResponse {
+        void signedIn();
+        void signedOut();
     }
 }

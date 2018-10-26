@@ -17,10 +17,17 @@ import upc.fib.victor.globetrotter.Domain.Profile;
 
 public class FirebaseDatabaseController {
 
+    private static FirebaseDatabaseController instance;
+
     private FirebaseFirestore db;
 
-    public FirebaseDatabaseController() {
+    private FirebaseDatabaseController() {
         db = FirebaseFirestore.getInstance();
+    }
+
+    public static FirebaseDatabaseController getInstance() {
+        if (instance == null) instance = new FirebaseDatabaseController();
+        return instance;
     }
 
     public void storeProfile (Profile profile, final StoreUserResponse storeUserResponse) {

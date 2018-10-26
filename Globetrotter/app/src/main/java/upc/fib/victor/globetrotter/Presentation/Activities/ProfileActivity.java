@@ -1,10 +1,14 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Domain.Profile;
@@ -24,26 +28,36 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        findViews();
+
         String uid = getIntent().getStringExtra("uid");
         getProfileAndDisplay(uid);
 
     }
 
     private void getProfileAndDisplay(String uid) {
-        FirebaseDatabaseController firebaseDatabaseController = new FirebaseDatabaseController();
+
+        FirebaseDatabaseController firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+
         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
             @Override
             public void success(Profile profile) {
                 currentProfile = profile;
                 nameTxt.setText(currentProfile.getNombreCompleto());
-                bornTxt.setText(currentProfile.getNacimiento().toString());
+
+                DateFormat dataFormat = new SimpleDateFormat("dd/MM/yyyy");
+                bornTxt.setText(dataFormat.format(currentProfile.getNacimiento()));
                 //TODO: CARGAR IMAGEN DE PERFIL
+
             }
 
             @Override
             public void notFound() {
                 Toast.makeText(ProfileActivity.this, "Perfil de usuario no encontrado. Pruebe otra vez.",
                         Toast.LENGTH_SHORT).show();
+                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
             }
 
             @Override

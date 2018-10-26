@@ -10,26 +10,58 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        app:cardCornerRadius="10dp">
-        <LinearLayout
+        app:cardCornerRadius="10dp"
+        android:layout_margin="2dp">
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:layout_margin="7dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/seguir"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
             <ImageView
                 android:id="@+id/profileImageView"
-                android:layout_width="150dp"
-                android:layout_height="150dp" />
+                android:src="@drawable/silueta"
+                android:background="@color/colorPrimaryLighter"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_margin="5dp"
+                android:layout_centerHorizontal="true"/>
+            <LinearLayout
+                android:id="@+id/layout_user_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@id/profileImageView"
+                android:gravity="center"
+                android:layout_margin="5dp">
+                <TextView
+                    android:id="@+id/nameLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorBlack"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/bornLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"/>
+            </LinearLayout>
             <TextView
-                android:id="@+id/nameLbl"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/bornLbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_user_info"
+                android:layout_centerHorizontal="true"
+                android:text="@string/ver_el_n_mero_de_tel_fono"
+                android:textColor="@color/colorPrimaryLight"
+                android:clickable="true"
+                android:layout_marginBottom="4dp"/>
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 
     <FrameLayout
