@@ -46,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         firebaseAuthenticationController.attachAuthListener();
-        updateUI();
     }
 
     @Override

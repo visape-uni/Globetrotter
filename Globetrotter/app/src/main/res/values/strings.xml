@@ -18,5 +18,11 @@
     <string name="contrase_a">Contraseña</string>
     <string name="seguir">Seguir</string>
     <string name="ver_el_n_mero_de_tel_fono">Ver el número de teléfono</string>
+    <string name="seguidores">Seguidores</string>
+    <string name="seguidos">Seguidos</string>
+    <string name="paises">Paises</string>
+    <string name="editar">Editar</string>
+    <string name="añadir">añadir</string>
+    <string name="siguiendo">siguiendo</string>
 
 </resources>

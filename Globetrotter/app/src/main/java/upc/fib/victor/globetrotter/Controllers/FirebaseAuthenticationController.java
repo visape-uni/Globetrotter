@@ -103,6 +103,10 @@ public class FirebaseAuthenticationController {
         }
     }
 
+    public void signOut() {
+        mAuth.signOut();
+    }
+
     public interface SignInResponse {
         void success();
         void error();

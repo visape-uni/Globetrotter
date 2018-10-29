@@ -9,16 +9,22 @@ public class Profile {
     private String apellidos;
     private Date nacimiento;
     private String correo;
+    private int numSeguidores;
+    private int numSeguidos;
+    private int numPaises;
 
     public Profile() {
     }
 
-    public Profile(String uid, String nombre, String apellidos, Date nacimiento, String correo) {
+    public Profile(String uid, String nombre, String apellidos, Date nacimiento, String correo, int numSeguidores, int numSeguidos, int numPaises) {
         this.uid = uid;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.nacimiento = nacimiento;
         this.correo = correo;
+        this.numSeguidores = numSeguidores;
+        this.numSeguidos = numSeguidos;
+        this.numPaises = numPaises;
     }
 
     public String getUid() {
@@ -53,8 +59,28 @@ public class Profile {
         this.nacimiento = nacimiento;
     }
 
-    public String getNombreCompleto() {
-        return nombre + " " + apellidos;
+    public int getNumSeguidores() {
+        return numSeguidores;
+    }
+
+    public void setNumSeguidores(int numSeguidores) {
+        this.numSeguidores = numSeguidores;
+    }
+
+    public int getNumSeguidos() {
+        return numSeguidos;
+    }
+
+    public void setNumSeguidos(int numSeguidos) {
+        this.numSeguidos = numSeguidos;
+    }
+
+    public int getNumPaises() {
+        return numPaises;
+    }
+
+    public void setNumPaises(int numPaises) {
+        this.numPaises = numPaises;
     }
 
     public String getCorreo() {
@@ -65,4 +91,7 @@ public class Profile {
         this.correo = correo;
     }
 
+    public String getNombreCompleto() {
+        return nombre + " " + apellidos;
+    }
 }
