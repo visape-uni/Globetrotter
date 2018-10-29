@@ -57,6 +57,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         String uid = getIntent().getStringExtra("uid");
         getProfileAndDisplay(uid);
+
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: mostrar pagina para editar perfil
+            }
+        });
     }
 
     @Override
