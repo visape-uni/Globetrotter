@@ -243,7 +243,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="6dp"
-                android:src="@mipmap/ic_globe_logo"/>
+                android:src="@drawable/ic_recomendacion"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>

@@ -33,8 +33,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="imageAsset" value="D:\Windows\Visape\Uni\TFG\Projecte\Imagenes\ic_cumple\ic_cumple.png" />
-                                      <entry key="outputName" value="ic_diario" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="D:\Windows\Visape\Uni\TFG\Projecte\Imagenes\ic_recomanacio.png" />
+                                      <entry key="outputName" value="ic_recomendacion" />
                                       <entry key="theme" value="CUSTOM" />
                                       <entry key="themeColor" value="000000" />
                                     </map>

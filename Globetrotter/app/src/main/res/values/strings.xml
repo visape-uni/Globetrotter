@@ -13,7 +13,7 @@
     <string name="apellidos">Apellidos</string>
     <string name="siguiente">siguiente</string>
     <string name="cu_ndo_naciste">¿Cuándo naciste?</string>
-    <string name="introduce_tu_correo_electr_nico">Introduce tu correo electrónico</string>
+    <string name="introduce_tu_correo_electr_nico">Introduce tu correo electrónico y contraseña</string>
     <string name="correo_electr_nico">Correo electrònico</string>
     <string name="contrase_a">Contraseña</string>
     <string name="seguir">Seguir</string>
@@ -24,5 +24,6 @@
     <string name="editar">Editar</string>
     <string name="añadir">añadir</string>
     <string name="siguiendo">siguiendo</string>
+    <string name="repite_la_contrase_a">Repite la contraseña</string>
 
 </resources>

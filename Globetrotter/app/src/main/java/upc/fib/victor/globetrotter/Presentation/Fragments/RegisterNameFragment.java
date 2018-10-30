@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import upc.fib.victor.globetrotter.R;
 
@@ -57,7 +58,8 @@ public class RegisterNameFragment extends Fragment {
                 String nombre = nombreTxt.getText().toString().trim();
                 String apellidos = apellidosTxt.getText().toString().trim();
                 if (nombre.equals("") || apellidos.equals("")) {
-                    //TODO: Show error message
+                    Toast.makeText(getContext(), "Debes introducir tu nombre y apellidos",
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     mListener.onSetNombreApellidos(nombre, apellidos);
                 }

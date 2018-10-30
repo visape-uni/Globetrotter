@@ -2,27 +2,18 @@ package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
@@ -30,19 +21,19 @@ import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterEmailFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterBornDateFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterNameFragment;
-import upc.fib.victor.globetrotter.Presentation.Fragments.RegisterPasswordFragment;
 import upc.fib.victor.globetrotter.R;
 
 public class RegisterActivity extends AppCompatActivity implements
         RegisterNameFragment.OnFragmentInteractionListener,
         RegisterBornDateFragment.OnFragmentInteractionListener,
-        RegisterEmailFragment.OnFragmentInteractionListener,
-        RegisterPasswordFragment.OnFragmentInteractionListener{
+        RegisterEmailFragment.OnFragmentInteractionListener{
 
     private static final int NAME = 1;
     private static final int DATE = 2;
     private static final int EMAIL = 3;
     private static final int PASSWORD = 4;
+
+    private int currentFragment;
 
     private final String TAG = "RegisterActivity";
 
@@ -53,8 +44,6 @@ public class RegisterActivity extends AppCompatActivity implements
     private FirebaseDatabaseController firebaseDatabaseController;
 
     private LinearLayout backgroundLayout;
-
-    private int currentFragment; //PUTSER ES POT ELIMINAR
 
     private String nombre;
     private String apellidos;
@@ -74,11 +63,39 @@ public class RegisterActivity extends AppCompatActivity implements
 
         setBackgroundAnimation();
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         fragmentManager = getSupportFragmentManager();
 
         fragment = RegisterNameFragment.newInstance();
         displayFragment(R.id.frame_layout, fragment, "name");
         currentFragment = NAME;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            switch (currentFragment) {
+                case NAME:
+                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                    break;
+                case DATE:
+                    fragment = RegisterNameFragment.newInstance();
+                    displayFragment(R.id.frame_layout, fragment, "name");
+                    currentFragment = NAME;
+                    break;
+                case EMAIL:
+                    fragment = RegisterBornDateFragment.newInstance();
+                    displayFragment(R.id.frame_layout, fragment, "date");
+                    currentFragment = DATE;
+                    break;
+            }
+        }
+        return true;
     }
 
     private void setFirebaseAuthenticationController() {
@@ -133,26 +150,21 @@ public class RegisterActivity extends AppCompatActivity implements
         this.nombre = nombre;
         this.apellidos = apellidos;
         fragment = RegisterBornDateFragment.newInstance();
-        replaceFragment(R.id.frame_layout, fragment, "register_nacimiento");
+        replaceFragment(R.id.frame_layout, fragment, "date");
+        currentFragment = DATE;
     }
 
     @Override
     public void onSetNacimiento(Date date) {
         this.nacimiento = date;
         fragment = RegisterEmailFragment.newInstance();
-        replaceFragment(R.id.frame_layout, fragment, "resgister_correo");
+        replaceFragment(R.id.frame_layout, fragment, "email");
+        currentFragment = EMAIL;
     }
 
     @Override
-    public void onSetCorreo(String correo) {
+    public void onSetCorreo(final String correo, String password) {
         this.correo = correo;
-        fragment = RegisterPasswordFragment.newInstance();
-        replaceFragment(R.id.frame_layout, fragment, "register_password");
-    }
-
-    @Override
-    public void onSetPassword(String password) {
-
         this.password = password;
 
         firebaseAuthenticationController.createAccount(correo, password, new FirebaseAuthenticationController.CreateAccountResponse() {
@@ -186,6 +198,5 @@ public class RegisterActivity extends AppCompatActivity implements
             }
         });
     }
-
 }
 
