@@ -24,5 +24,12 @@
     <string name="editar">Editar</string>
     <string name="añadir">añadir</string>
     <string name="siguiendo">siguiendo</string>
+    <string name="nombreLbl">Nombre:</string>
+    <string name="foto_de_perfil">Foto de perfil</string>
+    <string name="apellidosLbl">Apellidos:</string>
+    <string name="fecha_de_nacimiento_lbl">Fecha de nacimiento:</string>
+    <string name="descripcion">Descripcion:</string>
+    <string name="aceptar">aceptar</string>
+    <string name="cancelar">cancelar</string>
 
 </resources>

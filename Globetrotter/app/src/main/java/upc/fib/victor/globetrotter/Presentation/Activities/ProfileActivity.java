@@ -61,7 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: mostrar pagina para editar perfil
+                Intent editIntent = new Intent(getApplicationContext(), EditProfileActivity.class);
+                startActivity(editIntent);
             }
         });
     }
