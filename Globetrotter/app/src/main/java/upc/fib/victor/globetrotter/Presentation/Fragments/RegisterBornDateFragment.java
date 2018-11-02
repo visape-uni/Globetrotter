@@ -65,7 +65,7 @@ public class RegisterBornDateFragment extends Fragment {
 
         ArrayList<String> years = new ArrayList<String>();
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1900; i <= thisYear; i++) {
+        for (int i = thisYear; i >= 1900; i--) {
             years.add(String.valueOf(i));
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, years);
@@ -77,7 +77,7 @@ public class RegisterBornDateFragment extends Fragment {
             public void onClick(View view) {
                 Calendar cal = Calendar.getInstance();
                 cal.set(Calendar.YEAR, Integer.valueOf(yearSpinner.getSelectedItem().toString()));
-                cal.set(Calendar.MONTH, Integer.valueOf(monthSpinner.getSelectedItem().toString()));
+                cal.set(Calendar.MONTH, Integer.valueOf(monthSpinner.getSelectedItem().toString()) - 1);
                 cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(daySpinner.getSelectedItem().toString()));
                 mListener.onSetNacimiento(cal.getTime());
             }

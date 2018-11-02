@@ -62,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent editIntent = new Intent(getApplicationContext(), EditProfileActivity.class);
+                editIntent.putExtra("uid", activityProfile.getUid());
                 startActivity(editIntent);
             }
         });
@@ -108,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void success(Profile profile) {
                 activityProfile = profile;
 
-                if (activityProfile.equals(firebaseAuthenticationController.getCurrentUser())) {
+                if (activityProfile.getUid().equals(firebaseAuthenticationController.getCurrentUser().getUid())) {
                     seguirBtn.setVisibility(View.GONE);
                     dejarSeguirBtn.setVisibility(View.GONE);
                     editBtn.setVisibility(View.VISIBLE);

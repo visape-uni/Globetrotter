@@ -162,7 +162,7 @@ public class RegisterActivity extends AppCompatActivity implements
                 FirebaseUser user = firebaseAuthenticationController.getCurrentUser();
 
                 //Store user in DB
-                Profile profile = new Profile(user.getUid(), nombre, apellidos, nacimiento, correo, 0, 0 ,0);
+                Profile profile = new Profile(user.getUid(), nombre, apellidos, nacimiento, correo, 0, 0 ,0, "");
                 firebaseDatabaseController.storeProfile(profile, new FirebaseDatabaseController.StoreUserResponse() {
                     @Override
                     public void success() {

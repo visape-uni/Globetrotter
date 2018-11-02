@@ -12,15 +12,24 @@
         android:background="@color/colorPrimaryLighter"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"/>
+    <TextView
+        android:id="@+id/cambiarFotoLbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cambiar foto de perfil"
+        android:textColor="@color/colorPrimary"
+        android:layout_below="@id/profileImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"/>
 
     <LinearLayout
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/profileImageView"
+        android:layout_below="@id/cambiarFotoLbl"
         android:gravity="center_vertical">
         <TextView
             android:layout_width="wrap_content"
@@ -58,33 +67,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/layout2"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:layout_below="@id/layout2">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fecha_de_nacimiento_lbl"
             android:layout_margin="5dp"/>
-        <Spinner
-            android:id="@+id/daySpinner"
+        <EditText
+            android:id="@+id/dayTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:entries="@array/days_array"/>
-
-        <Spinner
-            android:id="@+id/monthSpinner"
+            android:inputType="number"/>
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:entries="@array/months_array" />
-
-        <Spinner
-            android:id="@+id/yearSpinner"
+            android:text="@string/barra"/>
+        <EditText
+            android:id="@+id/monthTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:entries="@array/years_array"/>
+            android:inputType="number"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/barra"/>
+        <EditText
+            android:id="@+id/yearTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/layout4"
         android:layout_width="match_parent"
@@ -112,7 +127,7 @@
         android:layout_below="@id/layout4"
         android:layout_margin="20dp"/>
     <Button
-        android:id="@+id/AceptarBtn"
+        android:id="@+id/aceptarBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout4"

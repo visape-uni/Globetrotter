@@ -7,6 +7,7 @@ public class Profile {
     private String uid;
     private String nombre;
     private String apellidos;
+    private String descripcion;
     private Date nacimiento;
     private String correo;
     private int numSeguidores;
@@ -16,7 +17,7 @@ public class Profile {
     public Profile() {
     }
 
-    public Profile(String uid, String nombre, String apellidos, Date nacimiento, String correo, int numSeguidores, int numSeguidos, int numPaises) {
+    public Profile(String uid, String nombre, String apellidos, Date nacimiento, String correo, int numSeguidores, int numSeguidos, int numPaises, String descripcion) {
         this.uid = uid;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -25,6 +26,7 @@ public class Profile {
         this.numSeguidores = numSeguidores;
         this.numSeguidos = numSeguidos;
         this.numPaises = numPaises;
+        this.descripcion = descripcion;
     }
 
     public String getUid() {
@@ -89,6 +91,14 @@ public class Profile {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getNombreCompleto() {

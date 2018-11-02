@@ -31,5 +31,6 @@
     <string name="descripcion">Descripcion:</string>
     <string name="aceptar">aceptar</string>
     <string name="cancelar">cancelar</string>
+    <string name="barra">/</string>
 
 </resources>
