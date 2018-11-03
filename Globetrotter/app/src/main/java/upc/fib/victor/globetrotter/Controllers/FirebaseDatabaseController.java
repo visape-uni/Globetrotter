@@ -73,6 +73,11 @@ public class FirebaseDatabaseController {
         void error();
     }
 
+    public interface EditProfileResponse {
+        void success();
+        void error();
+    }
+
     public interface GetProfileResponse {
         void success(Profile profile);
         void notFound();
