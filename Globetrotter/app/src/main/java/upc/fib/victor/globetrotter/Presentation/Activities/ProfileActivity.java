@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,12 +15,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
+import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
+import upc.fib.victor.globetrotter.Controllers.GlideApp;
+import upc.fib.victor.globetrotter.Controllers.MyAppGlideModule;
 import upc.fib.victor.globetrotter.Domain.Profile;
+import upc.fib.victor.globetrotter.Domain.Publication;
 import upc.fib.victor.globetrotter.R;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -32,7 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView seguidoresTxt;
     private TextView paisesTxt;
 
-    private ImageView profileImg;
+    ImageView profileImg;
 
     private Button editBtn;
     private Button seguirBtn;
@@ -42,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseDatabaseController firebaseDatabaseController;
     private FirebaseAuthenticationController firebaseAuthenticationController;
+    private FirebaseStorageController firebaseStorageController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,9 +111,10 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getProfileAndDisplay(String uid) {
+    private void getProfileAndDisplay(final String uid) {
 
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseStorageController = FirebaseStorageController.getInstance();
 
         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
             @Override
@@ -131,8 +143,21 @@ public class ProfileActivity extends AppCompatActivity {
 
                 DateFormat dataFormat = new SimpleDateFormat("dd/MM/yyyy");
                 bornTxt.setText(dataFormat.format(activityProfile.getNacimiento()));
-                //TODO: CARGAR IMAGEN DE PERFIL
 
+                try {
+                    firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                        @Override
+                        public void load(StorageReference ref) {
+
+                            GlideApp.with(getApplicationContext())
+                                    .load(ref)
+                                    .into(profileImg);
+                        }
+                    });
+                } catch (StorageException e) {
+                    profileImg.setImageDrawable(getResources().getDrawable(R.drawable.silueta));
+                    e.printStackTrace();
+                }
             }
 
             @Override

@@ -9,10 +9,11 @@
     <ImageView
         android:id="@+id/profileImageView"
         android:src="@drawable/silueta"
-        android:background="@color/colorPrimaryLighter"
+        android:background="@drawable/border_image"
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
         android:layout_centerHorizontal="true"/>
     <TextView
         android:id="@+id/cambiarFotoLbl"
@@ -22,7 +23,8 @@
         android:textColor="@color/colorPrimary"
         android:layout_below="@id/profileImageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:clickable="true"/>
 
     <LinearLayout
         android:id="@+id/layout1"

@@ -21,4 +21,7 @@
         <activity android:name=".Presentation.Activities.EditProfileActivity"></activity>
     </application>
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 </manifest>

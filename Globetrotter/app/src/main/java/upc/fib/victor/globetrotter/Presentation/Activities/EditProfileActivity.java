@@ -1,20 +1,35 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
+import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
+import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.R;
 
@@ -30,14 +45,19 @@ public class EditProfileActivity extends AppCompatActivity {
     private EditText monthTxt;
     private EditText yearTxt;
 
+    private TextView cambiarFotoTxt;
+
     private Button cancelarBtn;
     private Button aceptarBtn;
 
     private FirebaseDatabaseController firebaseDatabaseController;
+    private FirebaseStorageController firebaseStorageController;
 
     private Profile activityProfile;
 
     private String uid;
+
+    private final int PICK_IMAGE_REQUEST = 71;
 
 
     @Override
@@ -51,8 +71,9 @@ public class EditProfileActivity extends AppCompatActivity {
         getDatabaseController(uid);
     }
 
-    private void getDatabaseController(String uid) {
+    private void getDatabaseController(final String uid) {
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseStorageController = FirebaseStorageController.getInstance();
 
         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
             @Override
@@ -74,7 +95,26 @@ public class EditProfileActivity extends AppCompatActivity {
                 monthTxt.setText(String.valueOf(month));
                 yearTxt.setText(String.valueOf(year));
 
-                //TODO: CARGAR IMAGEN DE PERFIL
+                try {
+                    firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                        @Override
+                        public void load(StorageReference ref) {
+
+                            GlideApp.with(getApplicationContext())
+                                    .load(ref)
+                                    .into(imagenPerfil);
+                        }
+                    });
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                }
+
+                cambiarFotoTxt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        cambiarFoto();
+                    }
+                });
 
                 cancelarBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -103,6 +143,57 @@ public class EditProfileActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void cambiarFoto() {
+        Intent photoPickerIntent = new Intent();
+        photoPickerIntent.setType("image/*");
+        photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(photoPickerIntent, "Elige una foto"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_REQUEST
+                && data != null && data.getData() != null) {
+            try {
+                Uri imageUri = data.getData();
+
+                final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Subiendo...");
+                progressDialog.show();
+
+                firebaseStorageController.uploadImage(imageUri, uid, new FirebaseStorageController.UploadImageResponse() {
+                    @Override
+                    public void success() {
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Foto subida", Toast.LENGTH_SHORT).show();
+                        imagenPerfil.setImageBitmap(bitmap);
+
+                    }
+
+                    @Override
+                    public void progress(String message) {
+                        progressDialog.setMessage(message);
+                    }
+
+                    @Override
+                    public void error(String message) {
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Ha sucedido un error, pruebe más tarde", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "No has seleccionado ninguna imagen", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void editProfile() {
@@ -181,5 +272,6 @@ public class EditProfileActivity extends AppCompatActivity {
         yearTxt = findViewById(R.id.yearTxt);
         cancelarBtn = findViewById(R.id.cancelarBtn);
         aceptarBtn = findViewById(R.id.aceptarBtn);
+        cambiarFotoTxt = findViewById(R.id.cambiarFotoLbl);
     }
 }

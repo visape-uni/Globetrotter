@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Profile {
