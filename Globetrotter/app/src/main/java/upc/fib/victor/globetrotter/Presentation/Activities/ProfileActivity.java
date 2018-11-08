@@ -144,20 +144,16 @@ public class ProfileActivity extends AppCompatActivity {
                 DateFormat dataFormat = new SimpleDateFormat("dd/MM/yyyy");
                 bornTxt.setText(dataFormat.format(activityProfile.getNacimiento()));
 
-                try {
-                    firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
-                        @Override
-                        public void load(StorageReference ref) {
 
-                            GlideApp.with(getApplicationContext())
-                                    .load(ref)
-                                    .into(profileImg);
-                        }
-                    });
-                } catch (StorageException e) {
-                    profileImg.setImageDrawable(getResources().getDrawable(R.drawable.silueta));
-                    e.printStackTrace();
-                }
+                firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                    @Override
+                    public void load(StorageReference ref) {
+                        GlideApp.with(getApplicationContext())
+                                .load(ref)
+                                .placeholder(getResources().getDrawable(R.drawable.silueta))
+                                .into(profileImg);
+                    }
+                });
             }
 
             @Override

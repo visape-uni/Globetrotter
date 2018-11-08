@@ -95,19 +95,16 @@ public class EditProfileActivity extends AppCompatActivity {
                 monthTxt.setText(String.valueOf(month));
                 yearTxt.setText(String.valueOf(year));
 
-                try {
-                    firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
-                        @Override
-                        public void load(StorageReference ref) {
 
-                            GlideApp.with(getApplicationContext())
-                                    .load(ref)
-                                    .into(imagenPerfil);
-                        }
-                    });
-                } catch (StorageException e) {
-                    e.printStackTrace();
-                }
+                firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                    @Override
+                    public void load(StorageReference ref) {
+
+                        GlideApp.with(getApplicationContext())
+                                .load(ref)
+                                .into(imagenPerfil);
+                    }
+                });
 
                 cambiarFotoTxt.setOnClickListener(new View.OnClickListener() {
                     @Override
