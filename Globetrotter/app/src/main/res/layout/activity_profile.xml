@@ -106,7 +106,7 @@
             <ImageView
                 android:id="@+id/profileImageView"
                 android:src="@drawable/silueta"
-                android:background="@color/colorPrimaryLighter"
+                android:background="@drawable/border_image"
                 android:layout_width="125dp"
                 android:layout_height="125dp"
                 android:layout_margin="5dp"

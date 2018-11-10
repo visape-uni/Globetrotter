@@ -6,8 +6,6 @@
     <string name="entrar">Entrar</string>
     <string name="logo_de_la_aplicaci_n">Logo de la aplicación.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="c_mo_te_llamas">¿Cómo te llamas?</string>
     <string name="nombre">Nombre</string>
     <string name="apellidos">Apellidos</string>
@@ -24,6 +22,19 @@
     <string name="editar">Editar</string>
     <string name="añadir">añadir</string>
     <string name="siguiendo">siguiendo</string>
+<<<<<<< HEAD
     <string name="repite_la_contrase_a">Repite la contraseña</string>
+=======
+    <string name="nombreLbl">Nombre:</string>
+    <string name="foto_de_perfil">Foto de perfil</string>
+    <string name="apellidosLbl">Apellidos:</string>
+    <string name="fecha_de_nacimiento_lbl">Fecha de nacimiento:</string>
+    <string name="descripcion">Descripcion:</string>
+    <string name="aceptar">aceptar</string>
+    <string name="cancelar">cancelar</string>
+    <string name="barra">/</string>
+
+    <string name="cambio_de_foto">ha cambiado su foto de perfil.</string>
+>>>>>>> 3-editar_perfil
 
 </resources>
