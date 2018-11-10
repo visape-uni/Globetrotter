@@ -77,11 +77,7 @@ public class RegisterBornDateFragment extends Fragment {
             public void onClick(View view) {
                 Calendar cal = Calendar.getInstance();
                 cal.set(Calendar.YEAR, Integer.valueOf(yearSpinner.getSelectedItem().toString()));
-<<<<<<< HEAD
-                cal.set(Calendar.MONTH, (Integer.valueOf(monthSpinner.getSelectedItem().toString())-1));
-=======
                 cal.set(Calendar.MONTH, Integer.valueOf(monthSpinner.getSelectedItem().toString()) - 1);
->>>>>>> 3-editar_perfil
                 cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(daySpinner.getSelectedItem().toString()));
                 mListener.onSetNacimiento(cal.getTime());
             }

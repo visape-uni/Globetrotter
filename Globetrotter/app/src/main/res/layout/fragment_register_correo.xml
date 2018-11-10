@@ -29,6 +29,7 @@
             android:hint="@string/correo_electr_nico"
             android:layout_below="@id/preguntaLbl"
             android:inputType="textEmailAddress"
+<<<<<<< HEAD
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"/>
 
@@ -40,6 +41,8 @@
             android:layout_below="@id/correoTxt"
             android:inputType="textPassword"
             android:layout_marginTop="20dp"
+=======
+>>>>>>> 3-editar_perfil
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"/>
 
