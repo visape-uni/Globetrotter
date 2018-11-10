@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,8 +110,70 @@ public class FirebaseDatabaseController {
                 .set(map);
     }
 
-    public void editProfile() {
+    public void editProfile(final Profile newProfile, final EditProfileResponse editProfileResponse) {
         //TODO: IMPLEMENTAR
+        final DocumentReference refProfile = db.collection("perfiles").document(newProfile.getUid());
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot documentProfile = transaction.get(refProfile);
+
+                if (documentProfile.exists()) {
+                    Profile oldProfile = documentProfile.toObject(Profile.class);
+
+                    StorePublicationResponse response = new StorePublicationResponse() {
+                        @Override
+                        public void success() {
+                            Log.d("DatabaseController", "Published");
+                        }
+
+                        @Override
+                        public void error() {
+                            Log.d("DatabaseController", "Not Published");
+                        }
+                    };
+
+                    Map<String, Object> mapChanges = new HashMap<>();
+                    if (!oldProfile.getNombre().equals(newProfile.getNombre())) {
+                        mapChanges.put("nombre", newProfile.getNombre());
+
+                        String message = newProfile.getNombreCompleto() + " ha cambiado su nombre de '" + oldProfile.getNombre() + "' a '" + newProfile.getNombre() + "'.";
+                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        storePublication(publication, response);
+                    }
+                    if(!oldProfile.getApellidos().equals(newProfile.getApellidos())) {
+                        mapChanges.put("apellidos", newProfile.getApellidos());
+
+                        String message = newProfile.getNombreCompleto() + " ha cambiado su apellido de '" + oldProfile.getApellidos() + "' a '" + newProfile.getApellidos() + "'.";
+                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        storePublication(publication, response);
+                    }
+                    if(!oldProfile.getDescripcion().equals(newProfile.getDescripcion())) {
+                        mapChanges.put("descripcion", newProfile.getDescripcion());
+
+                        String message = newProfile.getNombreCompleto() + " ha cambiado su descripción.";
+                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        storePublication(publication, response);
+                    }
+                    if(!oldProfile.getNacimiento().equals(newProfile.getNacimiento())) {
+                        mapChanges.put("nacimiento", newProfile.getNacimiento());
+
+                        String message = newProfile.getNombreCompleto() + " ha cambiado su fecha de nacimiento de '" + oldProfile.getNacimiento() + "' a '" + newProfile.getNacimiento() + "'.";
+                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        storePublication(publication, response);
+                    }
+
+                    transaction.update(refProfile, mapChanges);
+                } else {
+                    editProfileResponse.notFound();
+                }
+                return null;
+            }
+
+        });
+        editProfileResponse.success();
     }
 
     public void storeProfile (final Profile profile, final StoreUserResponse storeUserResponse) {
@@ -155,6 +218,12 @@ public class FirebaseDatabaseController {
 
     public interface StoreUserResponse {
         void success();
+        void error();
+    }
+
+    public interface EditProfileResponse {
+        void success();
+        void notFound();
         void error();
     }
 

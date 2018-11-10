@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Presentation.Activities.RegisterActivity" />
-        <activity android:name=".Presentation.Activities.ProfileActivity" />
+        <activity android:name=".Presentation.Activities.ProfileActivity"
+                    android:launchMode="singleInstance"/>
         <activity android:name=".Presentation.Activities.EditProfileActivity"></activity>
     </application>
 

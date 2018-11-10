@@ -18,6 +18,14 @@ public class Profile {
     public Profile() {
     }
 
+    public Profile(String uid, String nombre, String apellidos, Date nacimiento, String descripcion) {
+        this.uid = uid;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.nacimiento = nacimiento;
+        this.descripcion = descripcion;
+    }
+
     public Profile(String uid, String nombre, String apellidos, Date nacimiento, String correo, int numSeguidores, int numSeguidos, int numPaises, String descripcion) {
         this.uid = uid;
         this.nombre = nombre;

@@ -14,7 +14,7 @@ public class Publication {
     public Publication() {
     }
 
-    public Publication(String message, String uidUser, Date date) {
+    public Publication(String uidUser, String message, Date date) {
         this.message = message;
         this.uidUser = uidUser;
         this.date = date;

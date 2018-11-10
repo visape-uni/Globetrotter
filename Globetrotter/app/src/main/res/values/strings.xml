@@ -6,8 +6,6 @@
     <string name="entrar">Entrar</string>
     <string name="logo_de_la_aplicaci_n">Logo de la aplicación.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="c_mo_te_llamas">¿Cómo te llamas?</string>
     <string name="nombre">Nombre</string>
     <string name="apellidos">Apellidos</string>
@@ -33,5 +31,6 @@
     <string name="cancelar">cancelar</string>
     <string name="barra">/</string>
 
+    <string name="cambio_de_foto">ha cambiado su foto de perfil.</string>
 
 </resources>

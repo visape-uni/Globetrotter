@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.Profile;
+import upc.fib.victor.globetrotter.Domain.Publication;
 import upc.fib.victor.globetrotter.R;
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -102,6 +104,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                         GlideApp.with(getApplicationContext())
                                 .load(ref)
+                                .placeholder(getResources().getDrawable(R.drawable.silueta))
                                 .into(imagenPerfil);
                     }
                 });
@@ -171,6 +174,18 @@ public class EditProfileActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Foto subida", Toast.LENGTH_SHORT).show();
                         imagenPerfil.setImageBitmap(bitmap);
 
+                        Publication publication = new Publication(uid, activityProfile.getNombreCompleto() + " " + R.string.cambio_de_foto, Calendar.getInstance().getTime());
+                        firebaseDatabaseController.storePublication(publication, new FirebaseDatabaseController.StorePublicationResponse() {
+                            @Override
+                            public void success() {
+                                Log.d("EditProfileActivity: ", "Published");
+                            }
+
+                            @Override
+                            public void error() {
+                                Log.d("EditProfileActivity: ", "Not published");
+                            }
+                        });
                     }
 
                     @Override
@@ -205,8 +220,8 @@ public class EditProfileActivity extends AppCompatActivity {
             Toast.makeText(EditProfileActivity.this, "Debes indicar tu nombre y apellidos",
                     Toast.LENGTH_SHORT).show();
         } else {
-            if (descripcion.length() > 255) {
-                Toast.makeText(EditProfileActivity.this, "La descripción no puede tener más de 255 carácteres",
+            if (descripcion.length() > 100) {
+                Toast.makeText(EditProfileActivity.this, "La descripción no puede tener más de 100 carácteres",
                         Toast.LENGTH_SHORT).show();
             } else {
                 if (day < 1 || day > 31 || month < 1 || month > 21 || year < 1900 || year > 2019) {
@@ -219,37 +234,27 @@ public class EditProfileActivity extends AppCompatActivity {
                     cal.set(Calendar.MONTH, month);
                     cal.set(Calendar.DAY_OF_MONTH, day);
 
-                    firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
-                        @Override
-                        public void success(Profile profileAnterior) {
-                            Profile profile = new Profile(uid, nombre, apellidos, cal.getTime(), profileAnterior.getCorreo(), profileAnterior.getNumSeguidores(),
-                                                            profileAnterior.getNumSeguidos(), profileAnterior.getNumPaises(), descripcion);
-                            firebaseDatabaseController.storeProfile(profile, new FirebaseDatabaseController.StoreUserResponse() {
-                                @Override
-                                public void success() {
-                                    Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                                    profileIntent.putExtra("uid", uid);
-                                    startActivity(profileIntent);
-                                    finish();
-                                }
+                    Profile profile = new Profile(uid, nombre, apellidos, cal.getTime(), descripcion);
 
-                                @Override
-                                public void error() {
-                                    Toast.makeText(EditProfileActivity.this, "Error: Perfil no editado, pruebe más tarde",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    firebaseDatabaseController.editProfile(profile, new FirebaseDatabaseController.EditProfileResponse() {
+                        @Override
+                        public void success() {
+                            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                            profileIntent.putExtra("uid", uid);
+                            startActivity(profileIntent);
+                            finish();
+                            //TODO: EVITAR TENER MAS DE 1 INSTANCIA DE PROFILE ACTIVITY
                         }
 
                         @Override
                         public void notFound() {
-                            Toast.makeText(EditProfileActivity.this, "Error interno, vuelve a probar",
+                            Toast.makeText(EditProfileActivity.this, "Error interno, vuelve a probar más tarde",
                                     Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
-                        public void error(String message) {
-                            Toast.makeText(EditProfileActivity.this, "Error: " + message,
+                        public void error() {
+                            Toast.makeText(EditProfileActivity.this, "Error: Perfil no editado, pruebe más tarde",
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
