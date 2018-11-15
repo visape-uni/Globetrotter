@@ -68,7 +68,8 @@ public class RegisterBornDateFragment extends Fragment {
         for (int i = thisYear; i >= 1900; i--) {
             years.add(String.valueOf(i));
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, years);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, years);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearSpinner.setAdapter(adapter);
 
 

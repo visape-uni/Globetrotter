@@ -31,7 +31,9 @@
     <string name="aceptar">aceptar</string>
     <string name="cancelar">cancelar</string>
     <string name="barra">/</string>
+    <string name="selecciona_pais">Selecciona el pais</string>
 
     <string name="cambio_de_foto">ha cambiado su foto de perfil.</string>
+    <string name="visitado">Visitado</string>
 
 </resources>

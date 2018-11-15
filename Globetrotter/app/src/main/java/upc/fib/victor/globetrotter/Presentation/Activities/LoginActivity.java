@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setFirebaseAuthenticationController() {
         firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
+
         firebaseAuthenticationController.setAuthListener(new FirebaseAuthenticationController.AuthListenerResponse() {
             @Override
             public void signedIn() {
@@ -72,12 +74,13 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI() {
         FirebaseUser currentUser = firebaseAuthenticationController.getCurrentUser();
         if (currentUser != null) {
+            //TODO: arreglar bug en register, doble login
             String uid = currentUser.getUid();
 
             Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
             profileIntent.putExtra("uid", uid);
             startActivity(profileIntent);
-
+            firebaseAuthenticationController.removeAuthListener();
             finish();
         }
     }

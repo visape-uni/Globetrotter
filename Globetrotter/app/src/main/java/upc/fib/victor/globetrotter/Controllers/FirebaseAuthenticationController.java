@@ -38,6 +38,7 @@ public class FirebaseAuthenticationController {
     }
 
     public void setAuthListener(final AuthListenerResponse authListenerResponse) {
+
         this.mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
