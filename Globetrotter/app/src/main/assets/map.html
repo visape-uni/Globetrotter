@@ -53,23 +53,24 @@ var map = AmCharts.makeChart( "chartdiv", {
       "color": "#00ff00"
     }, {
       "title": "Pendiente",
-      "color": "#64BCF7"
+      "color": "#67b7dc"
     } ]
   }
 
 } );
 
+function addCountry (id, title) {
+    var area = map.getObjectById(id);
+    area.color = "#00ff00";
 
-console.log(map.dataProvider.areas)
+    area.validate();
+}
 
-function addCountry(id, title) {
-    var pais = {
-                "title": title,
-                "id": id,
-                "color": "#00ff00"
-              };
-    var mapAreas = map.dataProvider.areas.push(pais);
-    map.validateData();
+function deleteCountry (id, title) {
+    var area = map.getObjectById(id);
+    area.color = "#67b7dc";
+
+    area.validate();
 }
 </script>
 

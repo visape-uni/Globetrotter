@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Globetrotter</string>
+    <string name="preference_file_key">upc.fib.victor.globetrotter</string>
 
     <string name="email">Email</string>
     <string name="register">Registrarse</string>
@@ -35,5 +36,7 @@
 
     <string name="cambio_de_foto">ha cambiado su foto de perfil.</string>
     <string name="visitado">Visitado</string>
+    <string name="buscar">Buscar</string>
+    <string name="busca_el_pa_s">Busca el país</string>
 
 </resources>

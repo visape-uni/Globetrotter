@@ -2,6 +2,7 @@ package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -66,7 +67,8 @@ public class ProfileActivity extends AppCompatActivity {
         findViews();
         bottomBar();
 
-        String uid = getIntent().getStringExtra("uid");
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+        String uid = sharedPreferences.getString("uid", null);
         getProfileAndDisplay(uid);
 
         editBtn.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +95,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                             firebaseAuthenticationController.signOut();
                             Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                            SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE).edit();
+                            editor.remove("uid");
+                            editor.commit();
                             startActivity(loginIntent);
                             finish();
                             break;
@@ -200,8 +205,6 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent webIntent = new Intent(getApplicationContext(), UserMapActivity.class);
                 startActivity(webIntent);
-                /*Intent mapIntent = new Intent(getApplicationContext(), UserMapActivity.class);
-                startActivity(mapIntent);*/
             }
         });
     }

@@ -1,24 +1,45 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
+import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
+import android.webkit.WebViewClient;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
+import upc.fib.victor.globetrotter.Presentation.Utils.CountryListAdapter;
 import upc.fib.victor.globetrotter.R;
 
 public class UserMapActivity extends AppCompatActivity {
 
-    private Button visitadoBtn;
+    private ProgressDialog progressDialog;
+
     private WebView webView;
-    private Spinner paisesSpinner;
+    private EditText buscarPais;
+    private ListView listView;
+
+    private CountryListAdapter adapter;
+
+    private FirebaseDatabaseController firebaseDatabaseController;
+
+    private String uid;
+    private HashMap<String, String> paisesVisitados;
 
     private HashMap<String, String> paisesId;
     private List<String> idList;
@@ -31,29 +52,89 @@ public class UserMapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map);
+        setTitle("Paises visitados");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Cargando paises...");
+        progressDialog.show();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+        uid = sharedPreferences.getString("uid", null);
+
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
 
         getViews();
         setMap();
         initializeIds();
+    }
 
-        visitadoBtn.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getPaisesVisitados() {
+        paisesVisitados = new HashMap<>();
+        firebaseDatabaseController.getCountriesVisited(uid, new FirebaseDatabaseController.GetCountriesResponse() {
             @Override
-            public void onClick(View view) {
-                String title = paisesSpinner.getSelectedItem().toString();
-                String id = paisesId.get(title);
-                webView.loadUrl("javascript:addCountry('"+ id +"', '"+ title +"');");
+            public void success(HashMap<String, String> countries) {
+
+                Iterator it = countries.entrySet().iterator();
+                while(it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    paisesVisitados.put(pair.getKey().toString(), pair.getValue().toString());
+                    webView.loadUrl("javascript:addCountry('"+ pair.getValue().toString() +"', '"+ pair.getKey().toString() +"');");
+                    it.remove();
+                }
+                fillList();
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void error() {
+                fillList();
+
+                progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(), "Error: No se han podido obtener los paises visitados por el usuario", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void getViews() {
         webView = findViewById(R.id.webView);
-        visitadoBtn = findViewById(R.id.buttonVisitado);
-        paisesSpinner = findViewById(R.id.paisesSpinner);
+        buscarPais = findViewById(R.id.buscarPais);
+        listView = findViewById(R.id.countryList);
+    }
+
+    private void fillList() {
+        adapter = new CountryListAdapter(this, nameList, paisesVisitados);
+        listView.setAdapter(adapter);
     }
 
     private void setMap() {
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                Log.d("WEBCLIENT: ", "onPageStarted");
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                Log.d("WEBCLIENT: ", "onPageFinished");
+                getPaisesVisitados();
+            }
+        });
+        webView.setWebChromeClient(new WebChromeClient());
         webView.loadUrl("file:///android_asset/map.html");
     }
 
@@ -68,9 +149,33 @@ public class UserMapActivity extends AppCompatActivity {
             paisesId.put(nameList.get(i), idList.get(i));
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.select_dialog_item, nameList);
-        adapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        paisesSpinner.setAdapter(adapter);
+        buscarPais.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                adapter.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
+    public void setVisited(String title) {
+        String id = paisesId.get(title);
+        webView.loadUrl("javascript:addCountry('"+ id +"', '"+ title +"');");
+        firebaseDatabaseController.setCountryVisited(uid, title, id);
+    }
+
+    public void setUnvisited(String title) {
+        String id = paisesId.get(title);
+        webView.loadUrl("javascript:deleteCountry('"+ id +"', '"+ title +"');");
+        firebaseDatabaseController.deleteCountryVisited(uid, title);
+    }
 }

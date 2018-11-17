@@ -1,6 +1,7 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -77,8 +78,13 @@ public class LoginActivity extends AppCompatActivity {
             //TODO: arreglar bug en register, doble login
             String uid = currentUser.getUid();
 
+            SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE).edit();
+            editor.putString("uid", uid);
+            editor.apply();
+
             Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-            profileIntent.putExtra("uid", uid);
+            //TODO: BORRAR
+            //profileIntent.putExtra("uid", uid);
             startActivity(profileIntent);
             firebaseAuthenticationController.removeAuthListener();
             finish();
