@@ -2,11 +2,10 @@ package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -15,21 +14,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
-import upc.fib.victor.globetrotter.Controllers.MyAppGlideModule;
 import upc.fib.victor.globetrotter.Domain.Profile;
-import upc.fib.victor.globetrotter.Domain.Publication;
 import upc.fib.victor.globetrotter.R;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -41,6 +35,12 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView seguidosTxt;
     private TextView seguidoresTxt;
     private TextView paisesTxt;
+
+    private ImageView crearRutaImgBtn;
+    private ImageView diarioImgBtn;
+    private ImageView muroImgBtn;
+    private ImageView buscarImgBtn;
+    private ImageView recomendarImgBtn;
 
     ImageView profileImg;
 
@@ -65,8 +65,10 @@ public class ProfileActivity extends AppCompatActivity {
         firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
 
         findViews();
+        bottomBar();
 
-        String uid = getIntent().getStringExtra("uid");
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+        String uid = sharedPreferences.getString("uid", null);
         getProfileAndDisplay(uid);
 
         editBtn.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +95,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                             firebaseAuthenticationController.signOut();
                             Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                            SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE).edit();
+                            editor.remove("uid");
+                            editor.commit();
                             startActivity(loginIntent);
                             finish();
                             break;
@@ -162,6 +167,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void notFound() {
                 Toast.makeText(ProfileActivity.this, "Perfil de usuario no encontrado. Pruebe otra vez.",
                         Toast.LENGTH_SHORT).show();
+                firebaseAuthenticationController.signOut();
                 Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(loginIntent);
                 finish();
@@ -186,6 +192,21 @@ public class ProfileActivity extends AppCompatActivity {
         dejarSeguirBtn = findViewById(R.id.dejar_seguir_Btn);
         editBtn = findViewById(R.id.editarBtn);
         frameLayout = findViewById(R.id.frame_layout);
+        buscarImgBtn = findViewById(R.id.ic_buscar);
+        crearRutaImgBtn = findViewById(R.id.ic_crear_ruta);
+        diarioImgBtn = findViewById(R.id.ic_diario_viajero);
+        muroImgBtn = findViewById(R.id.ic_muro);
+        recomendarImgBtn = findViewById(R.id.ic_crear_recomendacion);
+    }
+
+    private void bottomBar() {
+        crearRutaImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent webIntent = new Intent(getApplicationContext(), UserMapActivity.class);
+                startActivity(webIntent);
+            }
+        });
     }
 
     private boolean isFollowing() {

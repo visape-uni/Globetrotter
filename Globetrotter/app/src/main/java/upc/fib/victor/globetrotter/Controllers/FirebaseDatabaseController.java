@@ -90,6 +90,44 @@ public class FirebaseDatabaseController {
                 .set(mapPublicacion);
     }
 
+    public void setCountryVisited(String uid, String country, String idCountry) {
+        Map<String,String> map = new HashMap<>();
+        map.put("ID Ciudad", idCountry);
+        db.collection("perfiles")
+                .document(uid)
+                .collection("paisesVisitados")
+                .document(country)
+                .set(map);
+    }
+
+    public void deleteCountryVisited(String uid, String country) {
+        db.collection("perfiles")
+                .document(uid)
+                .collection("paisesVisitados")
+                .document(country).delete();
+    }
+
+    public void getCountriesVisited(String uid, final GetCountriesResponse getCountriesResponse) {
+        CollectionReference refPaisesVisitados = db.collection("perfiles")
+                .document(uid)
+                .collection("paisesVisitados");
+
+        refPaisesVisitados.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    HashMap<String, String> countries = new HashMap<>();
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        countries.put(document.getId(), document.getString("ID Ciudad"));
+                    }
+                    getCountriesResponse.success(countries);
+                } else {
+                    getCountriesResponse.error();
+                }
+            }
+        });
+    }
+
     public void setRelationFollower (String uid, String idFollower) {
         Map<String,String> map = new HashMap<>();
         map.put("ID Dueño", idFollower);
@@ -111,7 +149,6 @@ public class FirebaseDatabaseController {
     }
 
     public void editProfile(final Profile newProfile, final EditProfileResponse editProfileResponse) {
-        //TODO: IMPLEMENTAR
         final DocumentReference refProfile = db.collection("perfiles").document(newProfile.getUid());
 
         db.runTransaction(new Transaction.Function<Void>() {
@@ -236,5 +273,10 @@ public class FirebaseDatabaseController {
         void success(Profile profile);
         void notFound();
         void error(String message);
+    }
+
+    public interface GetCountriesResponse {
+        void success(HashMap<String, String> countries);
+        void error();
     }
 }

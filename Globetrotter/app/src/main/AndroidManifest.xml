@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="upc.fib.victor.globetrotter">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
@@ -19,12 +23,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Presentation.Activities.RegisterActivity" />
-        <activity android:name=".Presentation.Activities.ProfileActivity"
-                    android:launchMode="singleInstance"/>
-        <activity android:name=".Presentation.Activities.EditProfileActivity"></activity>
+        <activity
+            android:name=".Presentation.Activities.ProfileActivity"
+            android:launchMode="singleInstance" />
+        <activity android:name=".Presentation.Activities.EditProfileActivity" />
+        <activity android:name=".Presentation.Activities.UserMapActivity"></activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 </manifest>

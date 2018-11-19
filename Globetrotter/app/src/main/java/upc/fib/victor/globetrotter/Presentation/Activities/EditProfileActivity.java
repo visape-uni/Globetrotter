@@ -240,7 +240,6 @@ public class EditProfileActivity extends AppCompatActivity {
                         @Override
                         public void success() {
                             Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                            profileIntent.putExtra("uid", uid);
                             startActivity(profileIntent);
                             finish();
                             //TODO: EVITAR TENER MAS DE 1 INSTANCIA DE PROFILE ACTIVITY
