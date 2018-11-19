@@ -38,5 +38,6 @@
     <string name="visitado">Visitado</string>
     <string name="buscar">Buscar</string>
     <string name="busca_el_pa_s">Busca el país</string>
+    <string name="action_add_note">action_add_note</string>
 
 </resources>

@@ -3,17 +3,13 @@ package upc.fib.victor.globetrotter.Presentation.Utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
-import android.widget.Filter;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +26,7 @@ public class CountryListAdapter extends ArrayAdapter<String> {
         super(context, resource);
     }
     public CountryListAdapter (Context context, List<String> items, HashMap<String, String> visitados) {
-        super(context,R.layout.custom_list,items);
+        super(context,R.layout.custom_country_list,items);
         this.visitados = visitados;
         this.context = (UserMapActivity) context;
     }
@@ -42,7 +38,7 @@ public class CountryListAdapter extends ArrayAdapter<String> {
 
         if (convertView == null) {
             LayoutInflater vi = LayoutInflater.from(getContext());
-            row = vi.inflate(R.layout.custom_list, null);
+            row = vi.inflate(R.layout.custom_country_list, null);
         }
 
 
