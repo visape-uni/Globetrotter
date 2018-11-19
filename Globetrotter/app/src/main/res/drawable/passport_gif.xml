@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@drawable/passport0" android:duration="300"/>
+    <item android:drawable="@drawable/passport1" android:duration="300"/>
+    <item android:drawable="@drawable/passport2" android:duration="300"/>
+    <item android:drawable="@drawable/passport3" android:duration="300"/>
+    <item android:drawable="@drawable/passport4" android:duration="300"/>
+    <item android:drawable="@drawable/passport5" android:duration="300"/>
+    <item android:drawable="@drawable/passport6" android:duration="300"/>
+    <item android:drawable="@drawable/passport7" android:duration="300"/>
+    <item android:drawable="@drawable/passport8" android:duration="300"/>
+
+</animation-list>

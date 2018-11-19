@@ -1,4 +1,42 @@
 <resources>
     <string name="app_name">Globetrotter</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="preference_file_key">upc.fib.victor.globetrotter</string>
+
+    <string name="email">Email</string>
+    <string name="register">Registrarse</string>
+    <string name="entrar">Entrar</string>
+    <string name="logo_de_la_aplicaci_n">Logo de la aplicación.</string>
+
+    <string name="c_mo_te_llamas">¿Cómo te llamas?</string>
+    <string name="nombre">Nombre</string>
+    <string name="apellidos">Apellidos</string>
+    <string name="siguiente">siguiente</string>
+    <string name="cu_ndo_naciste">¿Cuándo naciste?</string>
+    <string name="introduce_tu_correo_electr_nico">Introduce tu correo electrónico y contraseña</string>
+    <string name="correo_electr_nico">Correo electrònico</string>
+    <string name="contrase_a">Contraseña</string>
+    <string name="seguir">Seguir</string>
+    <string name="ver_el_n_mero_de_tel_fono">Ver el número de teléfono</string>
+    <string name="seguidores">Seguidores</string>
+    <string name="seguidos">Seguidos</string>
+    <string name="paises">Paises</string>
+    <string name="editar">Editar</string>
+    <string name="añadir">añadir</string>
+    <string name="siguiendo">siguiendo</string>
+    <string name="repite_la_contrase_a">Repite la contraseña</string>
+    <string name="nombreLbl">Nombre:</string>
+    <string name="foto_de_perfil">Foto de perfil</string>
+    <string name="apellidosLbl">Apellidos:</string>
+    <string name="fecha_de_nacimiento_lbl">Fecha de nacimiento:</string>
+    <string name="descripcion">Descripcion:</string>
+    <string name="aceptar">aceptar</string>
+    <string name="cancelar">cancelar</string>
+    <string name="barra">/</string>
+    <string name="selecciona_pais">Selecciona el pais</string>
+
+    <string name="cambio_de_foto">ha cambiado su foto de perfil.</string>
+    <string name="visitado">Visitado</string>
+    <string name="buscar">Buscar</string>
+    <string name="busca_el_pa_s">Busca el país</string>
+
 </resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@drawable/cascada1" android:duration="70"/>
+    <item android:drawable="@drawable/cascada2" android:duration="70"/>
+    <item android:drawable="@drawable/cascada3" android:duration="70"/>
+    <item android:drawable="@drawable/cascada4" android:duration="70"/>
+    <item android:drawable="@drawable/cascada5" android:duration="70"/>
+    <item android:drawable="@drawable/cascada6" android:duration="70"/>
+    <item android:drawable="@drawable/cascada7" android:duration="70"/>
+    <item android:drawable="@drawable/cascada8" android:duration="70"/>
+    <item android:drawable="@drawable/cascada9" android:duration="70"/>
+    <item android:drawable="@drawable/cascada10" android:duration="70"/>
+    <item android:drawable="@drawable/cascada11" android:duration="70"/>
+    <item android:drawable="@drawable/cascada12" android:duration="70"/>
+    <item android:drawable="@drawable/cascada13" android:duration="70"/>
+    <item android:drawable="@drawable/cascada14" android:duration="70"/>
+    <item android:drawable="@drawable/cascada15" android:duration="70"/>
+
+</animation-list>
