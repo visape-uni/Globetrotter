@@ -39,5 +39,8 @@
     <string name="buscar">Buscar</string>
     <string name="busca_el_pa_s">Busca el país</string>
     <string name="action_add_note">action_add_note</string>
+    <string name="titulo_del_viaje">Titulo del viaje</string>
+    <string name="escribe_experi_ncias_vividas_an_cdotas_situaciones">Escribe anécdotas, situaciones y/o experiencias vividas....</string>
+    <string name="titulo_de_la_p_gina">Titulo de la página</string>
 
 </resources>

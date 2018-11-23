@@ -2,6 +2,7 @@ package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -69,7 +70,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
         findViews();
 
-        uid = getIntent().getStringExtra("uid");
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+        uid = sharedPreferences.getString("uid", null);
+
         getDatabaseController(uid);
     }
 

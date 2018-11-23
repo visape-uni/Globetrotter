@@ -75,7 +75,6 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent editIntent = new Intent(getApplicationContext(), EditProfileActivity.class);
-                editIntent.putExtra("uid", activityProfile.getUid());
                 startActivity(editIntent);
             }
         });
@@ -205,6 +204,13 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent webIntent = new Intent(getApplicationContext(), UserMapActivity.class);
                 startActivity(webIntent);
+            }
+        });
+        diarioImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent diaryIntent = new Intent(getApplicationContext(), DiaryActivity.class);
+                startActivity(diaryIntent);
             }
         });
     }
