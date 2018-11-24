@@ -106,9 +106,8 @@ public class FirebaseDatabaseController {
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                 DocumentSnapshot snapshot = transaction.get(docRef);
-                int newNumPaises = (Integer) snapshot.get("numPaises") + 1;
+                int newNumPaises = snapshot.getLong("numPaises").intValue() + 1;
                 transaction.update(docRef, "numPaises", newNumPaises);
-
                 return null;
             }
         });
@@ -126,7 +125,7 @@ public class FirebaseDatabaseController {
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                 DocumentSnapshot snapshot = transaction.get(docRef);
-                int newNumPaises = (Integer) snapshot.get("numPaises") - 1;
+                int newNumPaises = snapshot.getLong("numPaises").intValue() - 1;
                 transaction.update(docRef, "numPaises", newNumPaises);
 
                 return null;

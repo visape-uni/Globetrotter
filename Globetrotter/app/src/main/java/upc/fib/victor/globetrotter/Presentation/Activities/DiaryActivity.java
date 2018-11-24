@@ -1,11 +1,13 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,6 +53,9 @@ public class DiaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         setTitle("Tu diario de viajero");
 
         diaryListView = findViewById(R.id.diary_list);
@@ -74,8 +79,8 @@ public class DiaryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    protected void onStart() {
+        super.onStart();
         if (firebaseDatabaseController != null) getList();
     }
 
@@ -98,6 +103,11 @@ public class DiaryActivity extends AppCompatActivity {
                 Intent pageIntent = new Intent(getApplicationContext(), DiaryPageActivity.class);
                 pageIntent.putExtra("pageId", "");
                 startActivity(pageIntent);
+                break;
+
+            case android.R.id.home:
+
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

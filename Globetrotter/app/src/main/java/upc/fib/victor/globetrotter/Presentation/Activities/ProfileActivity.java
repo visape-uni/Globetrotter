@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import upc.fib.victor.globetrotter.R;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private String uid;
     private Profile activityProfile;
 
     private TextView nameTxt;
@@ -68,8 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
         bottomBar();
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
-        String uid = sharedPreferences.getString("uid", null);
-        getProfileAndDisplay(uid);
+        uid = sharedPreferences.getString("uid", null);
 
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +81,11 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    protected void onStart() {
+        getProfileAndDisplay(uid);
+        super.onStart();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -96,7 +101,7 @@ public class ProfileActivity extends AppCompatActivity {
                             Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
                             SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE).edit();
                             editor.remove("uid");
-                            editor.commit();
+                            editor.apply();
                             startActivity(loginIntent);
                             finish();
                             break;
