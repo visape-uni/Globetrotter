@@ -27,7 +27,9 @@
             android:name=".Presentation.Activities.ProfileActivity"
             android:launchMode="singleInstance" />
         <activity android:name=".Presentation.Activities.EditProfileActivity" />
-        <activity android:name=".Presentation.Activities.UserMapActivity"></activity>
+        <activity android:name=".Presentation.Activities.UserMapActivity" />
+        <activity android:name=".Presentation.Activities.DiaryActivity" />
+        <activity android:name=".Presentation.Activities.DiaryPageActivity"/>
     </application>
 
 </manifest>

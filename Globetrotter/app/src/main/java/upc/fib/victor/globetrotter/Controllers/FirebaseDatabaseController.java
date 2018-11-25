@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import upc.fib.victor.globetrotter.Domain.DiaryPage;
 import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Domain.Publication;
 
@@ -98,13 +99,38 @@ public class FirebaseDatabaseController {
                 .collection("paisesVisitados")
                 .document(country)
                 .set(map);
+
+        final DocumentReference docRef = db.collection("perfiles").document(uid);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                int newNumPaises = snapshot.getLong("numPaises").intValue() + 1;
+                transaction.update(docRef, "numPaises", newNumPaises);
+                return null;
+            }
+        });
     }
 
     public void deleteCountryVisited(String uid, String country) {
         db.collection("perfiles")
                 .document(uid)
                 .collection("paisesVisitados")
-                .document(country).delete();
+                .document(country)
+                .delete();
+        final DocumentReference docRef = db.collection("perfiles").document(uid);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                int newNumPaises = snapshot.getLong("numPaises").intValue() - 1;
+                transaction.update(docRef, "numPaises", newNumPaises);
+
+                return null;
+            }
+        });
     }
 
     public void getCountriesVisited(String uid, final GetCountriesResponse getCountriesResponse) {
@@ -251,6 +277,90 @@ public class FirebaseDatabaseController {
                 }
             }
         });
+    }
+
+    public void storePage(String uid, DiaryPage diaryPage, final StorePageResponse storePageResponse) {
+        db.collection("perfiles")
+                .document(uid)
+                .collection("diario")
+                .document(String.valueOf(diaryPage.getDateModified().getTime()))
+                .set(diaryPage)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        storePageResponse.success();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        storePageResponse.error();
+                    }
+                });
+    }
+
+    public void getPage (String uid, String pageId, final GetPageResponse getPageResponse) {
+        DocumentReference docRef = db.collection("perfiles").document(uid).collection("diario").document(pageId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        getPageResponse.success(document.toObject(DiaryPage.class));
+                    } else {
+                        getPageResponse.notFound();
+                    }
+                } else {
+                    getPageResponse.error(task.getException().getMessage());
+                }
+            }
+        });
+    }
+
+    public void deletePage(String uid, String pageId) {
+        db.collection("perfiles")
+                .document(uid)
+                .collection("diario")
+                .document(pageId)
+                .delete();
+    }
+
+    public void getUserPages (String uid, final GetUserPagesResponse getUserPagesResponse) {
+        CollectionReference refUserPages = db.collection("perfiles")
+                .document(uid)
+                .collection("diario");
+
+        refUserPages.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    HashMap<String, String> pages = new HashMap<>();
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        pages.put(document.getId(), document.getString("title"));
+                    }
+                    getUserPagesResponse.success(pages);
+                } else {
+                    getUserPagesResponse.error();
+                }
+            }
+        });
+    }
+
+    public interface GetUserPagesResponse {
+        void success (HashMap<String, String> pages);
+        void error();
+    }
+
+    public interface StorePageResponse {
+        void success();
+        void error();
+    }
+
+    public interface GetPageResponse {
+        void success(DiaryPage diaryPage);
+        void notFound();
+        void error(String message);
     }
 
     public interface StoreUserResponse {

@@ -1,11 +1,13 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,9 @@ import upc.fib.victor.globetrotter.R;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private ProgressDialog progressDialog;
+
+    private String uid;
     private Profile activityProfile;
 
     private TextView nameTxt;
@@ -62,26 +67,35 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Cargando perfil...");
+        progressDialog.show();
+
         firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
 
         findViews();
         bottomBar();
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
-        String uid = sharedPreferences.getString("uid", null);
-        getProfileAndDisplay(uid);
+        uid = sharedPreferences.getString("uid", null);
 
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent editIntent = new Intent(getApplicationContext(), EditProfileActivity.class);
-                editIntent.putExtra("uid", activityProfile.getUid());
                 startActivity(editIntent);
             }
         });
     }
 
-
+    @Override
+    protected void onStart() {
+        getProfileAndDisplay(uid);
+        super.onStart();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -97,7 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
                             Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
                             SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE).edit();
                             editor.remove("uid");
-                            editor.commit();
+                            editor.apply();
                             startActivity(loginIntent);
                             finish();
                             break;
@@ -161,10 +175,13 @@ public class ProfileActivity extends AppCompatActivity {
                                 .into(profileImg);
                     }
                 });
+                setTitle("Perfil de " + profile.getNombre());
+                progressDialog.dismiss();
             }
 
             @Override
             public void notFound() {
+                progressDialog.dismiss();
                 Toast.makeText(ProfileActivity.this, "Perfil de usuario no encontrado. Pruebe otra vez.",
                         Toast.LENGTH_SHORT).show();
                 firebaseAuthenticationController.signOut();
@@ -175,6 +192,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void error(String message) {
+                progressDialog.dismiss();
                 Toast.makeText(ProfileActivity.this, "Error: " + message,
                         Toast.LENGTH_SHORT).show();
             }
@@ -205,6 +223,13 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent webIntent = new Intent(getApplicationContext(), UserMapActivity.class);
                 startActivity(webIntent);
+            }
+        });
+        diarioImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent diaryIntent = new Intent(getApplicationContext(), DiaryActivity.class);
+                startActivity(diaryIntent);
             }
         });
     }

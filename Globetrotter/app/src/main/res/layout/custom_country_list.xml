@@ -11,7 +11,8 @@
         android:layout_margin="5dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@id/visitedSwitch"/>
+        android:layout_toLeftOf="@id/visitedSwitch"
+        android:layout_toStartOf="@id/visitedSwitch" />
     <Switch
         android:id="@+id/visitedSwitch"
         android:layout_width="wrap_content"
