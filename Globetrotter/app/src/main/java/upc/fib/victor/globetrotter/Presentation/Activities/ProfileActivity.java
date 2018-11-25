@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +29,8 @@ import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.R;
 
 public class ProfileActivity extends AppCompatActivity {
+
+    private ProgressDialog progressDialog;
 
     private String uid;
     private Profile activityProfile;
@@ -63,6 +66,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Cargando perfil...");
+        progressDialog.show();
 
         firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
 
@@ -165,10 +175,13 @@ public class ProfileActivity extends AppCompatActivity {
                                 .into(profileImg);
                     }
                 });
+                setTitle("Perfil de " + profile.getNombre());
+                progressDialog.dismiss();
             }
 
             @Override
             public void notFound() {
+                progressDialog.dismiss();
                 Toast.makeText(ProfileActivity.this, "Perfil de usuario no encontrado. Pruebe otra vez.",
                         Toast.LENGTH_SHORT).show();
                 firebaseAuthenticationController.signOut();
@@ -179,6 +192,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void error(String message) {
+                progressDialog.dismiss();
                 Toast.makeText(ProfileActivity.this, "Error: " + message,
                         Toast.LENGTH_SHORT).show();
             }

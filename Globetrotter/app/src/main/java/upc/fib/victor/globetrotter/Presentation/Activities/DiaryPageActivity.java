@@ -34,6 +34,8 @@ public class DiaryPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_page);
 
+        setTitle("Página del diario de viajero");
+
         titleTxt = findViewById(R.id.page_title);
         contentTxt = findViewById(R.id.page_text);
 
