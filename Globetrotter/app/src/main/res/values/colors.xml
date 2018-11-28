@@ -8,4 +8,5 @@
     <color name="colorBlack">#ff000000</color>
     <color name="colorWhite">#ffffffff</color>
     <color name="colorPage">#33eaea00</color>
+    <color name="colorPublicationText">#ff444444</color>
 </resources>

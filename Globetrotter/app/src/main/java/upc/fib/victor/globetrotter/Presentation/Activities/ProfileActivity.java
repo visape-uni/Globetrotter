@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,15 +23,18 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.Profile;
+import upc.fib.victor.globetrotter.Domain.Publication;
+import upc.fib.victor.globetrotter.Presentation.Fragments.WallFragment;
 import upc.fib.victor.globetrotter.R;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements WallFragment.OnFragmentInteractionListener {
 
     private ProgressDialog progressDialog;
 
@@ -54,6 +60,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Button dejarSeguirBtn;
 
     private FrameLayout frameLayout;
+    private Fragment fragment;
+    protected FragmentManager fragmentManager;
 
     private FirebaseDatabaseController firebaseDatabaseController;
     private FirebaseAuthenticationController firebaseAuthenticationController;
@@ -75,6 +83,8 @@ public class ProfileActivity extends AppCompatActivity {
         progressDialog.show();
 
         firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseStorageController = FirebaseStorageController.getInstance();
 
         findViews();
         bottomBar();
@@ -82,11 +92,16 @@ public class ProfileActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
 
+        fragmentManager = getSupportFragmentManager();
+
+        loadFragment();
+
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent editIntent = new Intent(getApplicationContext(), EditProfileActivity.class);
                 startActivity(editIntent);
+                finish();
             }
         });
     }
@@ -132,10 +147,12 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getProfileAndDisplay(final String uid) {
+    private void loadFragment() {
+        fragment = WallFragment.newInstance(uid);
+        displayFragment(R.id.frame_layout, fragment, "wall");
+    }
 
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
-        firebaseStorageController = FirebaseStorageController.getInstance();
+    private void getProfileAndDisplay(final String uid) {
 
         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
             @Override
@@ -176,6 +193,8 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
                 setTitle("Perfil de " + profile.getNombre());
+
+                loadFragment();
                 progressDialog.dismiss();
             }
 
@@ -237,5 +256,31 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean isFollowing() {
         //TODO: IMPLEMENTAR METODO PARA VER SI LO SIGUE
         return false;
+    }
+
+    // adds the given fragment to the front of the fragment stack
+    protected void addFragment(int contentResId, Fragment fragment, String tag) {
+        fragmentManager.beginTransaction()
+                .add(contentResId, fragment, tag)
+                .addToBackStack(tag)
+                .commit();
+    }
+
+    // replaces the front fragment with the given fragment
+    protected void replaceFragment(int contentResId, Fragment fragment, String tag) {
+        fragmentManager.beginTransaction()
+                .replace(contentResId, fragment, tag)
+                .commit();
+    }
+
+    // deletes all the fragments of the stack and displays the given one
+    protected void displayFragment(int contentResId, Fragment fragment, String tag) {
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        replaceFragment(contentResId, fragment, tag);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

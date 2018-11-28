@@ -7,6 +7,7 @@ public class Publication {
     private String id;
     private String message;
     private String uidUser;
+    private String userName;
     private Date date;
     private ArrayList<Publication> answers;
     private ArrayList<String> uidLikes;
@@ -14,16 +15,20 @@ public class Publication {
     public Publication() {
     }
 
-    public Publication(String uidUser, String message, Date date) {
+    public Publication(String uidUser, String userName, String message, Date date) {
         this.message = message;
         this.uidUser = uidUser;
+        this.userName = userName;
         this.date = date;
+        answers = new ArrayList<>();
+        uidLikes = new ArrayList<>();
     }
 
-    public Publication(String id, String message, String uidUser, Date date, ArrayList<Publication> answers, ArrayList<String> uidLikes) {
+    public Publication(String id, String message, String uidUser, String userName, Date date, ArrayList<Publication> answers, ArrayList<String> uidLikes) {
         this.id = id;
         this.message = message;
         this.uidUser = uidUser;
+        this.userName = userName;
         this.date = date;
         this.answers = answers;
         this.uidLikes = uidLikes;
@@ -51,6 +56,14 @@ public class Publication {
 
     public void setUidUser(String uidUser) {
         this.uidUser = uidUser;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Date getDate() {

@@ -3,6 +3,7 @@ package upc.fib.victor.globetrotter.Controllers;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -13,13 +14,17 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -48,10 +53,11 @@ public class FirebaseDatabaseController {
     public void storePublication(final Publication publication, final StorePublicationResponse storePublicationResponse) {
         final CollectionReference refUserFollowers = db.collection("perfiles").document(publication.getUidUser()).collection("seguidores");
 
-        final DocumentReference refPublication = db.collection("publicaciones").document();
+        DocumentReference refPublicationAux = db.collection("publicaciones").document();
 
-        final String id = refPublication.getId();
+        final String id = publication.getDate().getTime() + refPublicationAux.getId() ;
         publication.setId(id);
+        final DocumentReference refPublication = db.collection("publicaciones").document(id);
 
 
         refUserFollowers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -83,12 +89,71 @@ public class FirebaseDatabaseController {
 
     private void setRelationPublication(String uidFollower, String idPublication, String idOwner) {
         Map<String,String> mapPublicacion = new HashMap<>();
+        mapPublicacion.put("date", Calendar.getInstance().getTime().toString());
         mapPublicacion.put("ID Dueño", idOwner);
         db.collection("perfiles")
                 .document(uidFollower)
                 .collection("publicacionesSiguiendo")
                 .document(idPublication)
                 .set(mapPublicacion);
+    }
+
+    public void getIdsPublications (String uid, int limit, String idPubStart, final GetIdsPublicationsResponse getIdsPublicationsResponse) {
+        CollectionReference refPublicaciones = db.collection("perfiles").document(uid).collection("publicacionesSiguiendo");
+
+        if (idPubStart.isEmpty()) {
+            refPublicaciones.orderBy("date", Query.Direction.DESCENDING).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList idsPublications = new ArrayList<String>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsPublications.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsPublications);
+                        }
+                    } else {
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        } else {
+            refPublicaciones.orderBy("date", Query.Direction.DESCENDING).startAt(idPubStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList idsPublications = new ArrayList<String>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsPublications.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsPublications);
+                        }
+                    } else {
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        }
+    }
+
+    public void getPublication (String idPublication, final GetPublicationResponse getPublicationResponse) {
+        DocumentReference refPublication = db.collection("publicaciones").document(idPublication);
+
+        refPublication.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                getPublicationResponse.success(documentSnapshot.toObject(Publication.class));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                getPublicationResponse.error(e.getMessage());
+            }
+        });
     }
 
     public void setCountryVisited(String uid, String country, String idCountry) {
@@ -203,28 +268,29 @@ public class FirebaseDatabaseController {
                         mapChanges.put("nombre", newProfile.getNombre());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su nombre de '" + oldProfile.getNombre() + "' a '" + newProfile.getNombre() + "'.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
                     if(!oldProfile.getApellidos().equals(newProfile.getApellidos())) {
                         mapChanges.put("apellidos", newProfile.getApellidos());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su apellido de '" + oldProfile.getApellidos() + "' a '" + newProfile.getApellidos() + "'.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
                     if(!oldProfile.getDescripcion().equals(newProfile.getDescripcion())) {
                         mapChanges.put("descripcion", newProfile.getDescripcion());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su descripción.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
-                    if(!oldProfile.getNacimiento().equals(newProfile.getNacimiento())) {
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    if(!dateFormat.format(oldProfile.getNacimiento()).equals(dateFormat.format(newProfile.getNacimiento()))) {
                         mapChanges.put("nacimiento", newProfile.getNacimiento());
 
-                        String message = newProfile.getNombreCompleto() + " ha cambiado su fecha de nacimiento de '" + oldProfile.getNacimiento() + "' a '" + newProfile.getNacimiento() + "'.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        String message = newProfile.getNombreCompleto() + " ha cambiado su fecha de nacimiento de '" + dateFormat.format(oldProfile.getNacimiento()) + "' a '" + dateFormat.format(newProfile.getNacimiento()) + "'.";
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
 
@@ -376,6 +442,17 @@ public class FirebaseDatabaseController {
 
     public interface StorePublicationResponse {
         void success();
+        void error();
+    }
+
+    public interface GetPublicationResponse {
+        void success(Publication publication);
+        void error(String message);
+    }
+
+    public interface GetIdsPublicationsResponse {
+        void success(ArrayList idsPublications);
+        void noPublications();
         void error();
     }
 

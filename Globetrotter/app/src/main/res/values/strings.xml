@@ -44,4 +44,7 @@
     <string name="titulo_de_la_p_gina">Titulo de la página</string>
     <string name="escribe_una_nueva_p_gina_de_tu_diario">Escribe una nueva página de tu diario...</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

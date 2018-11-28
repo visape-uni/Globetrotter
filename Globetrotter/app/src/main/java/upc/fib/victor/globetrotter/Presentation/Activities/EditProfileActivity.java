@@ -122,6 +122,8 @@ public class EditProfileActivity extends AppCompatActivity {
                 cancelarBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivity(intent);
                         finish();
                     }
                 });
@@ -177,7 +179,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Foto subida", Toast.LENGTH_SHORT).show();
                         imagenPerfil.setImageBitmap(bitmap);
 
-                        Publication publication = new Publication(uid, activityProfile.getNombreCompleto() + " " + R.string.cambio_de_foto, Calendar.getInstance().getTime());
+                        Publication publication = new Publication(uid, activityProfile.getNombreCompleto(), activityProfile.getNombreCompleto() + " " + R.string.cambio_de_foto, Calendar.getInstance().getTime());
                         firebaseDatabaseController.storePublication(publication, new FirebaseDatabaseController.StorePublicationResponse() {
                             @Override
                             public void success() {
@@ -211,6 +213,14 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void editProfile() {
         final String nombre = nombreTxt.getText().toString().trim();
         final String apellidos = apellidosTxt.getText().toString().trim();
@@ -234,16 +244,18 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     final Calendar cal = Calendar.getInstance();
                     cal.set(Calendar.YEAR, year);
-                    cal.set(Calendar.MONTH, month);
+                    cal.set(Calendar.MONTH, month-1);
                     cal.set(Calendar.DAY_OF_MONTH, day);
 
-                    Profile profile = new Profile(uid, nombre, apellidos, cal.getTime(), descripcion);
+                    final Profile profile = new Profile(uid, nombre, apellidos, cal.getTime(), descripcion);
 
                     firebaseDatabaseController.editProfile(profile, new FirebaseDatabaseController.EditProfileResponse() {
                         @Override
                         public void success() {
+                            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                            startActivity(intent);
                             finish();
-                            //TODO: EVITAR TENER MAS DE 1 INSTANCIA DE PROFILE ACTIVITY
+                            //TODO: EVITAR TENER MAS DE 1 INSTANCIA DE PROFILE ACTIVITY Y SOBRETODO HACER QUE SE MUESTREN LOS CAMBIOS!
                         }
 
                         @Override
