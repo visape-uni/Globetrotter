@@ -156,6 +156,57 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public void likePublication (String idPublication, final String uid) {
+        final DocumentReference docRef = db.collection("publicaciones").document(idPublication);
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                ArrayList<String> likes = (ArrayList<String>) snapshot.get("uidLikes");
+                if (likes.contains(uid)) {
+                    likes.remove(uid);
+                } else {
+                    likes.add(uid);
+                }
+
+                transaction.update(docRef, "uidLikes", likes);
+                return null;
+            }
+        });
+    }
+
+    public void commentPublication (final String idParentPublication, final Publication publication, final CommentPublicationResponse commentPublicationResponse) {
+        final DocumentReference docRef = db.collection("publicaciones").document(idParentPublication);
+
+        DocumentReference pubRef = db.collection("publicaciones").document();
+        String id = publication.getDate().getTime() + pubRef.getId() ;
+        publication.setId(id);
+
+        final DocumentReference refPublication = db.collection("publicaciones").document(id);
+
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                ArrayList<String> comments = (ArrayList<String>) snapshot.get("answers");
+                comments.add(publication.getId());
+
+                transaction.set(refPublication, publication);
+                transaction.update(docRef, "answers", comments);
+                return null;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                commentPublicationResponse.success(publication.getId());
+            }
+        });
+    }
+
     public void setCountryVisited(String uid, String country, String idCountry) {
         Map<String,String> map = new HashMap<>();
         map.put("ID Ciudad", idCountry);
@@ -345,6 +396,22 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public void getUserName (String uid, final GetUserNameResponse getUserNameResponse) {
+        db.collection("perfiles").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        getUserNameResponse.success(document.getString("nombreCompleto"));
+                    }
+                } else {
+                    getUserNameResponse.error();
+                }
+            }
+        });
+    }
+
     public void storePage(String uid, DiaryPage diaryPage, final StorePageResponse storePageResponse) {
         db.collection("perfiles")
                 .document(uid)
@@ -413,6 +480,15 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public interface CommentPublicationResponse {
+        void success(String publicationId);
+    }
+
+    public interface GetUserNameResponse {
+        void success(String userName);
+        void error();
+    }
+
     public interface GetUserPagesResponse {
         void success (HashMap<String, String> pages);
         void error();
@@ -451,7 +527,7 @@ public class FirebaseDatabaseController {
     }
 
     public interface GetIdsPublicationsResponse {
-        void success(ArrayList idsPublications);
+        void success(ArrayList<String> idsPublications);
         void noPublications();
         void error();
     }

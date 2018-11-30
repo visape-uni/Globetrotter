@@ -9,4 +9,6 @@
     <color name="colorWhite">#ffffffff</color>
     <color name="colorPage">#33eaea00</color>
     <color name="colorPublicationText">#ff444444</color>
+
+    <color name="colorRecyclerBackground">#44BBBBBB</color>
 </resources>

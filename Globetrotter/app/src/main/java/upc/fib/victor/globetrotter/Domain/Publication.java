@@ -9,7 +9,7 @@ public class Publication {
     private String uidUser;
     private String userName;
     private Date date;
-    private ArrayList<Publication> answers;
+    private ArrayList<String> answers;
     private ArrayList<String> uidLikes;
 
     public Publication() {
@@ -24,7 +24,7 @@ public class Publication {
         uidLikes = new ArrayList<>();
     }
 
-    public Publication(String id, String message, String uidUser, String userName, Date date, ArrayList<Publication> answers, ArrayList<String> uidLikes) {
+    public Publication(String id, String message, String uidUser, String userName, Date date, ArrayList<String> answers, ArrayList<String> uidLikes) {
         this.id = id;
         this.message = message;
         this.uidUser = uidUser;
@@ -74,12 +74,16 @@ public class Publication {
         this.date = date;
     }
 
-    public ArrayList<Publication> getAnswers() {
+    public ArrayList<String> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(ArrayList<Publication> answers) {
+    public void setAnswers(ArrayList<String> answers) {
         this.answers = answers;
+    }
+
+    public void addComment(String commentId) {
+        answers.add(commentId);
     }
 
     public ArrayList<String> getUidLikes() {
@@ -88,5 +92,13 @@ public class Publication {
 
     public void setUidLikes(ArrayList<String> uidLikes) {
         this.uidLikes = uidLikes;
+    }
+
+    public void addLike(String uid) {
+        if (!uidLikes.contains(uid)) uidLikes.add(uid);
+    }
+
+    public void removeLike(String uid) {
+        uidLikes.remove(uid);
     }
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="5dp">
     <TextView
         android:id="@+id/error"
@@ -85,6 +84,7 @@
             android:textColor="@color/colorPrimary"/>
     </LinearLayout>
 
+
     <TextView
         android:id="@+id/comentariosTxt"
         android:layout_width="wrap_content"
@@ -95,58 +95,12 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/colorPrimary"
         android:layout_below="@id/publicationTxt"
-        android:layout_toRightOf="@id/likes"
-        android:layout_toEndOf="@id/likes" />
+        android:layout_toRightOf="@id/likes"/>
 
     <View
-        android:id="@+id/publicationSeparator"
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
         android:layout_height="1dp"
         android:layout_below="@id/likes"
         android:background="#7aaa"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/comments_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:layout_margin="10dp"
-        android:layout_below="@id/publicationSeparator"
-        android:visibility="gone"
-        android:background="@color/colorRecyclerBackground"/>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/comments_recycler_view"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="5dp"
-        android:layout_toLeftOf="@+id/send_btn"
-        android:layout_toStartOf="@+id/send_btn"
-        android:visibility="gone">
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/comment_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/escribe_un_comentario"/>
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/send_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_send"
-        android:layout_alignParentRight = "true"
-        android:layout_alignParentEnd = "true"
-        android:clickable="true"
-        android:focusable="true"
-        app:fabSize="mini"
-        android:layout_alignTop="@id/textInputLayout"
-        android:layout_alignBaseline="@id/textInputLayout"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        android:visibility="gone"/>
 </RelativeLayout>

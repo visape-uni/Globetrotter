@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -148,7 +149,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     }
 
     private void loadFragment() {
-        fragment = WallFragment.newInstance(uid);
+        fragment = WallFragment.newInstance(uid, uid);
         displayFragment(R.id.frame_layout, fragment, "wall");
     }
 

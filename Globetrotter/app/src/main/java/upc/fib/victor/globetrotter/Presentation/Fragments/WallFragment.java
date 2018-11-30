@@ -32,11 +32,12 @@ public class WallFragment extends Fragment {
 
     private ArrayList<String> publicationIds;
 
-    private static String idUser;
+    private static String idUserWall;
+    private static String uid;
 
     private TextView errorTxt;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private PublicationAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private OnFragmentInteractionListener mListener;
@@ -45,9 +46,10 @@ public class WallFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static WallFragment newInstance(String idUserWall) {
+    public static WallFragment newInstance(String idApp, String idUser) {
         WallFragment fragment = new WallFragment();
-        idUser = idUserWall;
+        idUserWall = idUser;
+        uid = idApp;
         return fragment;
     }
 
@@ -69,13 +71,16 @@ public class WallFragment extends Fragment {
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        publicationIds = new ArrayList<>();
+        mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
+        mRecyclerView.setAdapter(mAdapter);
 
-        firebaseDatabaseController.getIdsPublications(idUser, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
+        firebaseDatabaseController.getIdsPublications(idUserWall, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
             @Override
-            public void success(ArrayList idsPublications) {
+            public void success(ArrayList<String> idsPublications) {
                 publicationIds = idsPublications;
-                mAdapter = new PublicationAdapter(getContext(), publicationIds);
-                mRecyclerView.setAdapter(mAdapter);
+                mAdapter.setPublicationIds(publicationIds);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
