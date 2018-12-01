@@ -3,18 +3,23 @@ package upc.fib.victor.globetrotter.Presentation.Fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Domain.Publication;
+import upc.fib.victor.globetrotter.Presentation.Utils.MyRecyclerScroll;
 import upc.fib.victor.globetrotter.Presentation.Utils.PublicationAdapter;
 import upc.fib.victor.globetrotter.R;
 
@@ -39,6 +44,9 @@ public class WallFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private PublicationAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+
+    private MyRecyclerScroll myRecyclerScroll;
 
     private OnFragmentInteractionListener mListener;
 
@@ -96,6 +104,15 @@ public class WallFragment extends Fragment {
             }
         });
 
+        myRecyclerScroll = new MyRecyclerScroll() {
+            @Override
+            public void hide() {
+                mListener.hideInteraction();
+            }
+        };
+
+        mRecyclerView.addOnScrollListener(myRecyclerScroll);
+
         return view;
     }
 
@@ -116,8 +133,12 @@ public class WallFragment extends Fragment {
         mListener = null;
     }
 
+    public void showInteraction() {
+        myRecyclerScroll.show();
+    }
+
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+        void hideInteraction();
     }
 }

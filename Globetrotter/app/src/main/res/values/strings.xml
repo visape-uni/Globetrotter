@@ -47,5 +47,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="escribe_un_comentario">Escribe un comentario</string>
+    <string name="escribe_una_publicaci_n">Escribe una publicación</string>
 
 </resources>

@@ -36,10 +36,11 @@
         android:textStyle="bold"
         android:layout_toRightOf="@+id/userImage"
         android:layout_toEndOf="@+id/userImage"
-        android:layout_marginTop="25dp"/>
+        android:layout_alignTop="@id/userImage"
+        android:layout_marginTop="17dp"/>
     <TextView
         android:id="@+id/publicationTxt"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/userImage"
         android:textSize="16sp"
@@ -103,7 +104,7 @@
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
         android:layout_height="1dp"
-        android:layout_below="@id/likes"
+        android:layout_below="@id/dateTxt"
         android:background="#7aaa"/>
 
     <android.support.v7.widget.RecyclerView
@@ -123,10 +124,11 @@
         android:layout_below="@id/comments_recycler_view"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_margin="5dp"
         android:layout_toLeftOf="@+id/send_btn"
         android:layout_toStartOf="@+id/send_btn"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp">
         <android.support.design.widget.TextInputEditText
             android:id="@+id/comment_input"
             android:layout_width="match_parent"
@@ -143,10 +145,10 @@
         android:clickable="true"
         android:focusable="true"
         app:fabSize="mini"
-        android:layout_alignTop="@id/textInputLayout"
-        android:layout_alignBaseline="@id/textInputLayout"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignBottom="@id/textInputLayout"
         android:visibility="gone"/>
 </RelativeLayout>

@@ -6,12 +6,14 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.storage.StorageReference;
@@ -76,6 +78,24 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
             @Override
             public void success(Publication publication) {
                 holder.publication = publication;
+                holder.userImg.getLayoutParams().height = (int) context.getResources().getDimension(R.dimen.comment_image_height);
+                holder.userImg.getLayoutParams().width = (int) context.getResources().getDimension(R.dimen.comment_image_width);
+
+                RelativeLayout.LayoutParams layoutParamsUserName = (RelativeLayout.LayoutParams) holder.userNameTxt.getLayoutParams();
+                layoutParamsUserName.topMargin = (int) context.getResources().getDimension(R.dimen.username_margin_top);
+                holder.userNameTxt.setLayoutParams(layoutParamsUserName);
+
+                RelativeLayout.LayoutParams layoutParamsComment = (RelativeLayout.LayoutParams) holder.publicationTxt.getLayoutParams();
+                layoutParamsComment.topMargin = (int) context.getResources().getDimension(R.dimen.comment_margin);
+                layoutParamsComment.bottomMargin = (int) context.getResources().getDimension(R.dimen.comment_margin);
+                holder.publicationTxt.setLayoutParams(layoutParamsComment);
+
+                RelativeLayout.LayoutParams layoutParamsDate = (RelativeLayout.LayoutParams) holder.dateTxt.getLayoutParams();
+                layoutParamsDate.bottomMargin = 0;
+                holder.dateTxt.setLayoutParams(layoutParamsDate);
+
+
+
                 firebaseStorageController.loadImageToView("profiles/" + holder.publication.getUidUser() + ".jpg", new FirebaseStorageController.GetImageResponse() {
                     @Override
                     public void load(StorageReference ref) {
@@ -88,6 +108,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
 
                 holder.userNameTxt.setText(holder.publication.getUserName());
                 holder.publicationTxt.setText(holder.publication.getMessage());
+                holder.publicationTxt.setGravity(Gravity.RIGHT);
 
                 DateFormat dataFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
                 String date = dataFormat.format(holder.publication.getDate());
