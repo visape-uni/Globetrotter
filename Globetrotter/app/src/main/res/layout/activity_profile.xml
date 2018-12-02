@@ -155,54 +155,25 @@
                         android:textColor="@color/colorBlack" />
                 </LinearLayout>
             </LinearLayout>
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/arrowImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:tint="@android:color/darker_gray"
-            android:src="@drawable/ic_down_arrow"
-            android:layout_gravity="bottom|center_horizontal"/>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        app:layout_constraintTop_toBottomOf="@id/cardView"
-        app:layout_constraintBottom_toTopOf="@id/cardView3"
-        app:layout_constraintHeight_default="spread"
-        android:id="@+id/cardView2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="2dp">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <FrameLayout
-                android:id="@+id/frame_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_above="@id/textInputLayout">
-            </FrameLayout>
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/textInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentBottom="true"
+                android:layout_below="@id/layout_user_info"
                 android:layout_toLeftOf="@+id/send_btn"
                 android:layout_toStartOf="@+id/send_btn"
                 android:layout_marginLeft="5dp"
+                android:focusable="true"
+                android:focusedByDefault="true"
+                android:focusableInTouchMode="true"
                 android:layout_marginStart="5dp">
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/publication_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/escribe_una_publicaci_n"/>
+                    android:hint="@string/escribe_una_publicaci_n"/>                />
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/send_btn"
@@ -214,12 +185,39 @@
                 android:clickable="true"
                 android:focusable="true"
                 app:fabSize="mini"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_alignBottom="@id/textInputLayout"/>
+                android:layout_marginRight="5dp"
+                android:layout_alignTop="@id/textInputLayout"/>
+            <ImageView
+                android:id="@+id/arrowImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:tint="@android:color/darker_gray"
+                android:src="@drawable/ic_down_arrow"
+                android:layout_below="@id/textInputLayout"
+                android:layout_centerHorizontal="true"/>
         </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        app:layout_constraintTop_toBottomOf="@id/cardView"
+        app:layout_constraintBottom_toTopOf="@id/cardView3"
+        app:layout_constraintHeight_default="spread"
+        android:id="@+id/cardView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="2dp">
+        <FrameLayout
+            android:id="@+id/frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@id/textInputLayout">
+        </FrameLayout>
     </android.support.v7.widget.CardView>
     <android.support.v7.widget.CardView
         app:layout_constraintBottom_toBottomOf="parent"

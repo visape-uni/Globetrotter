@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".Presentation.Fragments.WallFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
     <TextView
         android:id="@+id/error"
         android:textColor="#ff0000"

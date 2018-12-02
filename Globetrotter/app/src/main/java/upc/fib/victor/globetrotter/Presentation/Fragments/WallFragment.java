@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Presentation.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,6 +34,8 @@ import upc.fib.victor.globetrotter.R;
  * create an instance of this fragment.
  */
 public class WallFragment extends Fragment {
+
+    private ProgressBar progressBar;
 
     private FirebaseDatabaseController firebaseDatabaseController;
 
@@ -72,6 +76,10 @@ public class WallFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_wall, container, false);
 
+        progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setIndeterminate(true);
+        progressBar.setVisibility(View.VISIBLE);
+
         errorTxt = view.findViewById(R.id.error);
         errorTxt.setVisibility(View.GONE);
 
@@ -80,25 +88,30 @@ public class WallFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         publicationIds = new ArrayList<>();
-        mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
-        mRecyclerView.setAdapter(mAdapter);
 
         firebaseDatabaseController.getIdsPublications(idUserWall, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
             @Override
             public void success(ArrayList<String> idsPublications) {
                 publicationIds = idsPublications;
-                mAdapter.setPublicationIds(publicationIds);
-                mAdapter.notifyDataSetChanged();
+                mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
+                mRecyclerView.setAdapter(mAdapter);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void noPublications() {
+                progressBar.setVisibility(View.GONE);
+                mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
+                mRecyclerView.setAdapter(mAdapter);
                 errorTxt.setVisibility(View.VISIBLE);
                 errorTxt.setText("No hay publicaciones");
             }
 
             @Override
             public void error() {
+                progressBar.setVisibility(View.GONE);
+                mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
+                mRecyclerView.setAdapter(mAdapter);
                 errorTxt.setVisibility(View.VISIBLE);
                 errorTxt.setText("Error cargando las publicaciones...");
             }

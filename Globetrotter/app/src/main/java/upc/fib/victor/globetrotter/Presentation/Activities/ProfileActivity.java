@@ -170,8 +170,13 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     }
 
     @Override
-    protected void onStart() {
+    protected void onPostResume() {
+        super.onPostResume();
         getProfileAndDisplay(uid);
+    }
+
+    @Override
+    protected void onStart() {
         super.onStart();
     }
 

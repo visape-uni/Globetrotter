@@ -89,7 +89,7 @@ public class FirebaseDatabaseController {
 
     private void setRelationPublication(String uidFollower, String idPublication, String idOwner) {
         Map<String,String> mapPublicacion = new HashMap<>();
-        mapPublicacion.put("date", Calendar.getInstance().getTime().toString());
+        mapPublicacion.put("id", idPublication);
         mapPublicacion.put("ID Dueño", idOwner);
         db.collection("perfiles")
                 .document(uidFollower)
@@ -102,7 +102,7 @@ public class FirebaseDatabaseController {
         CollectionReference refPublicaciones = db.collection("perfiles").document(uid).collection("publicacionesSiguiendo");
 
         if (idPubStart.isEmpty()) {
-            refPublicaciones.orderBy("date", Query.Direction.DESCENDING).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            refPublicaciones.orderBy("id", Query.Direction.DESCENDING).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -120,7 +120,7 @@ public class FirebaseDatabaseController {
                 }
             });
         } else {
-            refPublicaciones.orderBy("date", Query.Direction.DESCENDING).startAt(idPubStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            refPublicaciones.orderBy("id", Query.Direction.DESCENDING).startAt(idPubStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
