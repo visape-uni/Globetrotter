@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Presentation.Utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.storage.StorageReference;
 
@@ -42,6 +44,7 @@ public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.
     public static class PublicationViewHolder extends RecyclerView.ViewHolder {
 
         public Publication publication;
+        public ImageView deleteIcon;
         public ImageView likeImg;
         public LinearLayout likeLayout;
         public TextView errorTxt;
@@ -64,6 +67,7 @@ public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.
 
         public PublicationViewHolder(View itemView, Context context) {
             super(itemView);
+            deleteIcon = itemView.findViewById(R.id.ic_delete_publication);
             likeLayout = itemView.findViewById(R.id.likes);
             likeImg = itemView.findViewById(R.id.likesImg);
             errorTxt = itemView.findViewById(R.id.error);
@@ -76,6 +80,7 @@ public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.
             commentsTxt = itemView.findViewById(R.id.comentariosTxt);
             publication = new Publication();
 
+            deleteIcon.setClickable(true);
             likeLayout.setClickable(true);
             commentsTxt.setClickable(true);
 
@@ -216,6 +221,36 @@ public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.
                         holder.commentsRecycledView.setVisibility(View.VISIBLE);
                         holder.sendButton.setVisibility(View.VISIBLE);
                         holder.commentInput.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                //Delete On Click Listener
+                holder.deleteIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        final ProgressDialog progressDialog = new ProgressDialog(context);
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.setCancelable(false);
+                        progressDialog.setMessage("Eliminando publicación...");
+                        progressDialog.show();
+
+                        firebaseDatabaseController.deletePublication(holder.publication.getId(), holder.publication.getUidUser(), new FirebaseDatabaseController.DeletePublicationResponse() {
+                            @Override
+                            public void success() {
+                                publicationIds.remove(holder.publication.getId());
+                                progressDialog.dismiss();
+                                Toast.makeText(context, "Publicación eliminada correctamente", Toast.LENGTH_SHORT).show();
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void error() {
+                                progressDialog.dismiss();
+                                Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
 

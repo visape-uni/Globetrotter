@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -131,6 +132,8 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 final String content = publicationTxt.getText().toString().trim();
                 publicationTxt.setText("");
                 if(!content.isEmpty()) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(publicationTxt.getWindowToken(), 0);
                     firebaseDatabaseController.getUserName(uid, new FirebaseDatabaseController.GetUserNameResponse() {
                         @Override
                         public void success(String userName) {
@@ -155,6 +158,8 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                             Toast.makeText(getApplicationContext(), "No se ha podido publicar, pruebe más tarde", Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    Toast.makeText(getApplicationContext(), "No has escrito nada", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/hardware/ic_keyboard_arrow_down_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_close_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -34,9 +34,9 @@
                                   <option name="values">
                                     <map>
                                       <entry key="imageAsset" value="D:\Windows\Visape\Uni\TFG\Projecte\Imagenes\ic_recomanacio.png" />
-                                      <entry key="outputName" value="ic_down_arrow" />
+                                      <entry key="outputName" value="ic_close" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="000000" />
+                                      <entry key="themeColor" value="ffffff" />
                                     </map>
                                   </option>
                                 </PersistentState>

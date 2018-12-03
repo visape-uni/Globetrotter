@@ -67,11 +67,18 @@ public class FirebaseDatabaseController {
                     refPublication.set(publication).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+
                             storePublicationResponse.success();
+
                             //TODO: HACER ASYNCRON
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                setRelationPublication(document.getId(), publication.getId(), publication.getUidUser());
-                            }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        setRelationPublication(document.getId(), publication.getId(), publication.getUidUser());
+                                    }
+                                }
+                            }).start();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -87,6 +94,34 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public void deletePublication (final String idPublication, String uidOwner, final DeletePublicationResponse deletePublicationResponse) {
+        CollectionReference refUserFollowers = db.collection("perfiles").document(uidOwner).collection("seguidores");
+
+        final DocumentReference refPublication = db.collection("publicaciones").document(idPublication);
+
+        refUserFollowers.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
+                refPublication.delete();
+                deletePublicationResponse.success();
+                //TODO: HACER ASYNCRON
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            deleteRelationPublication(document.getId(), idPublication);
+                        }
+                    }
+                }).start();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                deletePublicationResponse.error();
+            }
+        });
+    }
+
     private void setRelationPublication(String uidFollower, String idPublication, String idOwner) {
         Map<String,String> mapPublicacion = new HashMap<>();
         mapPublicacion.put("id", idPublication);
@@ -96,6 +131,14 @@ public class FirebaseDatabaseController {
                 .collection("publicacionesSiguiendo")
                 .document(idPublication)
                 .set(mapPublicacion);
+    }
+
+    private void deleteRelationPublication(String uidFollower, String idPublication) {
+        db.collection("perfiles")
+                .document(uidFollower)
+                .collection("publicacionesSiguiendo")
+                .document(idPublication)
+                .delete();
     }
 
     public void getIdsPublications (String uid, int limit, String idPubStart, final GetIdsPublicationsResponse getIdsPublicationsResponse) {
@@ -207,7 +250,7 @@ public class FirebaseDatabaseController {
         });
     }
 
-    public void setCountryVisited(String uid, String country, String idCountry) {
+    public void setCountryVisited(String uid, final String country, String idCountry) {
         Map<String,String> map = new HashMap<>();
         map.put("ID Ciudad", idCountry);
         db.collection("perfiles")
@@ -223,6 +266,23 @@ public class FirebaseDatabaseController {
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                 DocumentSnapshot snapshot = transaction.get(docRef);
                 int newNumPaises = snapshot.getLong("numPaises").intValue() + 1;
+
+                String userName = snapshot.getString("nombreCompleto");
+                String message = userName + " ha visitado " + country + ".";
+                Publication publication = new Publication(snapshot.getString("uid"), userName, message, Calendar.getInstance().getTime());
+
+                storePublication(publication, new StorePublicationResponse() {
+                    @Override
+                    public void success() {
+                        Log.d("DatabaseController", "Country visited");
+                    }
+
+                    @Override
+                    public void error() {
+                        Log.d("DatabaseController", "Country not visited");
+                    }
+                });
+
                 transaction.update(docRef, "numPaises", newNumPaises);
                 return null;
             }
@@ -305,12 +365,12 @@ public class FirebaseDatabaseController {
                     StorePublicationResponse response = new StorePublicationResponse() {
                         @Override
                         public void success() {
-                            Log.d("DatabaseController", "Published");
+                            Log.d("DatabaseController", "Profile edited");
                         }
 
                         @Override
                         public void error() {
-                            Log.d("DatabaseController", "Not Published");
+                            Log.d("DatabaseController", "Profile not edited");
                         }
                     };
 
@@ -478,6 +538,11 @@ public class FirebaseDatabaseController {
                 }
             }
         });
+    }
+
+    public interface DeletePublicationResponse {
+        void success();
+        void error();
     }
 
     public interface CommentPublicationResponse {
