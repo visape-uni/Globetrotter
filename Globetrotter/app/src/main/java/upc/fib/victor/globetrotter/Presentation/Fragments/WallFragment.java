@@ -1,28 +1,22 @@
 package upc.fib.victor.globetrotter.Presentation.Fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
-import upc.fib.victor.globetrotter.Domain.Publication;
 import upc.fib.victor.globetrotter.Presentation.Utils.MyRecyclerScroll;
-import upc.fib.victor.globetrotter.Presentation.Utils.PublicationAdapter;
+import upc.fib.victor.globetrotter.Presentation.Utils.PublicationRecyclerAdapter;
 import upc.fib.victor.globetrotter.R;
 
 /**
@@ -41,12 +35,12 @@ public class WallFragment extends Fragment {
 
     private ArrayList<String> publicationIds;
 
-    private static String idUserWall;
-    private static String uid;
+    private String idUserWall;
+    private String uid;
 
     private TextView errorTxt;
     private RecyclerView mRecyclerView;
-    private PublicationAdapter mAdapter;
+    private PublicationRecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
 
@@ -58,16 +52,22 @@ public class WallFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static WallFragment newInstance(String idApp, String idUser) {
+    public static WallFragment newInstance(String uid, String idUserWall) {
         WallFragment fragment = new WallFragment();
-        idUserWall = idUser;
-        uid = idApp;
+        Bundle args = new Bundle();
+        args.putString("uid", uid);
+        args.putString("idUserWall", idUserWall);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            idUserWall = getArguments().getString("idUserWall");
+            uid = getArguments().getString("uid");
+        }
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
     }
 
@@ -93,7 +93,7 @@ public class WallFragment extends Fragment {
             @Override
             public void success(ArrayList<String> idsPublications) {
                 publicationIds = idsPublications;
-                mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
+                mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
                 mRecyclerView.setAdapter(mAdapter);
                 progressBar.setVisibility(View.GONE);
             }
@@ -101,19 +101,21 @@ public class WallFragment extends Fragment {
             @Override
             public void noPublications() {
                 progressBar.setVisibility(View.GONE);
-                mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
+                mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
                 mRecyclerView.setAdapter(mAdapter);
                 errorTxt.setVisibility(View.VISIBLE);
-                errorTxt.setText("No hay publicaciones");
+                errorTxt.setText("No hay publicaciones.");
+                errorTxt.setTextColor(Color.GRAY);
             }
 
             @Override
             public void error() {
                 progressBar.setVisibility(View.GONE);
-                mAdapter = new PublicationAdapter(getContext(), publicationIds, uid);
+                mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
                 mRecyclerView.setAdapter(mAdapter);
                 errorTxt.setVisibility(View.VISIBLE);
                 errorTxt.setText("Error cargando las publicaciones...");
+                errorTxt.setTextColor(Color.parseColor("#ff0000"));
             }
         });
 
@@ -151,7 +153,6 @@ public class WallFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-
         void hideInteraction();
     }
 }

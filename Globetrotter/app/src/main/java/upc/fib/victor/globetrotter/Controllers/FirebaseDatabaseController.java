@@ -377,6 +377,8 @@ public class FirebaseDatabaseController {
                     Map<String, Object> mapChanges = new HashMap<>();
                     if (!oldProfile.getNombre().equals(newProfile.getNombre())) {
                         mapChanges.put("nombre", newProfile.getNombre());
+                        mapChanges.put("nombreCompleto", newProfile.getNombre() + " " + newProfile.getApellidos());
+                        mapChanges.put("nombreCompletoCapital", newProfile.getNombre().toUpperCase() + " " + newProfile.getApellidos().toUpperCase());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su nombre de '" + oldProfile.getNombre() + "' a '" + newProfile.getNombre() + "'.";
                         Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
@@ -384,6 +386,8 @@ public class FirebaseDatabaseController {
                     }
                     if(!oldProfile.getApellidos().equals(newProfile.getApellidos())) {
                         mapChanges.put("apellidos", newProfile.getApellidos());
+                        mapChanges.put("nombreCompleto", newProfile.getNombre() + " " + newProfile.getApellidos());
+                        mapChanges.put("nombreCompletoCapital", newProfile.getNombre().toUpperCase() + " " + newProfile.getApellidos().toUpperCase());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su apellido de '" + oldProfile.getApellidos() + "' a '" + newProfile.getApellidos() + "'.";
                         Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
@@ -451,6 +455,29 @@ public class FirebaseDatabaseController {
                     }
                 } else {
                     getProfileResponse.error(task.getException().getMessage());
+                }
+            }
+        });
+    }
+
+    public void searchUsers(String userName, final String uid, final SearchUsersResponse searchUsersResponse) {
+        CollectionReference refProfiles = db.collection("perfiles");
+
+        userName = userName.toUpperCase();
+
+        refProfiles.whereGreaterThanOrEqualTo("nombreCompletoCapital", userName).whereLessThanOrEqualTo("nombreCompletoCapital", userName+"Z").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<Profile> users = new ArrayList<>();
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        Profile profile = document.toObject(Profile.class);
+                        if(!profile.getUid().equals(uid)) users.add(profile);
+                    }
+                    if(users.isEmpty()) searchUsersResponse.noUsers();
+                    else searchUsersResponse.success(users);
+                } else {
+                    searchUsersResponse.error();
                 }
             }
         });
@@ -601,6 +628,12 @@ public class FirebaseDatabaseController {
         void success(Profile profile);
         void notFound();
         void error(String message);
+    }
+
+    public interface SearchUsersResponse {
+        void success(ArrayList<Profile> users);
+        void noUsers();
+        void error();
     }
 
     public interface GetCountriesResponse {

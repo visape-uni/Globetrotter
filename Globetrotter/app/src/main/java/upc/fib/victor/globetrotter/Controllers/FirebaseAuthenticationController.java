@@ -15,11 +15,6 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.concurrent.Executor;
-
-import upc.fib.victor.globetrotter.Presentation.Activities.LoginActivity;
-import upc.fib.victor.globetrotter.Presentation.Activities.ProfileActivity;
-
 public class FirebaseAuthenticationController {
 
     private static FirebaseAuthenticationController instance;

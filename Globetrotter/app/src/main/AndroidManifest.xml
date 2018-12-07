@@ -29,7 +29,8 @@
         <activity android:name=".Presentation.Activities.EditProfileActivity" />
         <activity android:name=".Presentation.Activities.UserMapActivity" />
         <activity android:name=".Presentation.Activities.DiaryActivity" />
-        <activity android:name=".Presentation.Activities.DiaryPageActivity"/>
+        <activity android:name=".Presentation.Activities.DiaryPageActivity" />
+        <activity android:name=".Presentation.Activities.SearchActivity"></activity>
     </application>
 
 </manifest>
