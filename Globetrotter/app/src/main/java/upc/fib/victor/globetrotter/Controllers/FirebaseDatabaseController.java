@@ -330,6 +330,22 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public void isFollowing(String uid, String idOther, final IsFollowingResponse isFollowingResponse) {
+        DocumentReference refFollowing = db.collection("perfiles").document(uid).collection("siguiendo").document(idOther);
+        refFollowing.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) isFollowingResponse.itIsFollowing();
+                else isFollowingResponse.itIsNotFollowing();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                isFollowingResponse.error();
+            }
+        });
+    }
+
     public void setRelationFollower (String uid, String idFollower) {
         Map<String,String> map = new HashMap<>();
         map.put("ID Dueño", idFollower);
@@ -338,6 +354,41 @@ public class FirebaseDatabaseController {
                 .collection("seguidores")
                 .document(idFollower)
                 .set(map);
+        if(!uid.equals(idFollower)) {
+            final DocumentReference docRef = db.collection("perfiles").document(uid);
+            db.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(docRef);
+                    int numSeguidores = snapshot.getLong("numSeguidores").intValue() + 1;
+                    transaction.update(docRef, "numSeguidores", numSeguidores);
+
+                    return null;
+                }
+            });
+        }
+    }
+
+    public void deleteRelationFollower (String uid, String idFollower) {
+        db.collection("perfiles")
+                .document(uid)
+                .collection("seguidores")
+                .document(idFollower).delete();
+        if(!uid.equals(idFollower)) {
+            final DocumentReference docRef = db.collection("perfiles").document(uid);
+            db.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(docRef);
+                    int numSeguidores = snapshot.getLong("numSeguidores").intValue() - 1;
+                    transaction.update(docRef, "numSeguidores", numSeguidores);
+
+                    return null;
+                }
+            });
+        }
     }
 
     public void setRelationFollowing (String uid, String idFollowing) {
@@ -348,6 +399,43 @@ public class FirebaseDatabaseController {
                 .collection("siguiendo")
                 .document(idFollowing)
                 .set(map);
+
+        if(!uid.equals(idFollowing)) {
+            final DocumentReference docRef = db.collection("perfiles").document(uid);
+            db.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(docRef);
+                    int numSeguidos = snapshot.getLong("numSeguidos").intValue() + 1;
+                    transaction.update(docRef, "numSeguidos", numSeguidos);
+
+                    return null;
+                }
+            });
+        }
+    }
+
+    public void deleteRelationFollowing (String uid, String idFollowing) {
+        db.collection("perfiles")
+                .document(uid)
+                .collection("siguiendo")
+                .document(idFollowing)
+                .delete();
+        if(!uid.equals(idFollowing)) {
+            final DocumentReference docRef = db.collection("perfiles").document(uid);
+            db.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(docRef);
+                    int numSeguidos = snapshot.getLong("numSeguidos").intValue() - 1;
+                    transaction.update(docRef, "numSeguidos", numSeguidos);
+
+                    return null;
+                }
+            });
+        }
     }
 
     public void editProfile(final Profile newProfile, final EditProfileResponse editProfileResponse) {
@@ -567,6 +655,11 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public interface IsFollowingResponse {
+        void itIsFollowing();
+        void itIsNotFollowing();
+        void error();
+    }
     public interface DeletePublicationResponse {
         void success();
         void error();

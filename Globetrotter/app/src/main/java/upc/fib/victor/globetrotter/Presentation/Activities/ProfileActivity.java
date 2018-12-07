@@ -86,6 +86,8 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     private Fragment fragment;
     protected FragmentManager fragmentManager;
 
+    private boolean follower;
+
     private FirebaseDatabaseController firebaseDatabaseController;
     private FirebaseAuthenticationController firebaseAuthenticationController;
     private FirebaseStorageController firebaseStorageController;
@@ -174,6 +176,32 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 finish();
             }
         });
+
+        seguirBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebaseDatabaseController.setRelationFollowing(uid, uidOwner);
+                firebaseDatabaseController.setRelationFollower(uidOwner, uid);
+                activityProfile.setNumSeguidores(activityProfile.getNumSeguidores() + 1);
+                seguidoresTxt.setText(String.valueOf(activityProfile.getNumSeguidores()));
+
+                dejarSeguirBtn.setVisibility(View.VISIBLE);
+                seguirBtn.setVisibility(View.GONE);
+            }
+        });
+
+        dejarSeguirBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebaseDatabaseController.deleteRelationFollowing(uid, uidOwner);
+                firebaseDatabaseController.deleteRelationFollower(uidOwner,uid);
+                activityProfile.setNumSeguidores(activityProfile.getNumSeguidores() - 1);
+                seguidoresTxt.setText(String.valueOf(activityProfile.getNumSeguidores()));
+
+                seguirBtn.setVisibility(View.VISIBLE);
+                dejarSeguirBtn.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -183,40 +211,38 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
+            if (uid.equals(uidOwner)) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case DialogInterface.BUTTON_POSITIVE:
 
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    switch (i) {
-                        case DialogInterface.BUTTON_POSITIVE:
+                                firebaseAuthenticationController.signOut();
+                                Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                                SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE).edit();
+                                editor.remove("uid");
+                                editor.apply();
+                                startActivity(loginIntent);
+                                finish();
+                                break;
 
-                            firebaseAuthenticationController.signOut();
-                            Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                            SharedPreferences.Editor editor = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE).edit();
-                            editor.remove("uid");
-                            editor.apply();
-                            startActivity(loginIntent);
-                            finish();
-                            break;
+                            case DialogInterface.BUTTON_NEGATIVE:
 
-                        case DialogInterface.BUTTON_NEGATIVE:
-
-                            break;
+                                break;
+                        }
                     }
-                }
-            };
+                };
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
-            builder.setMessage("Estás seguro de que quieres cerrar sessión?")
-                    .setPositiveButton("Sí", dialogClickListener)
-                    .setNegativeButton("No", dialogClickListener).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                builder.setMessage("Estás seguro de que quieres cerrar sessión?")
+                        .setPositiveButton("Sí", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            } else {
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -227,26 +253,41 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         displayFragment(R.id.frame_layout, fragment, "wall");
     }
 
-    private void getProfileAndDisplay(final String uid) {
+    private void getProfileAndDisplay(final String id) {
 
-        firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
+        firebaseDatabaseController.getProfile(id, new FirebaseDatabaseController.GetProfileResponse() {
             @Override
             public void success(Profile profile) {
                 activityProfile = profile;
 
-                if (activityProfile.getUid().equals(uidOwner)) {
+                if (activityProfile.getUid().equals(uid)) {
                     seguirBtn.setVisibility(View.GONE);
                     dejarSeguirBtn.setVisibility(View.GONE);
                     editBtn.setVisibility(View.VISIBLE);
                 } else {
                     editBtn.setVisibility(View.GONE);
-                    if(isFollowing()) {
-                        seguirBtn.setVisibility(View.INVISIBLE);
-                        dejarSeguirBtn.setVisibility(View.VISIBLE);
-                    } else {
-                        seguirBtn.setVisibility(View.VISIBLE);
-                        dejarSeguirBtn.setVisibility(View.INVISIBLE);
-                    }
+                    firebaseDatabaseController.isFollowing(uid, uidOwner, new FirebaseDatabaseController.IsFollowingResponse() {
+                        @Override
+                        public void itIsFollowing() {
+                            seguirBtn.setVisibility(View.INVISIBLE);
+                            dejarSeguirBtn.setVisibility(View.VISIBLE);
+                            follower = true;
+                        }
+
+                        @Override
+                        public void itIsNotFollowing() {
+                            seguirBtn.setVisibility(View.VISIBLE);
+                            dejarSeguirBtn.setVisibility(View.INVISIBLE);
+                            follower = false;
+                        }
+
+                        @Override
+                        public void error() {
+                            seguirBtn.setVisibility(View.VISIBLE);
+                            dejarSeguirBtn.setVisibility(View.INVISIBLE);
+                            follower = false;
+                        }
+                    });
                 }
 
                 nameTxt.setText(activityProfile.getNombreCompleto());
@@ -259,7 +300,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 bornTxt.setText(dataFormat.format(activityProfile.getNacimiento()));
 
 
-                firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                firebaseStorageController.loadImageToView("profiles/" + uidOwner + ".jpg", new FirebaseStorageController.GetImageResponse() {
                     @Override
                     public void load(StorageReference ref) {
                         GlideApp.with(getApplicationContext())
@@ -276,7 +317,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             @Override
             public void notFound() {
                 progressDialog.dismiss();
-                Toast.makeText(ProfileActivity.this, "Perfil de usuario no encontrado. Pruebe otra vez.",
+                Toast.makeText(ProfileActivity.this, "Perfil de usuario no encontrado. Vuelve a intentarlo",
                         Toast.LENGTH_SHORT).show();
                 firebaseAuthenticationController.signOut();
                 Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -344,11 +385,6 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         });
     }
 
-    private boolean isFollowing() {
-        //TODO: IMPLEMENTAR METODO PARA VER SI LO SIGUE
-        return false;
-    }
-
     // adds the given fragment to the front of the fragment stack
     protected void addFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.beginTransaction()
@@ -404,10 +440,14 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         firstCardView.setCardBackgroundColor(getResources().getColor(R.color.colorWhite));
         nameTxt2.setVisibility(View.GONE);
         arrowImg.setVisibility(View.GONE);
-        if (isFollowing()) dejarSeguirBtn.setVisibility(View.VISIBLE);
-        else seguirBtn.setVisibility(View.VISIBLE);
-        if (activityProfile.getUid().equals(firebaseAuthenticationController.getCurrentUser().getUid()))
+
+        if (activityProfile.getUid().equals(uid))
             editBtn.setVisibility(View.VISIBLE);
+        else {
+            if (follower) dejarSeguirBtn.setVisibility(View.VISIBLE);
+            else seguirBtn.setVisibility(View.VISIBLE);
+        }
+
         profileImg.setVisibility(View.VISIBLE);
         bornLayout.setVisibility(View.VISIBLE);
         seguidosLayout.setVisibility(View.VISIBLE);

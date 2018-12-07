@@ -83,7 +83,7 @@
                 android:text="@string/seguir"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:backgroundTint="@color/colorPrimaryLight"
+                android:backgroundTint="@color/colorAccent"
                 android:textColor="@color/colorWhite"/>
             <Button
                 android:id="@+id/dejar_seguir_Btn"
@@ -173,7 +173,7 @@
                     android:id="@+id/publication_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/escribe_una_publicaci_n"/>                />
+                    android:hint="@string/escribe_una_publicaci_n"/>
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/send_btn"
