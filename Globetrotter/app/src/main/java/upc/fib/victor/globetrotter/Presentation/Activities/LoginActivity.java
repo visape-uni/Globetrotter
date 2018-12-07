@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             editor.apply();
 
             Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+            profileIntent.putExtra("uidOwner", uid);
             startActivity(profileIntent);
             firebaseAuthenticationController.removeAuthListener();
             finish();

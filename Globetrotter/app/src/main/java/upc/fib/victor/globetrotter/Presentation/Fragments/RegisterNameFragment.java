@@ -61,6 +61,8 @@ public class RegisterNameFragment extends Fragment {
                     Toast.makeText(getContext(), "Debes introducir tu nombre y apellidos",
                             Toast.LENGTH_SHORT).show();
                 } else {
+                    nombre = nombre.substring(0,1).toUpperCase() + nombre.substring(1);
+                    apellidos = apellidos.substring(0,1).toUpperCase() + apellidos.substring(1);
                     mListener.onSetNombreApellidos(nombre, apellidos);
                 }
             }

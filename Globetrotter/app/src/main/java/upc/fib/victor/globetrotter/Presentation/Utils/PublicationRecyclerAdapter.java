@@ -32,7 +32,7 @@ import upc.fib.victor.globetrotter.Domain.Publication;
 import upc.fib.victor.globetrotter.R;
 
 
-public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.PublicationViewHolder> {
+public class PublicationRecyclerAdapter extends RecyclerView.Adapter<PublicationRecyclerAdapter.PublicationViewHolder> {
 
     private Context context;
     private String uid;
@@ -95,7 +95,7 @@ public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.
         }
     }
 
-    public PublicationAdapter(Context context, ArrayList<String> publicationIds, String uid) {
+    public PublicationRecyclerAdapter(Context context, ArrayList<String> publicationIds, String uid) {
         this.context = context;
         this.publicationIds = publicationIds;
         firebaseStorageController = FirebaseStorageController.getInstance();
@@ -211,7 +211,7 @@ public class PublicationAdapter extends RecyclerView.Adapter<PublicationAdapter.
                                     @Override
                                     public void error() {
                                         //Error
-                                        Log.d("PublicationAdapter", "error getting userName");
+                                        Log.d("PublicationRecyclerAptr", "error getting userName");
                                     }
                                 });
                             }

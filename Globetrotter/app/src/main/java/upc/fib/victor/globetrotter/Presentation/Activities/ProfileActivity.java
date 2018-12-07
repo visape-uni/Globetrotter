@@ -51,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
     private ProgressDialog progressDialog;
 
+    private String uidOwner;
     private String uid;
     private Profile activityProfile;
 
@@ -94,6 +95,10 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
+        uid = sharedPreferences.getString("uid", null);
+
+        uidOwner = getIntent().getExtras().getString("uidOwner");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -111,9 +116,6 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
         findViews();
         bottomBar();
-
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
-        uid = sharedPreferences.getString("uid", null);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -177,7 +179,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        getProfileAndDisplay(uid);
+        getProfileAndDisplay(uidOwner);
     }
 
     @Override
@@ -221,7 +223,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     }
 
     private void loadFragment() {
-        fragment = WallFragment.newInstance(uid, uid);
+        fragment = WallFragment.newInstance(uid, uidOwner);
         displayFragment(R.id.frame_layout, fragment, "wall");
     }
 
@@ -232,7 +234,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             public void success(Profile profile) {
                 activityProfile = profile;
 
-                if (activityProfile.getUid().equals(firebaseAuthenticationController.getCurrentUser().getUid())) {
+                if (activityProfile.getUid().equals(uidOwner)) {
                     seguirBtn.setVisibility(View.GONE);
                     dejarSeguirBtn.setVisibility(View.GONE);
                     editBtn.setVisibility(View.VISIBLE);
@@ -330,6 +332,14 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             public void onClick(View view) {
                 Intent diaryIntent = new Intent(getApplicationContext(), DiaryActivity.class);
                 startActivity(diaryIntent);
+            }
+        });
+        buscarImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(searchIntent);
+                finish();
             }
         });
     }

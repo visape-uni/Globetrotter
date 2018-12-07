@@ -123,6 +123,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        intent.putExtra("uidOwner", uid);
                         startActivity(intent);
                         finish();
                     }
@@ -217,6 +218,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+        intent.putExtra("uidOwner", uid);
         startActivity(intent);
         finish();
     }
@@ -233,6 +235,9 @@ public class EditProfileActivity extends AppCompatActivity {
             Toast.makeText(EditProfileActivity.this, "Debes indicar tu nombre y apellidos",
                     Toast.LENGTH_SHORT).show();
         } else {
+            String nombreCapital = nombre.substring(0,1).toUpperCase() + nombre.substring(1);
+            String apellidosCapital = apellidos.substring(0,1).toUpperCase() + apellidos.substring(1);
+
             if (descripcion.length() > 100) {
                 Toast.makeText(EditProfileActivity.this, "La descripción no puede tener más de 100 carácteres",
                         Toast.LENGTH_SHORT).show();
@@ -247,12 +252,13 @@ public class EditProfileActivity extends AppCompatActivity {
                     cal.set(Calendar.MONTH, month-1);
                     cal.set(Calendar.DAY_OF_MONTH, day);
 
-                    final Profile profile = new Profile(uid, nombre, apellidos, cal.getTime(), descripcion);
+                    final Profile profile = new Profile(uid, nombreCapital, apellidosCapital, cal.getTime(), descripcion);
 
                     firebaseDatabaseController.editProfile(profile, new FirebaseDatabaseController.EditProfileResponse() {
                         @Override
                         public void success() {
                             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                            intent.putExtra("uidOwner", uid);
                             startActivity(intent);
                             finish();
                             //TODO: EVITAR TENER MAS DE 1 INSTANCIA DE PROFILE ACTIVITY Y SOBRETODO HACER QUE SE MUESTREN LOS CAMBIOS!

@@ -48,5 +48,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="escribe_un_comentario">Escribe un comentario</string>
     <string name="escribe_una_publicaci_n">Escribe una publicación</string>
+    <string name="buscar_usuario">Buscar usuario</string>
+    <string name="buscar_compa_ero_de_viaje">Buscar Compañero de viaje</string>
 
 </resources>
