@@ -87,11 +87,4 @@ public class DiaryListAdapter extends ArrayAdapter<Pair<String,String>> {
 
         return row;
     }
-
-    /*Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Intent pageIntent = new Intent(context, DiaryPageActivity.class);
-        pageIntent.putExtra("pageId", list.get(i).first);
-        context.startActivity(pageIntent);
-    }*/
 }

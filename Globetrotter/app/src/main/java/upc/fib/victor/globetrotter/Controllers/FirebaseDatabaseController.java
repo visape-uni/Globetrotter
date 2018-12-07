@@ -3,6 +3,7 @@ package upc.fib.victor.globetrotter.Controllers;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.Pair;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -13,13 +14,17 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -48,10 +53,11 @@ public class FirebaseDatabaseController {
     public void storePublication(final Publication publication, final StorePublicationResponse storePublicationResponse) {
         final CollectionReference refUserFollowers = db.collection("perfiles").document(publication.getUidUser()).collection("seguidores");
 
-        final DocumentReference refPublication = db.collection("publicaciones").document();
+        DocumentReference refPublicationAux = db.collection("publicaciones").document();
 
-        final String id = refPublication.getId();
+        final String id = publication.getDate().getTime() + refPublicationAux.getId() ;
         publication.setId(id);
+        final DocumentReference refPublication = db.collection("publicaciones").document(id);
 
 
         refUserFollowers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -61,11 +67,18 @@ public class FirebaseDatabaseController {
                     refPublication.set(publication).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+
                             storePublicationResponse.success();
+
                             //TODO: HACER ASYNCRON
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                setRelationPublication(document.getId(), publication.getId(), publication.getUidUser());
-                            }
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        setRelationPublication(document.getId(), publication.getId(), publication.getUidUser());
+                                    }
+                                }
+                            }).start();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -81,8 +94,37 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public void deletePublication (final String idPublication, String uidOwner, final DeletePublicationResponse deletePublicationResponse) {
+        CollectionReference refUserFollowers = db.collection("perfiles").document(uidOwner).collection("seguidores");
+
+        final DocumentReference refPublication = db.collection("publicaciones").document(idPublication);
+
+        refUserFollowers.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
+                refPublication.delete();
+                deletePublicationResponse.success();
+                //TODO: HACER ASYNCRON
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            deleteRelationPublication(document.getId(), idPublication);
+                        }
+                    }
+                }).start();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                deletePublicationResponse.error();
+            }
+        });
+    }
+
     private void setRelationPublication(String uidFollower, String idPublication, String idOwner) {
         Map<String,String> mapPublicacion = new HashMap<>();
+        mapPublicacion.put("id", idPublication);
         mapPublicacion.put("ID Dueño", idOwner);
         db.collection("perfiles")
                 .document(uidFollower)
@@ -91,7 +133,124 @@ public class FirebaseDatabaseController {
                 .set(mapPublicacion);
     }
 
-    public void setCountryVisited(String uid, String country, String idCountry) {
+    private void deleteRelationPublication(String uidFollower, String idPublication) {
+        db.collection("perfiles")
+                .document(uidFollower)
+                .collection("publicacionesSiguiendo")
+                .document(idPublication)
+                .delete();
+    }
+
+    public void getIdsPublications (String uid, int limit, String idPubStart, final GetIdsPublicationsResponse getIdsPublicationsResponse) {
+        CollectionReference refPublicaciones = db.collection("perfiles").document(uid).collection("publicacionesSiguiendo");
+
+        if (idPubStart.isEmpty()) {
+            refPublicaciones.orderBy("id", Query.Direction.DESCENDING).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList idsPublications = new ArrayList<String>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsPublications.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsPublications);
+                        }
+                    } else {
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        } else {
+            refPublicaciones.orderBy("id", Query.Direction.DESCENDING).startAt(idPubStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList idsPublications = new ArrayList<String>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsPublications.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsPublications);
+                        }
+                    } else {
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        }
+    }
+
+    public void getPublication (String idPublication, final GetPublicationResponse getPublicationResponse) {
+        DocumentReference refPublication = db.collection("publicaciones").document(idPublication);
+
+        refPublication.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                getPublicationResponse.success(documentSnapshot.toObject(Publication.class));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                getPublicationResponse.error(e.getMessage());
+            }
+        });
+    }
+
+    public void likePublication (String idPublication, final String uid) {
+        final DocumentReference docRef = db.collection("publicaciones").document(idPublication);
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                ArrayList<String> likes = (ArrayList<String>) snapshot.get("uidLikes");
+                if (likes.contains(uid)) {
+                    likes.remove(uid);
+                } else {
+                    likes.add(uid);
+                }
+
+                transaction.update(docRef, "uidLikes", likes);
+                return null;
+            }
+        });
+    }
+
+    public void commentPublication (final String idParentPublication, final Publication publication, final CommentPublicationResponse commentPublicationResponse) {
+        final DocumentReference docRef = db.collection("publicaciones").document(idParentPublication);
+
+        DocumentReference pubRef = db.collection("publicaciones").document();
+        String id = publication.getDate().getTime() + pubRef.getId() ;
+        publication.setId(id);
+
+        final DocumentReference refPublication = db.collection("publicaciones").document(id);
+
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                ArrayList<String> comments = (ArrayList<String>) snapshot.get("answers");
+                comments.add(publication.getId());
+
+                transaction.set(refPublication, publication);
+                transaction.update(docRef, "answers", comments);
+                return null;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                commentPublicationResponse.success(publication.getId());
+            }
+        });
+    }
+
+    public void setCountryVisited(String uid, final String country, String idCountry) {
         Map<String,String> map = new HashMap<>();
         map.put("ID Ciudad", idCountry);
         db.collection("perfiles")
@@ -107,6 +266,23 @@ public class FirebaseDatabaseController {
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                 DocumentSnapshot snapshot = transaction.get(docRef);
                 int newNumPaises = snapshot.getLong("numPaises").intValue() + 1;
+
+                String userName = snapshot.getString("nombreCompleto");
+                String message = userName + " ha visitado " + country + ".";
+                Publication publication = new Publication(snapshot.getString("uid"), userName, message, Calendar.getInstance().getTime());
+
+                storePublication(publication, new StorePublicationResponse() {
+                    @Override
+                    public void success() {
+                        Log.d("DatabaseController", "Country visited");
+                    }
+
+                    @Override
+                    public void error() {
+                        Log.d("DatabaseController", "Country not visited");
+                    }
+                });
+
                 transaction.update(docRef, "numPaises", newNumPaises);
                 return null;
             }
@@ -189,12 +365,12 @@ public class FirebaseDatabaseController {
                     StorePublicationResponse response = new StorePublicationResponse() {
                         @Override
                         public void success() {
-                            Log.d("DatabaseController", "Published");
+                            Log.d("DatabaseController", "Profile edited");
                         }
 
                         @Override
                         public void error() {
-                            Log.d("DatabaseController", "Not Published");
+                            Log.d("DatabaseController", "Profile not edited");
                         }
                     };
 
@@ -203,28 +379,29 @@ public class FirebaseDatabaseController {
                         mapChanges.put("nombre", newProfile.getNombre());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su nombre de '" + oldProfile.getNombre() + "' a '" + newProfile.getNombre() + "'.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
                     if(!oldProfile.getApellidos().equals(newProfile.getApellidos())) {
                         mapChanges.put("apellidos", newProfile.getApellidos());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su apellido de '" + oldProfile.getApellidos() + "' a '" + newProfile.getApellidos() + "'.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
                     if(!oldProfile.getDescripcion().equals(newProfile.getDescripcion())) {
                         mapChanges.put("descripcion", newProfile.getDescripcion());
 
                         String message = newProfile.getNombreCompleto() + " ha cambiado su descripción.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
-                    if(!oldProfile.getNacimiento().equals(newProfile.getNacimiento())) {
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    if(!dateFormat.format(oldProfile.getNacimiento()).equals(dateFormat.format(newProfile.getNacimiento()))) {
                         mapChanges.put("nacimiento", newProfile.getNacimiento());
 
-                        String message = newProfile.getNombreCompleto() + " ha cambiado su fecha de nacimiento de '" + oldProfile.getNacimiento() + "' a '" + newProfile.getNacimiento() + "'.";
-                        Publication publication = new Publication(newProfile.getUid(), message, Calendar.getInstance().getTime());
+                        String message = newProfile.getNombreCompleto() + " ha cambiado su fecha de nacimiento de '" + dateFormat.format(oldProfile.getNacimiento()) + "' a '" + dateFormat.format(newProfile.getNacimiento()) + "'.";
+                        Publication publication = new Publication(newProfile.getUid(), newProfile.getNombreCompleto(), message, Calendar.getInstance().getTime());
                         storePublication(publication, response);
                     }
 
@@ -274,6 +451,22 @@ public class FirebaseDatabaseController {
                     }
                 } else {
                     getProfileResponse.error(task.getException().getMessage());
+                }
+            }
+        });
+    }
+
+    public void getUserName (String uid, final GetUserNameResponse getUserNameResponse) {
+        db.collection("perfiles").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()) {
+                        getUserNameResponse.success(document.getString("nombreCompleto"));
+                    }
+                } else {
+                    getUserNameResponse.error();
                 }
             }
         });
@@ -347,6 +540,20 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public interface DeletePublicationResponse {
+        void success();
+        void error();
+    }
+
+    public interface CommentPublicationResponse {
+        void success(String publicationId);
+    }
+
+    public interface GetUserNameResponse {
+        void success(String userName);
+        void error();
+    }
+
     public interface GetUserPagesResponse {
         void success (HashMap<String, String> pages);
         void error();
@@ -376,6 +583,17 @@ public class FirebaseDatabaseController {
 
     public interface StorePublicationResponse {
         void success();
+        void error();
+    }
+
+    public interface GetPublicationResponse {
+        void success(Publication publication);
+        void error(String message);
+    }
+
+    public interface GetIdsPublicationsResponse {
+        void success(ArrayList<String> idsPublications);
+        void noPublications();
         void error();
     }
 

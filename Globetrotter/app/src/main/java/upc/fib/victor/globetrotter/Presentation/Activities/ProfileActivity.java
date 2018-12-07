@@ -1,18 +1,33 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,15 +35,19 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.Profile;
+import upc.fib.victor.globetrotter.Domain.Publication;
+import upc.fib.victor.globetrotter.Presentation.Fragments.WallFragment;
 import upc.fib.victor.globetrotter.R;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements WallFragment.OnFragmentInteractionListener {
 
     private ProgressDialog progressDialog;
 
@@ -36,6 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Profile activityProfile;
 
     private TextView nameTxt;
+    private TextView nameTxt2;
     private TextView bornTxt;
     private TextView seguidosTxt;
     private TextView seguidoresTxt;
@@ -47,13 +67,23 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView buscarImgBtn;
     private ImageView recomendarImgBtn;
 
-    ImageView profileImg;
+    private ImageView profileImg;
+
+    private TextInputEditText publicationTxt;
+    private FloatingActionButton publicateBtn;
 
     private Button editBtn;
     private Button seguirBtn;
     private Button dejarSeguirBtn;
 
+    private CardView firstCardView;
+    private LinearLayout bornLayout;
+    private LinearLayout seguidosLayout;
+    private ImageView arrowImg;
+
     private FrameLayout frameLayout;
+    private Fragment fragment;
+    protected FragmentManager fragmentManager;
 
     private FirebaseDatabaseController firebaseDatabaseController;
     private FirebaseAuthenticationController firebaseAuthenticationController;
@@ -63,6 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -75,6 +106,8 @@ public class ProfileActivity extends AppCompatActivity {
         progressDialog.show();
 
         firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseStorageController = FirebaseStorageController.getInstance();
 
         findViews();
         bottomBar();
@@ -82,18 +115,73 @@ public class ProfileActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
 
+        fragmentManager = getSupportFragmentManager();
+
+        firstCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if ((profileImg.getVisibility() == View.GONE) && (bornLayout.getVisibility() == View.GONE) && (seguidosLayout.getVisibility()==View.GONE)) {
+                    showInteraction();
+                }
+            }
+        });
+
+        publicateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String content = publicationTxt.getText().toString().trim();
+                publicationTxt.setText("");
+                if(!content.isEmpty()) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(publicationTxt.getWindowToken(), 0);
+                    firebaseDatabaseController.getUserName(uid, new FirebaseDatabaseController.GetUserNameResponse() {
+                        @Override
+                        public void success(String userName) {
+                            firebaseDatabaseController.storePublication(new Publication(uid, userName, content, Calendar.getInstance().getTime()), new FirebaseDatabaseController.StorePublicationResponse() {
+                                @Override
+                                public void success() {
+                                    loadFragment();
+                                    Toast.makeText(getApplicationContext(), "Se ha publicado correctamente.", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void error() {
+                                    //Error publicating
+                                    Toast.makeText(getApplicationContext(), "No se ha podido publicar, pruebe más tarde", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void error() {
+                            //Error getting userName
+                            Toast.makeText(getApplicationContext(), "No se ha podido publicar, pruebe más tarde", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(getApplicationContext(), "No has escrito nada", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent editIntent = new Intent(getApplicationContext(), EditProfileActivity.class);
                 startActivity(editIntent);
+                finish();
             }
         });
     }
 
     @Override
-    protected void onStart() {
+    protected void onPostResume() {
+        super.onPostResume();
         getProfileAndDisplay(uid);
+    }
+
+    @Override
+    protected void onStart() {
         super.onStart();
     }
 
@@ -132,10 +220,12 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getProfileAndDisplay(final String uid) {
+    private void loadFragment() {
+        fragment = WallFragment.newInstance(uid, uid);
+        displayFragment(R.id.frame_layout, fragment, "wall");
+    }
 
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
-        firebaseStorageController = FirebaseStorageController.getInstance();
+    private void getProfileAndDisplay(final String uid) {
 
         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
             @Override
@@ -158,6 +248,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
                 nameTxt.setText(activityProfile.getNombreCompleto());
+                nameTxt2.setText(activityProfile.getNombreCompleto());
                 seguidoresTxt.setText(String.valueOf(activityProfile.getNumSeguidores()));
                 seguidosTxt.setText(String.valueOf(activityProfile.getNumSeguidos()));
                 paisesTxt.setText(String.valueOf(activityProfile.getNumPaises()));
@@ -176,6 +267,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
                 setTitle("Perfil de " + profile.getNombre());
+
                 progressDialog.dismiss();
             }
 
@@ -197,10 +289,16 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+        loadFragment();
     }
 
     private void findViews() {
+        arrowImg = findViewById(R.id.arrowImg);
+        bornLayout = findViewById(R.id.bornLayout);
+        seguidosLayout = findViewById(R.id.seguidosLayout);
+        firstCardView = findViewById(R.id.cardView);
         nameTxt = findViewById(R.id.nameLbl);
+        nameTxt2 = findViewById(R.id.nameLbl2);
         bornTxt = findViewById(R.id.bornLbl);
         profileImg = findViewById(R.id.profileImageView);
         paisesTxt = findViewById(R.id.paisesVisitadosTxt);
@@ -215,6 +313,8 @@ public class ProfileActivity extends AppCompatActivity {
         diarioImgBtn = findViewById(R.id.ic_diario_viajero);
         muroImgBtn = findViewById(R.id.ic_muro);
         recomendarImgBtn = findViewById(R.id.ic_crear_recomendacion);
+        publicationTxt = findViewById(R.id.publication_input);
+        publicateBtn = findViewById(R.id.send_btn);
     }
 
     private void bottomBar() {
@@ -237,5 +337,82 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean isFollowing() {
         //TODO: IMPLEMENTAR METODO PARA VER SI LO SIGUE
         return false;
+    }
+
+    // adds the given fragment to the front of the fragment stack
+    protected void addFragment(int contentResId, Fragment fragment, String tag) {
+        fragmentManager.beginTransaction()
+                .add(contentResId, fragment, tag)
+                .addToBackStack(tag)
+                .commit();
+    }
+
+    // replaces the front fragment with the given fragment
+    protected void replaceFragment(int contentResId, Fragment fragment, String tag) {
+        fragmentManager.beginTransaction()
+                .replace(contentResId, fragment, tag)
+                .commit();
+    }
+
+    // deletes all the fragments of the stack and displays the given one
+    protected void displayFragment(int contentResId, Fragment fragment, String tag) {
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        replaceFragment(contentResId, fragment, tag);
+    }
+
+    // Called by fragment
+    @Override
+    public void hideInteraction() {
+        profileImg.animate().translationY(-firstCardView.getHeight());
+        bornLayout.animate().translationY(-firstCardView.getHeight());
+        seguidosLayout.animate().translationY(-firstCardView.getHeight());
+        editBtn.animate().translationY(-firstCardView.getHeight());
+        dejarSeguirBtn.animate().translationY(-firstCardView.getHeight());
+        seguirBtn.animate().translationY(-firstCardView.getHeight());
+        nameTxt.animate().translationY(-firstCardView.getHeight());
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                profileImg.setVisibility(View.GONE);
+                bornLayout.setVisibility(View.GONE);
+                seguidosLayout.setVisibility(View.GONE);
+                editBtn.setVisibility(View.GONE);
+                dejarSeguirBtn.setVisibility(View.GONE);
+                seguirBtn.setVisibility(View.GONE);
+                nameTxt.setVisibility(View.GONE);
+                nameTxt2.setVisibility(View.VISIBLE);
+                firstCardView.setCardBackgroundColor(getResources().getColor(R.color.colorCardViewAnimation));
+                arrowImg.setVisibility(View.VISIBLE);
+            }
+        }, 450);
+
+    }
+
+    public void showInteraction() {
+
+        firstCardView.setCardBackgroundColor(getResources().getColor(R.color.colorWhite));
+        nameTxt2.setVisibility(View.GONE);
+        arrowImg.setVisibility(View.GONE);
+        if (isFollowing()) dejarSeguirBtn.setVisibility(View.VISIBLE);
+        else seguirBtn.setVisibility(View.VISIBLE);
+        if (activityProfile.getUid().equals(firebaseAuthenticationController.getCurrentUser().getUid()))
+            editBtn.setVisibility(View.VISIBLE);
+        profileImg.setVisibility(View.VISIBLE);
+        bornLayout.setVisibility(View.VISIBLE);
+        seguidosLayout.setVisibility(View.VISIBLE);
+        nameTxt.setVisibility(View.VISIBLE);
+
+        profileImg.animate().translationY(0);
+        bornLayout.animate().translationY(0);
+        seguidosLayout.animate().translationY(0);
+        seguirBtn.animate().translationY(0);
+        dejarSeguirBtn.animate().translationY(0);
+        editBtn.animate().translationY(0);
+        nameTxt.animate().translationY(0);
+
+
+        WallFragment wallFragment = (WallFragment) fragmentManager.findFragmentById(R.id.frame_layout);
+        wallFragment.showInteraction();
     }
 }

@@ -8,4 +8,8 @@
     <color name="colorBlack">#ff000000</color>
     <color name="colorWhite">#ffffffff</color>
     <color name="colorPage">#33eaea00</color>
+    <color name="colorPublicationText">#ff444444</color>
+
+    <color name="colorRecyclerBackground">#11CCCCCC</color>
+    <color name="colorCardViewAnimation">#66b7d8ff</color>
 </resources>
