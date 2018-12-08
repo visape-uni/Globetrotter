@@ -77,9 +77,13 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     private Button seguirBtn;
     private Button dejarSeguirBtn;
 
+    private LinearLayout seguidosLayout;
+    private LinearLayout seguidoresLayout;
+    private LinearLayout paisesLayout;
+
     private CardView firstCardView;
     private LinearLayout bornLayout;
-    private LinearLayout seguidosLayout;
+    private LinearLayout infoLayout;
     private ImageView arrowImg;
 
     private FrameLayout frameLayout;
@@ -96,6 +100,8 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        //TODO: poder veure seguidors i seguits
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
@@ -124,7 +130,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         firstCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ((profileImg.getVisibility() == View.GONE) && (bornLayout.getVisibility() == View.GONE) && (seguidosLayout.getVisibility()==View.GONE)) {
+                if ((profileImg.getVisibility() == View.GONE) && (bornLayout.getVisibility() == View.GONE) && (infoLayout.getVisibility()==View.GONE)) {
                     showInteraction();
                 }
             }
@@ -200,6 +206,24 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
                 seguirBtn.setVisibility(View.VISIBLE);
                 dejarSeguirBtn.setVisibility(View.GONE);
+            }
+        });
+
+        seguidoresLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), FollowersActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        seguidosLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), FollowingActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -338,7 +362,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     private void findViews() {
         arrowImg = findViewById(R.id.arrowImg);
         bornLayout = findViewById(R.id.bornLayout);
-        seguidosLayout = findViewById(R.id.seguidosLayout);
+        infoLayout = findViewById(R.id.info_layout);
         firstCardView = findViewById(R.id.cardView);
         nameTxt = findViewById(R.id.nameLbl);
         nameTxt2 = findViewById(R.id.nameLbl2);
@@ -358,6 +382,9 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         recomendarImgBtn = findViewById(R.id.ic_crear_recomendacion);
         publicationTxt = findViewById(R.id.publication_input);
         publicateBtn = findViewById(R.id.send_btn);
+        seguidosLayout = findViewById(R.id.layout_seguidos);
+        seguidoresLayout = findViewById(R.id.layout_seguidores);
+        paisesLayout = findViewById(R.id.layout_paises);
     }
 
     private void bottomBar() {
@@ -411,7 +438,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     public void hideInteraction() {
         profileImg.animate().translationY(-firstCardView.getHeight());
         bornLayout.animate().translationY(-firstCardView.getHeight());
-        seguidosLayout.animate().translationY(-firstCardView.getHeight());
+        infoLayout.animate().translationY(-firstCardView.getHeight());
         editBtn.animate().translationY(-firstCardView.getHeight());
         dejarSeguirBtn.animate().translationY(-firstCardView.getHeight());
         seguirBtn.animate().translationY(-firstCardView.getHeight());
@@ -422,7 +449,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             public void run() {
                 profileImg.setVisibility(View.GONE);
                 bornLayout.setVisibility(View.GONE);
-                seguidosLayout.setVisibility(View.GONE);
+                infoLayout.setVisibility(View.GONE);
                 editBtn.setVisibility(View.GONE);
                 dejarSeguirBtn.setVisibility(View.GONE);
                 seguirBtn.setVisibility(View.GONE);
@@ -450,12 +477,12 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
         profileImg.setVisibility(View.VISIBLE);
         bornLayout.setVisibility(View.VISIBLE);
-        seguidosLayout.setVisibility(View.VISIBLE);
+        infoLayout.setVisibility(View.VISIBLE);
         nameTxt.setVisibility(View.VISIBLE);
 
         profileImg.animate().translationY(0);
         bornLayout.animate().translationY(0);
-        seguidosLayout.animate().translationY(0);
+        infoLayout.animate().translationY(0);
         seguirBtn.animate().translationY(0);
         dejarSeguirBtn.animate().translationY(0);
         editBtn.animate().translationY(0);

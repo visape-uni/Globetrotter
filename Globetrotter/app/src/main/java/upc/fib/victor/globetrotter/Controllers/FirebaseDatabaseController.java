@@ -167,7 +167,7 @@ public class FirebaseDatabaseController {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        ArrayList idsPublications = new ArrayList<String>();
+                        ArrayList<String> idsPublications = new ArrayList<>();
                         if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
                         else {
                             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -325,6 +325,46 @@ public class FirebaseDatabaseController {
                     getCountriesResponse.success(countries);
                 } else {
                     getCountriesResponse.error();
+                }
+            }
+        });
+    }
+
+    public void getFollowingUsers(final String uid, final GetProfileIdsResponse getFollowingUsersIdsResponse) {
+        CollectionReference refFollowing = db.collection("perfiles").document(uid).collection("siguiendo");
+
+        refFollowing.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    ArrayList<String> idsFollowing = new ArrayList<>();
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        if(!document.getId().equals(uid)) idsFollowing.add(document.getId());
+                    }
+                    if(idsFollowing.isEmpty()) getFollowingUsersIdsResponse.noFollowing();
+                    else getFollowingUsersIdsResponse.success(idsFollowing);
+                } else {
+                    getFollowingUsersIdsResponse.error();
+                }
+            }
+        });
+    }
+
+    public void getFollowersUsers(final String uid, final GetProfileIdsResponse getFollowerUsersIdsResponse) {
+        CollectionReference refFollowers = db.collection("perfiles").document(uid).collection("seguidores");
+
+        refFollowers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    ArrayList<String> idsFollowers = new ArrayList<>();
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        if(!document.getId().equals(uid)) idsFollowers.add(document.getId());
+                    }
+                    if(idsFollowers.isEmpty()) getFollowerUsersIdsResponse.noFollowing();
+                    else getFollowerUsersIdsResponse.success(idsFollowers);
+                } else {
+                    getFollowerUsersIdsResponse.error();
                 }
             }
         });
@@ -714,6 +754,12 @@ public class FirebaseDatabaseController {
     public interface GetIdsPublicationsResponse {
         void success(ArrayList<String> idsPublications);
         void noPublications();
+        void error();
+    }
+
+    public interface GetProfileIdsResponse {
+        void success(ArrayList<String> idsProfiles);
+        void noFollowing();
         void error();
     }
 
