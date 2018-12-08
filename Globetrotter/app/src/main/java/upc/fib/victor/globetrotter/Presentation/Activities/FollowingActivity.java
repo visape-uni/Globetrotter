@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -19,7 +20,7 @@ import upc.fib.victor.globetrotter.R;
 
 public class FollowingActivity extends AppCompatActivity {
 
-    private String uid;
+    private String idOwner;
 
     private ArrayList<String> profiles;
 
@@ -37,8 +38,7 @@ public class FollowingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followers);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
-        uid = sharedPreferences.getString("uid", null);
+        Log.d("FOLOWWWWWWWWWWIN", "ONCREATE");
 
         setTitle("Siguiendo");
 
@@ -54,49 +54,19 @@ public class FollowingActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         profiles = new ArrayList<>();
-
-        firebaseDatabaseController.getFollowingUsers(uid, new FirebaseDatabaseController.GetProfileIdsResponse() {
-            @Override
-            public void success(ArrayList<String> idsProfiles) {
-                profiles = idsProfiles;
-                adapter = new FollowUsersRecyclerAdapter(getApplicationContext(), profiles);
-                recyclerView.setAdapter(adapter);
-
-                recyclerView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-                errorTxt.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void noFollowing() {
-                adapter = new FollowUsersRecyclerAdapter(getApplicationContext(), profiles);
-                recyclerView.setAdapter(adapter);
-                errorTxt.setText("Este usuario no sigue a nadie.");
-
-                recyclerView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                errorTxt.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void error() {
-                adapter = new FollowUsersRecyclerAdapter(getApplicationContext(), profiles);
-                recyclerView.setAdapter(adapter);
-                errorTxt.setText("Error accediendo a los datos, vuelve a intentarlo");
-
-                recyclerView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                errorTxt.setVisibility(View.VISIBLE);
-            }
-        });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getAndDisplayFollowing();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
             Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-            profileIntent.putExtra("uidOwner", uid);
+            profileIntent.putExtra("uidOwner", idOwner);
             startActivity(profileIntent);
             finish();
         }
@@ -108,9 +78,48 @@ public class FollowingActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-        profileIntent.putExtra("uidOwner", uid);
+        profileIntent.putExtra("uidOwner", idOwner);
         startActivity(profileIntent);
         finish();
+    }
+
+    private void getAndDisplayFollowing() {
+        idOwner = getIntent().getExtras().getString("idOwner");
+
+        firebaseDatabaseController.getFollowingUsers(idOwner, new FirebaseDatabaseController.GetProfileIdsResponse() {
+            @Override
+            public void success(ArrayList<String> idsProfiles) {
+                profiles = idsProfiles;
+                adapter = new FollowUsersRecyclerAdapter(getApplicationContext(), profiles, FollowingActivity.this);
+                recyclerView.setAdapter(adapter);
+
+                recyclerView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                errorTxt.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void noFollowing() {
+                adapter = new FollowUsersRecyclerAdapter(getApplicationContext(), profiles, FollowingActivity.this);
+                recyclerView.setAdapter(adapter);
+                errorTxt.setText("Este usuario no sigue a nadie.");
+
+                recyclerView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                errorTxt.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void error() {
+                adapter = new FollowUsersRecyclerAdapter(getApplicationContext(), profiles, FollowingActivity.this);
+                recyclerView.setAdapter(adapter);
+                errorTxt.setText("Error accediendo a los datos, vuelve a intentarlo");
+
+                recyclerView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                errorTxt.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void findViews() {

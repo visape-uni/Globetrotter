@@ -101,8 +101,6 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        //TODO: poder veure seguidors i seguits
-
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
 
@@ -212,8 +210,9 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         seguidoresLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), FollowersActivity.class);
-                startActivity(intent);
+                Intent intentSeguidores = new Intent(getApplicationContext(), FollowersActivity.class);
+                intentSeguidores.putExtra("idOwner", uidOwner);
+                startActivity(intentSeguidores);
                 finish();
             }
         });
@@ -222,6 +221,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), FollowingActivity.class);
+                intent.putExtra("idOwner", uidOwner);
                 startActivity(intent);
                 finish();
             }
@@ -265,7 +265,16 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                         .setPositiveButton("Sí", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
             } else {
-                finish();
+                uidOwner = uid;
+
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Cargando perfil...");
+                progressDialog.show();
+
+                getProfileAndDisplay(uidOwner);
             }
         }
 

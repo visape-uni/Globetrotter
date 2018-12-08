@@ -31,8 +31,8 @@
         <activity android:name=".Presentation.Activities.DiaryActivity" />
         <activity android:name=".Presentation.Activities.DiaryPageActivity" />
         <activity android:name=".Presentation.Activities.SearchActivity" />
-        <activity android:name=".Presentation.Activities.FollowersActivity" />
-        <activity android:name=".Presentation.Activities.FollowingActivity"></activity>
+        <activity android:name=".Presentation.Activities.FollowersActivity"/>
+        <activity android:name=".Presentation.Activities.FollowingActivity"/>
     </application>
 
 </manifest>

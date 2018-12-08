@@ -1,9 +1,12 @@
 package upc.fib.victor.globetrotter.Presentation.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +33,8 @@ public class FollowUsersRecyclerAdapter extends RecyclerView.Adapter<FollowUsers
     private FirebaseStorageController firebaseStorageController;
     private FirebaseDatabaseController firebaseDatabaseController;
 
+    private Activity parentActivity;
+
     public static class ProfileViewHolder extends RecyclerView.ViewHolder {
         public RelativeLayout profileLayout;
         public ImageView userImg;
@@ -48,7 +53,8 @@ public class FollowUsersRecyclerAdapter extends RecyclerView.Adapter<FollowUsers
         }
     }
 
-    public FollowUsersRecyclerAdapter(Context context, ArrayList<String> idsProfiles) {
+    public FollowUsersRecyclerAdapter(Context context, ArrayList<String> idsProfiles, Activity parentActivity) {
+        this.parentActivity = parentActivity;
         firebaseStorageController = FirebaseStorageController.getInstance();
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
         this.context = context;
@@ -91,6 +97,7 @@ public class FollowUsersRecyclerAdapter extends RecyclerView.Adapter<FollowUsers
                         Intent profileIntent = new Intent(context, ProfileActivity.class);
                         profileIntent.putExtra("uidOwner", holder.profile.getUid());
                         context.startActivity(profileIntent);
+                        parentActivity.finish();
                     }
                 });
                 holder.progressBar.setVisibility(View.GONE);
