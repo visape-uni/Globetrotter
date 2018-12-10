@@ -75,6 +75,7 @@ public class SearchUserFragment extends Fragment {
 
         searchView.setSubmitButtonEnabled(true);
         searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint("Escribe el nombre y apellidos del usuario ");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
