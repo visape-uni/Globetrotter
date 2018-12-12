@@ -8,6 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <android.support.v7.widget.SearchView
             android:id="@+id/search_travel_view"
             android:layout_width="match_parent"
@@ -15,7 +16,7 @@
         <View
             android:id="@+id/searchSeparator"
             android:layout_width="match_parent"
-            android:layout_below="@id/search_user_view"
+            android:layout_below="@id/search_travel_view"
             android:layout_height="1dp"
             android:background="#7aaa"/>
         <ProgressBar

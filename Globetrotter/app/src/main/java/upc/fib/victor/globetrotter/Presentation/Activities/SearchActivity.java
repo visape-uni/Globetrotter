@@ -3,12 +3,16 @@ package upc.fib.victor.globetrotter.Presentation.Activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TabItem;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
+import upc.fib.victor.globetrotter.Presentation.Fragments.SearchTravelFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.SearchUserFragment;
 import upc.fib.victor.globetrotter.R;
 
@@ -16,6 +20,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private TabItem userTab;
     private TabItem travelTab;
+    private TabLayout tabLayout;
 
     private Fragment fragment;
     protected FragmentManager fragmentManager;
@@ -35,7 +40,40 @@ public class SearchActivity extends AppCompatActivity {
 
         fragmentManager = getSupportFragmentManager();
         findViews();
-        loadFragment();
+
+        TabLayout.Tab tab = tabLayout.newTab();
+        tab.setCustomView(userTab);
+
+        tabLayout.addTab(tab);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        loadFragmentUser();
+                        break;
+
+                    case 1:
+                        loadFragmentTrip();
+                        //TODO: AÑADIR BOTON AÑADIR TRIP!!!!!!!
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
+        loadFragmentUser();
     }
 
     @Override
@@ -59,12 +97,18 @@ public class SearchActivity extends AppCompatActivity {
         finish();
     }
 
-    private void loadFragment() {
+    private void loadFragmentUser() {
         fragment = SearchUserFragment.newInstance(uid);
         displayFragment(R.id.frame_layout, fragment, "searchUser");
     }
 
+    private void loadFragmentTrip() {
+        fragment = SearchTravelFragment.newInstance(uid);
+        displayFragment(R.id.frame_layout, fragment, "searchTrip");
+    }
+
     private void findViews() {
+        tabLayout = findViewById(R.id.tabLayout);
         userTab = findViewById(R.id.userTab);
         travelTab = findViewById(R.id.travelMateTab);
     }

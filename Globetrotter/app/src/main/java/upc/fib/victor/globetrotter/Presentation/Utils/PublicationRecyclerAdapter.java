@@ -103,10 +103,6 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
         this.uid = uid;
     }
 
-    public void setPublicationIds(ArrayList<String> publicationIds) {
-        this.publicationIds = publicationIds;
-    }
-
     @NonNull
     @Override
     public PublicationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

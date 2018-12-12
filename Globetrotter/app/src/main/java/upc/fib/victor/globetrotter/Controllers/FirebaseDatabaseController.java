@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import upc.fib.victor.globetrotter.Domain.DiaryPage;
 import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Domain.Publication;
+import upc.fib.victor.globetrotter.Domain.TripProposal;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -50,6 +51,90 @@ public class FirebaseDatabaseController {
         return instance;
     }
 
+    public void storeTripProposal(TripProposal tripProposal, final StorePublicationResponse storePublicationResponse) {
+        DocumentReference refTripProposalAux = db.collection("propuestasViajes").document();
+
+        String id = tripProposal.getDate().getTime() + refTripProposalAux.getId();
+        tripProposal.setId(id);
+
+        DocumentReference refTripProposal = db.collection("propuestasViajes").document(id);
+
+        DocumentReference refProposals = db.collection("perfiles").document(tripProposal.getUidUser()).collection("propuestas").document(id);
+        Map<String, String> map = new HashMap<>();
+        map.put("ID Dueño", tripProposal.getUidUser());
+        refProposals.set(map);
+
+        refTripProposal.set(tripProposal).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                storePublicationResponse.success();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                storePublicationResponse.error();
+            }
+        });
+
+    }
+
+    public void getTripProposal (String idTripProposal, final GetTripProposalResponse getTripProposalResponse) {
+        DocumentReference refTrip = db.collection("propuestasViajes").document(idTripProposal);
+        refTrip.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                getTripProposalResponse.success(documentSnapshot.toObject(TripProposal.class));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                getTripProposalResponse.error(e.getMessage());
+            }
+        });
+
+    }
+
+    public void getIdsProposals (int limit, String idPropStart, final GetIdsPublicationsResponse getIdsPublicationsResponse) {
+        CollectionReference refProposals = db.collection("propuestasViajes");
+        if (idPropStart.isEmpty()) {
+            refProposals.limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> idsProposals = new ArrayList<>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsProposals.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsProposals);
+                        }
+                    } else {
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        } else {
+            refProposals.startAt(idPropStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> idsProposals = new ArrayList<>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsProposals.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsProposals);
+                        }
+                    } else {
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        }
+    }
+
     public void storePublication(final Publication publication, final StorePublicationResponse storePublicationResponse) {
         final CollectionReference refUserFollowers = db.collection("perfiles").document(publication.getUidUser()).collection("seguidores");
 
@@ -58,7 +143,6 @@ public class FirebaseDatabaseController {
         final String id = publication.getDate().getTime() + refPublicationAux.getId() ;
         publication.setId(id);
         final DocumentReference refPublication = db.collection("publicaciones").document(id);
-
 
         refUserFollowers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -149,7 +233,7 @@ public class FirebaseDatabaseController {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
-                        ArrayList idsPublications = new ArrayList<String>();
+                        ArrayList<String> idsPublications = new ArrayList<>();
                         if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
                         else {
                             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -744,6 +828,11 @@ public class FirebaseDatabaseController {
     public interface StorePublicationResponse {
         void success();
         void error();
+    }
+
+    public interface GetTripProposalResponse {
+        void success(TripProposal tripProposal);
+        void error(String message);
     }
 
     public interface GetPublicationResponse {
