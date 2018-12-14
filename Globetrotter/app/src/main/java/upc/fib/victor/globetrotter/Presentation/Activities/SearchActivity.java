@@ -12,11 +12,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import upc.fib.victor.globetrotter.Presentation.Fragments.AddTripProposalFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.SearchTravelFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.SearchUserFragment;
 import upc.fib.victor.globetrotter.R;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements SearchTravelFragment.OnFragmentInteractionListener {
 
     private TabItem userTab;
     private TabItem travelTab;
@@ -26,6 +27,8 @@ public class SearchActivity extends AppCompatActivity {
     protected FragmentManager fragmentManager;
 
     private String uid;
+
+    private String currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +44,6 @@ public class SearchActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         findViews();
 
-        TabLayout.Tab tab = tabLayout.newTab();
-        tab.setCustomView(userTab);
-
-        tabLayout.addTab(tab);
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -56,7 +54,6 @@ public class SearchActivity extends AppCompatActivity {
 
                     case 1:
                         loadFragmentTrip();
-                        //TODO: AÑADIR BOTON AÑADIR TRIP!!!!!!!
                         break;
                 }
             }
@@ -90,19 +87,25 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-        profileIntent.putExtra("uidOwner", uid);
-        startActivity(profileIntent);
-        finish();
+        //super.onBackPressed();
+        if (currentFragment.equals("addTrip")) {
+            fragmentManager.popBackStackImmediate();
+        } else {
+            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+            profileIntent.putExtra("uidOwner", uid);
+            startActivity(profileIntent);
+            finish();
+        }
     }
 
     private void loadFragmentUser() {
+        currentFragment = "searchUser";
         fragment = SearchUserFragment.newInstance(uid);
         displayFragment(R.id.frame_layout, fragment, "searchUser");
     }
 
     private void loadFragmentTrip() {
+        currentFragment = "searchTrip";
         fragment = SearchTravelFragment.newInstance(uid);
         displayFragment(R.id.frame_layout, fragment, "searchTrip");
     }
@@ -116,6 +119,7 @@ public class SearchActivity extends AppCompatActivity {
     // adds the given fragment to the front of the fragment stack
     protected void addFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.beginTransaction()
+                .remove(fragmentManager.findFragmentById(R.id.frame_layout))
                 .add(contentResId, fragment, tag)
                 .addToBackStack(tag)
                 .commit();
@@ -132,5 +136,11 @@ public class SearchActivity extends AppCompatActivity {
     protected void displayFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         replaceFragment(contentResId, fragment, tag);
+    }
+
+    @Override
+    public void onAddClicked(AddTripProposalFragment addTripProposalFragment) {
+        currentFragment = "addTrip";
+        addFragment(R.id.frame_layout, addTripProposalFragment, "addTrip");
     }
 }

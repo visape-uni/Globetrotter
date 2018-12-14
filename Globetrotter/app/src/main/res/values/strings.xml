@@ -51,5 +51,17 @@
     <string name="buscar_usuario">Buscar usuario</string>
     <string name="buscar_compa_ero_de_viaje">Buscar Compañero de viaje</string>
     <string name="flecha"><![CDATA[->]]></string>
+    <string name="country">Country:</string>
+    <string name="selecciona_un_pais">Selecciona un país</string>
+    <string name="pa_s">País:</string>
+    <string name="fecha_inicio">Fecha Inicio:</string>
+    <string name="fecha_fin">Fecha Fin:</string>
+    <string name="presupuesto">Presupuesto:</string>
+    <string name="comentario">Comentario:</string>
+    <string name="publicar">Publicar</string>
+    <string name="fecha_fin_del_viaje">Fecha Fin del viaje</string>
+    <string name="fecha_de_inicio_del_viaje">Fecha de inicio del viaje</string>
+    <string name="presupuesto_del_viaje">Presupuesto del viaje (Opcional)</string>
+    <string name="breve_descripcion_del_viaje_opcional">Breve descripcion del viaje (Opcional)</string>
 
 </resources>

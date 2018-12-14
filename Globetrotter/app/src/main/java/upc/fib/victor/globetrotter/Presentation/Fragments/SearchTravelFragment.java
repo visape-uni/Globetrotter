@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,12 +30,16 @@ public class SearchTravelFragment extends Fragment {
     private TextView noResultsTxt;
     private ProgressBar progressBar;
 
+    private FloatingActionButton addBtn;
+
     private ArrayList<String> idsTripProposals;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private TripProposalRecyclerAdapter adapter;
 
     private FirebaseDatabaseController firebaseDatabaseController;
+
+    private OnFragmentInteractionListener mListener;
 
     public SearchTravelFragment() {
         // Required empty public constructor
@@ -67,6 +72,7 @@ public class SearchTravelFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         progressBar = view.findViewById(R.id.progressBar);
         noResultsTxt = view.findViewById(R.id.noResultsTxt);
+        addBtn = view.findViewById(R.id.addBtn);
 
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -76,7 +82,7 @@ public class SearchTravelFragment extends Fragment {
         searchView.setIconifiedByDefault(false);
         searchView.setQueryHint("Escribe el país");
 
-        //TODO: firebaseDatabase get proposals
+        //TODO: OBTENER LOS IDS ORDENADOS
         firebaseDatabaseController.getIdsProposals(20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
             @Override
             public void success(ArrayList<String> idsPublications) {
@@ -107,10 +113,19 @@ public class SearchTravelFragment extends Fragment {
             }
         });
 
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddTripProposalFragment addTripFragment = AddTripProposalFragment.newInstance(uid);
+                mListener.onAddClicked(addTripFragment);
+            }
+        });
+
         //TODO: setOnQueryTextListener get proposals searched
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 return false;
             }
 
@@ -121,5 +136,29 @@ public class SearchTravelFragment extends Fragment {
         });
 
         return view;
+    }
+
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onAddClicked(AddTripProposalFragment addTripProposalFragment);
     }
 }

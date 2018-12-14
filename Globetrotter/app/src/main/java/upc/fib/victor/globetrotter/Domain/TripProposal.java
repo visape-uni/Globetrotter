@@ -14,6 +14,8 @@ public class TripProposal {
     private int budget;
     private String country;
 
+    public TripProposal(){}
+
     public TripProposal(String message, String uidUser, String userName, Date date, Date iniDate, Date endDate, int budget, String country) {
         this.message = message;
         this.uidUser = uidUser;

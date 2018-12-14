@@ -58,7 +58,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
             presupuestoTxt = itemView.findViewById(R.id.presupuestoTxt);
             dateTxt = itemView.findViewById(R.id.dateTxt);
             errorTxt = itemView.findViewById(R.id.errorTxt);
-            progressBar = itemView.findViewById(R.id.progressBar);
+            progressBar = itemView.findViewById(R.id.publicationProgressBar);
         }
     }
 
@@ -75,9 +75,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
     public TripProposalViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.trip_proposal, parent, false);
 
-        TripProposalViewHolder holder = new TripProposalViewHolder(v);
-
-        return holder;
+        return new TripProposalViewHolder(v);
     }
 
     @Override
@@ -110,14 +108,21 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
                 });
                 holder.userName.setText(holder.tripProposal.getUserName());
                 holder.countryTxt.setText(holder.tripProposal.getCountry());
-                holder.durationTxt.setText(String.valueOf(holder.tripProposal.getDuration()));
+
+                holder.durationTxt.setText(String.valueOf(holder.tripProposal.getDuration()) + " Dias");
 
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-                holder.iniDateTxt.setText(dateFormat.format(holder.tripProposal.getIniDate()));
+                holder.iniDateTxt.setText(dateFormat.format(holder.tripProposal.getIniDate()) + " -> ");
                 holder.endDateTxt.setText(dateFormat.format(holder.tripProposal.getEndDate()));
                 holder.publicationTxt.setText(holder.tripProposal.getMessage());
-                holder.presupuestoTxt.setText(holder.tripProposal.getBudget());
+
+                if(holder.tripProposal.getBudget() == -1) {
+                    holder.presupuestoTxt.setText("Presupuesto: No calculado...");
+                } else {
+                    holder.presupuestoTxt.setText("Presupuesto: " + String.valueOf(holder.tripProposal.getBudget()) + "€");
+                }
+
                 holder.dateTxt.setText(dateFormat.format(holder.tripProposal.getDate()));
 
 
