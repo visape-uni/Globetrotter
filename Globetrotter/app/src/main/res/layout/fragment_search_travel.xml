@@ -30,21 +30,26 @@
             android:id="@+id/noResultsTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No se han encontrado resultados."
-            android:layout_centerInParent="true"
-            android:visibility="gone"/>
+            android:layout_centerInParent="true"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_below="@id/searchSeparator"
+            android:layout_marginTop="2dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content" />
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/addBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="5dp"
+            android:tint="@color/colorWhite"
+            android:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_margin="7dp"
+            android:fitsSystemWindows="false"
             android:scaleType="center"
             android:src="@drawable/ic_add"
             app:fabSize="normal"/>

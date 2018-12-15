@@ -29,10 +29,10 @@
             android:layout_toRightOf="@id/countryTxtView"
             android:layout_marginTop="20dp"
             android:layout_toEndOf="@id/countryTxtView"
-            android:layout_alignLeft="@id/budgetEditTxt"
-            android:layout_alignStart="@id/budgetEditTxt"
-            android:layout_alignRight="@id/budgetEditTxt"
-            android:layout_alignEnd="@id/budgetEditTxt" />
+            android:layout_alignLeft="@id/fechaFinEditTxt"
+            android:layout_alignStart="@id/fechaFinEditTxt"
+            android:layout_alignRight="@id/fechaFinEditTxt"
+            android:layout_alignEnd="@id/fechaFinEditTxt" />
 
         <TextView
             android:id="@+id/fechaInicioTextView"
@@ -56,10 +56,10 @@
             android:textSize="14sp"
             android:layout_toRightOf="@id/fechaInicioTextView"
             android:layout_toEndOf="@id/fechaInicioTextView"
-            android:layout_alignLeft="@id/budgetEditTxt"
-            android:layout_alignStart="@id/budgetEditTxt"
-            android:layout_alignRight="@id/budgetEditTxt"
-            android:layout_alignEnd="@id/budgetEditTxt"
+            android:layout_alignLeft="@id/fechaFinEditTxt"
+            android:layout_alignStart="@id/fechaFinEditTxt"
+            android:layout_alignRight="@id/fechaFinEditTxt"
+            android:layout_alignEnd="@id/fechaFinEditTxt"
             android:layout_alignBaseline="@id/fechaInicioTextView"/>
 
         <TextView
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/fechaInicioTextView"
-            android:text="@string/fecha_fin"
+            android:text="@string/fecha_regreso"
             android:layout_alignLeft="@id/countryTxtView"
             android:layout_alignStart="@id/countryTxtView"
             android:layout_marginTop="30dp"/>
@@ -84,10 +84,10 @@
             android:textSize="14sp"
             android:layout_toRightOf="@id/fechaFinTextView"
             android:layout_toEndOf="@id/fechaFinTextView"
-            android:layout_alignLeft="@id/budgetEditTxt"
-            android:layout_alignStart="@id/budgetEditTxt"
-            android:layout_alignRight="@id/budgetEditTxt"
-            android:layout_alignEnd="@id/budgetEditTxt"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_alignBaseline="@id/fechaFinTextView"/>
 
         <TextView
@@ -110,10 +110,10 @@
             android:layout_alignBaseline="@id/budgetTextView"
             android:hint="@string/presupuesto_del_viaje"
             android:textSize="14sp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"/>
+            android:layout_alignLeft="@id/fechaFinEditTxt"
+            android:layout_alignStart="@id/fechaFinEditTxt"
+            android:layout_alignRight="@id/fechaFinEditTxt"
+            android:layout_alignEnd="@id/fechaFinEditTxt"/>
 
         <TextView
             android:id="@+id/publicationTextView"

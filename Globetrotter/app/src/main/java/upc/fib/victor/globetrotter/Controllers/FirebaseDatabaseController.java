@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.ArrayAdapter;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,6 +34,7 @@ import upc.fib.victor.globetrotter.Domain.DiaryPage;
 import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Domain.Publication;
 import upc.fib.victor.globetrotter.Domain.TripProposal;
+import upc.fib.victor.globetrotter.Presentation.Activities.FollowersActivity;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -49,6 +51,28 @@ public class FirebaseDatabaseController {
     public static FirebaseDatabaseController getInstance() {
         if (instance == null) instance = new FirebaseDatabaseController();
         return instance;
+    }
+
+    public void searchTrip(String countryName, final SearchTripProposalResponse searchTripProposalResponse) {
+        CollectionReference refTrips = db.collection("propuestasViajes");
+
+        countryName = countryName.toUpperCase();
+
+        refTrips.whereGreaterThanOrEqualTo("paisCapital", countryName).whereLessThanOrEqualTo("paisCapital", countryName+'Z').get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> idsProposals = new ArrayList<>();
+                    if(task.getResult().isEmpty()) searchTripProposalResponse.noTrips();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        idsProposals.add(document.getId());
+                    }
+                    searchTripProposalResponse.success(idsProposals);
+                } else {
+                    searchTripProposalResponse.error();
+                }
+            }
+        });
     }
 
     public void storeTripProposal(TripProposal tripProposal, final StorePublicationResponse storePublicationResponse) {
@@ -94,10 +118,36 @@ public class FirebaseDatabaseController {
 
     }
 
+    public void deleteTripProposal (String idPublication, String uidOwner, final DeletePublicationResponse deletePublicationResponse) {
+        DocumentReference refProposal = db.collection("propuestasViajes").document(idPublication);
+        final DocumentReference refMyProposal = db.collection("perfiles").document(uidOwner).collection("propuestas").document(idPublication);
+        refProposal.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                refMyProposal.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        deletePublicationResponse.success();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        deletePublicationResponse.error();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                deletePublicationResponse.error();
+            }
+        });
+    }
+
     public void getIdsProposals (int limit, String idPropStart, final GetIdsPublicationsResponse getIdsPublicationsResponse) {
         CollectionReference refProposals = db.collection("propuestasViajes");
         if (idPropStart.isEmpty()) {
-            refProposals.limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            refProposals.orderBy("id", Query.Direction.DESCENDING).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -115,7 +165,7 @@ public class FirebaseDatabaseController {
                 }
             });
         } else {
-            refProposals.startAt(idPropStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            refProposals.orderBy("id", Query.Direction.DESCENDING).startAt(idPropStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -861,6 +911,12 @@ public class FirebaseDatabaseController {
     public interface SearchUsersResponse {
         void success(ArrayList<Profile> users);
         void noUsers();
+        void error();
+    }
+
+    public interface SearchTripProposalResponse {
+        void success(ArrayList<String> idTrips);
+        void noTrips();
         void error();
     }
 

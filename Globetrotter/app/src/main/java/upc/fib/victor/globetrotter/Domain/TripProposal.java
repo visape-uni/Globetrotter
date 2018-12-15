@@ -111,8 +111,12 @@ public class TripProposal {
         this.date = date;
     }
 
+    public String getPaisCapital() {
+        return country.toUpperCase();
+    }
+
     public long getDuration() {
-        long diff = iniDate.getTime() - endDate.getTime();
+        long diff = endDate.getTime() - iniDate.getTime();
         return diff/(1000*60*60*24);
     }
 }

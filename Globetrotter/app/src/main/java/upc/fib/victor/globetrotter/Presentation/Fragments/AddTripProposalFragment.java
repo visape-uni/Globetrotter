@@ -4,6 +4,7 @@ package upc.fib.victor.globetrotter.Presentation.Fragments;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -134,62 +135,76 @@ public class AddTripProposalFragment extends Fragment {
             public void onClick(View view) {
 
                 if(!iniDateTxt.getText().toString().isEmpty() && !endDateTxt.getText().toString().isEmpty() && !countryTxt.getText().toString().isEmpty()) {
-                    firebaseDatabaseController.getUserName(uid, new FirebaseDatabaseController.GetUserNameResponse() {
-                        @Override
-                        public void success(String userName) {
-                            String message = publicationTxt.getText().toString();
 
-                            String ini = iniDateTxt.getText().toString();
-                            String end = endDateTxt.getText().toString();
+                    String ini = iniDateTxt.getText().toString();
+                    String end = endDateTxt.getText().toString();
 
-                            int day = Integer.valueOf(ini.substring(0,2));
-                            int mon = Integer.valueOf(ini.substring(3,5)) - 1;
-                            int year = Integer.valueOf(ini.substring(6,10));
+                    int day = Integer.valueOf(ini.substring(0,2));
+                    int mon = Integer.valueOf(ini.substring(3,5)) - 1;
+                    int year = Integer.valueOf(ini.substring(6,10));
 
-                            Calendar iniCal = Calendar.getInstance();
-                            iniCal.set(year, mon, day);
-                            Date iniDate = iniCal.getTime();
+                    Calendar iniCal = Calendar.getInstance();
+                    iniCal.set(year, mon, day);
+                    final Date iniDate = iniCal.getTime();
 
-                            day = Integer.valueOf(end.substring(0,2));
-                            mon = Integer.valueOf(end.substring(3,5)) - 1;
-                            year = Integer.valueOf(end.substring(6,10));
+                    day = Integer.valueOf(end.substring(0,2));
+                    mon = Integer.valueOf(end.substring(3,5)) - 1;
+                    year = Integer.valueOf(end.substring(6,10));
 
-                            Calendar endCal = Calendar.getInstance();
-                            endCal.set(year, mon, day);
-                            Date endDate = endCal.getTime();
+                    Calendar endCal = Calendar.getInstance();
+                    endCal.set(year, mon, day);
+                    final Date endDate = endCal.getTime();
 
+                    if(iniDate.getTime() <= endDate.getTime() && iniDate.getTime() >= Calendar.getInstance().getTime().getTime()) {
 
-                            //TODO: comprovar fecha regreso mas grande que fecha salida
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.setCancelable(false);
+                        progressDialog.setMessage("Publicando viaje...");
+                        progressDialog.show();
 
-                            int budget;
-                            if (budgetTxt.getText().toString().isEmpty()) {
-                                budget = -1;
-                            } else {
-                                budget = Integer.valueOf(budgetTxt.getText().toString());
+                        firebaseDatabaseController.getUserName(uid, new FirebaseDatabaseController.GetUserNameResponse() {
+                            @Override
+                            public void success(String userName) {
+                                String message = publicationTxt.getText().toString();
+
+                                int budget;
+                                if (budgetTxt.getText().toString().isEmpty()) {
+                                    budget = -1;
+                                } else {
+                                    budget = Integer.valueOf(budgetTxt.getText().toString());
+                                }
+
+                                String country = countryTxt.getText().toString();
+
+                                TripProposal tripProposal = new TripProposal(message, uid, userName, Calendar.getInstance().getTime(), iniDate, endDate, budget, country);
+                                firebaseDatabaseController.storeTripProposal(tripProposal, new FirebaseDatabaseController.StorePublicationResponse() {
+                                    @Override
+                                    public void success() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getContext(), "Publicado correctamente", Toast.LENGTH_SHORT).show();
+                                        getActivity().getSupportFragmentManager().popBackStackImmediate();
+                                    }
+
+                                    @Override
+                                    public void error() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getContext(), "Error publicando", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
 
-                            String country = countryTxt.getText().toString();
-
-                            TripProposal tripProposal = new TripProposal(message, uid, userName, Calendar.getInstance().getTime(), iniDate, endDate, budget, country);
-                            firebaseDatabaseController.storeTripProposal(tripProposal, new FirebaseDatabaseController.StorePublicationResponse() {
-                                @Override
-                                public void success() {
-                                    Toast.makeText(getContext(), "Publicado correctamente", Toast.LENGTH_SHORT).show();
-                                    getActivity().getSupportFragmentManager().popBackStackImmediate();
-                                }
-
-                                @Override
-                                public void error() {
-                                    Toast.makeText(getContext(), "Error publicando", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void error() {
-                            Toast.makeText(getContext(), "Error publicando", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void error() {
+                                progressDialog.dismiss();
+                                Toast.makeText(getContext(), "Error publicando", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        if (iniDate.getTime() < Calendar.getInstance().getTime().getTime()) Toast.makeText(getContext(), "Debes insertar una fecha válida", Toast.LENGTH_SHORT).show();
+                        else Toast.makeText(getContext(), "La fecha de regreso debe ser igual o mayor que la de inicio", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getContext(), "Debes rellenar todos los campos obligatorios", Toast.LENGTH_SHORT).show();
                 }

@@ -221,34 +221,40 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
                 });
 
                 //Delete On Click Listener
-                holder.deleteIcon.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                if(holder.publication.getUidUser().equals(uid)) {
 
-                        final ProgressDialog progressDialog = new ProgressDialog(context);
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        progressDialog.setCancelable(false);
-                        progressDialog.setMessage("Eliminando publicación...");
-                        progressDialog.show();
 
-                        firebaseDatabaseController.deletePublication(holder.publication.getId(), holder.publication.getUidUser(), new FirebaseDatabaseController.DeletePublicationResponse() {
-                            @Override
-                            public void success() {
-                                publicationIds.remove(holder.publication.getId());
-                                progressDialog.dismiss();
-                                Toast.makeText(context, "Publicación eliminada correctamente", Toast.LENGTH_SHORT).show();
-                                notifyDataSetChanged();
-                            }
+                    holder.deleteIcon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                            @Override
-                            public void error() {
-                                progressDialog.dismiss();
-                                Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
+                            final ProgressDialog progressDialog = new ProgressDialog(context);
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            progressDialog.setCancelable(false);
+                            progressDialog.setMessage("Eliminando publicación...");
+                            progressDialog.show();
+
+                            firebaseDatabaseController.deletePublication(holder.publication.getId(), holder.publication.getUidUser(), new FirebaseDatabaseController.DeletePublicationResponse() {
+                                @Override
+                                public void success() {
+                                    publicationIds.remove(holder.publication.getId());
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, "Publicación eliminada correctamente", Toast.LENGTH_SHORT).show();
+                                    notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void error() {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    holder.deleteIcon.setVisibility(View.GONE);
+                }
 
 
                 holder.progressBar.setVisibility(View.GONE);

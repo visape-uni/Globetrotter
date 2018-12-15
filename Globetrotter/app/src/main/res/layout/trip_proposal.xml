@@ -14,6 +14,16 @@
         android:layout_centerInParent="true"
         android:visibility="gone"/>
     <ImageView
+        android:id="@+id/ic_delete_publication"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_close"
+        android:tint="#aabbbbbb"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="2dp"/>
+    <ImageView
         android:id="@+id/userImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -94,5 +104,11 @@
         android:layout_below="@id/publicationTxt"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
+    <View
+        android:id="@+id/publicationSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#7aaa"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

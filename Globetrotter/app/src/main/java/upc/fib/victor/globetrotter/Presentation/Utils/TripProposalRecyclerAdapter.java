@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Presentation.Utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.storage.StorageReference;
 
@@ -29,6 +31,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
     private Context context;
     private FirebaseStorageController firebaseStorageController;
     private FirebaseDatabaseController firebaseDatabaseController;
+    private String uid;
 
     public static class TripProposalViewHolder extends RecyclerView.ViewHolder {
 
@@ -45,6 +48,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
         public TextView presupuestoTxt;
         public TextView dateTxt;
         public TripProposal tripProposal;
+        public ImageView deleteIcon;
 
         public TripProposalViewHolder(View itemView) {
             super(itemView);
@@ -59,15 +63,17 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
             dateTxt = itemView.findViewById(R.id.dateTxt);
             errorTxt = itemView.findViewById(R.id.errorTxt);
             progressBar = itemView.findViewById(R.id.publicationProgressBar);
+            deleteIcon = itemView.findViewById(R.id.ic_delete_publication);
         }
     }
 
 
-    public TripProposalRecyclerAdapter (Context context, ArrayList<String> idsTripProposals) {
+    public TripProposalRecyclerAdapter (Context context, ArrayList<String> idsTripProposals, String uid) {
         firebaseStorageController = FirebaseStorageController.getInstance();
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
         this.context = context;
         this.tripProposalsIds = idsTripProposals;
+        this.uid = uid;
     }
 
     @NonNull
@@ -91,6 +97,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
         holder.presupuestoTxt.setVisibility(View.GONE);
         holder.dateTxt.setVisibility(View.GONE);
         holder.errorTxt.setVisibility(View.GONE);
+        holder.deleteIcon.setVisibility(View.GONE);
 
 
         firebaseDatabaseController.getTripProposal(tripProposalsIds.get(position), new FirebaseDatabaseController.GetTripProposalResponse() {
@@ -106,6 +113,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
                                 .into(holder.userImage);
                     }
                 });
+
                 holder.userName.setText(holder.tripProposal.getUserName());
                 holder.countryTxt.setText(holder.tripProposal.getCountry());
 
@@ -124,6 +132,40 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
                 }
 
                 holder.dateTxt.setText(dateFormat.format(holder.tripProposal.getDate()));
+
+                if(holder.tripProposal.getUidUser().equals(uid)) {
+                    holder.deleteIcon.setVisibility(View.VISIBLE);
+                    holder.deleteIcon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            final ProgressDialog progressDialog = new ProgressDialog(context);
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            progressDialog.setCancelable(false);
+                            progressDialog.setMessage("Eliminando viaje...");
+                            progressDialog.show();
+
+                            firebaseDatabaseController.deleteTripProposal(holder.tripProposal.getId(), holder.tripProposal.getUidUser(), new FirebaseDatabaseController.DeletePublicationResponse() {
+                                @Override
+                                public void success() {
+                                    tripProposalsIds.remove(holder.tripProposal.getId());
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, "Propuesta de viaje eliminada", Toast.LENGTH_SHORT).show();
+                                    notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void error() {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, "Ha habido un error y no se ha podido eliminar", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    holder.deleteIcon.setVisibility(View.GONE);
+                }
 
 
                 holder.progressBar.setVisibility(View.GONE);

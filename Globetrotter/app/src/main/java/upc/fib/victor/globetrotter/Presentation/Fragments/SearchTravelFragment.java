@@ -9,11 +9,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -87,25 +89,30 @@ public class SearchTravelFragment extends Fragment {
             @Override
             public void success(ArrayList<String> idsPublications) {
                 idsTripProposals = idsPublications;
-                adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals);
+                adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals, uid);
                 recyclerView.setAdapter(adapter);
                 progressBar.setVisibility(View.GONE);
+                noResultsTxt.setVisibility(View.GONE);
             }
 
             @Override
             public void noPublications() {
-                adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals);
+                idsTripProposals = new ArrayList<>();
+                adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals, uid);
                 recyclerView.setAdapter(adapter);
+
                 progressBar.setVisibility(View.GONE);
                 noResultsTxt.setVisibility(View.VISIBLE);
-                noResultsTxt.setText("No hay publicaciones.");
+                noResultsTxt.setText("No se han encontrado resultados.");
                 noResultsTxt.setTextColor(Color.GRAY);
             }
 
             @Override
             public void error() {
-                adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals);
+                idsTripProposals = new ArrayList<>();
+                adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals, uid);
                 recyclerView.setAdapter(adapter);
+
                 progressBar.setVisibility(View.GONE);
                 noResultsTxt.setVisibility(View.VISIBLE);
                 noResultsTxt.setText("Error cargando las propuestas de viaje...");
@@ -125,6 +132,49 @@ public class SearchTravelFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
+                progressBar.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                noResultsTxt.setVisibility(View.GONE);
+
+                firebaseDatabaseController.searchTrip(query, new FirebaseDatabaseController.SearchTripProposalResponse() {
+                    @Override
+                    public void success(ArrayList<String> idTrips) {
+                        idsTripProposals = idTrips;
+                        adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals, uid);
+                        recyclerView.setAdapter(adapter);
+
+                        progressBar.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        noResultsTxt.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void noTrips() {
+                        idsTripProposals = new ArrayList<>();
+                        adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals, uid);
+                        recyclerView.setAdapter(adapter);
+                        recyclerView.setVisibility(View.GONE);
+
+                        progressBar.setVisibility(View.GONE);
+                        noResultsTxt.setVisibility(View.VISIBLE);
+                        noResultsTxt.setText("No se han encontrado resultados.");
+                        Toast.makeText(getContext(), "No se han encontrado resultados", Toast.LENGTH_LONG).show();
+                        noResultsTxt.setTextColor(Color.GRAY);
+                    }
+
+                    @Override
+                    public void error() {
+                        idsTripProposals = new ArrayList<>();
+
+                        adapter = new TripProposalRecyclerAdapter(getContext(), idsTripProposals, uid);
+                        recyclerView.setAdapter(adapter);
+                        progressBar.setVisibility(View.GONE);
+                        noResultsTxt.setVisibility(View.VISIBLE);
+                        noResultsTxt.setText("Error cargando las propuestas de viaje...");
+                        noResultsTxt.setTextColor(Color.GRAY);
+                    }
+                });
 
                 return false;
             }

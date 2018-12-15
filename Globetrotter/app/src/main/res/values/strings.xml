@@ -63,5 +63,6 @@
     <string name="fecha_de_inicio_del_viaje">Fecha de inicio del viaje</string>
     <string name="presupuesto_del_viaje">Presupuesto del viaje (Opcional)</string>
     <string name="breve_descripcion_del_viaje_opcional">Breve descripcion del viaje (Opcional)</string>
+    <string name="fecha_regreso">Fecha regreso:</string>
 
 </resources>

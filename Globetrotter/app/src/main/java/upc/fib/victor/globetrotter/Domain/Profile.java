@@ -114,7 +114,7 @@ public class Profile {
         return nombre + " " + apellidos;
     }
 
-    public String getNombreCompletoCapitar() {
+    public String getNombreCompletoCapital() {
         return nombre.toUpperCase() + " " + apellidos.toUpperCase();
     }
 }
