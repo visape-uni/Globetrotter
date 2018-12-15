@@ -89,6 +89,8 @@ public class WallFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         publicationIds = new ArrayList<>();
 
+        //TODO: PODER BORRAR SOLO MIS PUBLICACIONES
+
         firebaseDatabaseController.getIdsPublications(idUserWall, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
             @Override
             public void success(ArrayList<String> idsPublications) {
