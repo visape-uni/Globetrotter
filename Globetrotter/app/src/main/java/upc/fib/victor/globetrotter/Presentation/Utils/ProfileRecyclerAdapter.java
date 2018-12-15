@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,4 +87,13 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         return profiles.size();
     }
 
+    public void addItem (Profile profile) {
+        profiles.add(profile);
+        notifyDataSetChanged();
+    }
+
+    public void deleteItem (Profile profile) {
+        profiles.remove(profile);
+        notifyDataSetChanged();
+    }
 }

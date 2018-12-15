@@ -46,7 +46,6 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:tint="@color/colorWhite"
-            android:backgroundTint="@color/colorPrimary"
             app:backgroundTint="@color/colorPrimary"
             android:layout_margin="7dp"
             android:fitsSystemWindows="false"

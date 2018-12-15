@@ -23,6 +23,8 @@ import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.TripProposal;
+import upc.fib.victor.globetrotter.Presentation.Activities.SearchActivity;
+import upc.fib.victor.globetrotter.Presentation.Fragments.TripProposalFragment;
 import upc.fib.victor.globetrotter.R;
 
 public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripProposalRecyclerAdapter.TripProposalViewHolder> {
@@ -52,6 +54,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
 
         public TripProposalViewHolder(View itemView) {
             super(itemView);
+            tripProposalLayout = itemView.findViewById(R.id.proposalLayout);
             userImage = itemView.findViewById(R.id.userImage);
             userName = itemView.findViewById(R.id.userNameTxt);
             countryTxt = itemView.findViewById(R.id.countryTxt);
@@ -166,6 +169,15 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
                 } else {
                     holder.deleteIcon.setVisibility(View.GONE);
                 }
+
+                holder.tripProposalLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        TripProposalFragment tripFragment = TripProposalFragment.newInstance(holder.tripProposal.getId(), holder.tripProposal.getUidUser());
+                        SearchActivity activity = (SearchActivity) context;
+                        activity.showTrip(tripFragment);
+                    }
+                });
 
 
                 holder.progressBar.setVisibility(View.GONE);

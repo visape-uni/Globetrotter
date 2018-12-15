@@ -53,6 +53,108 @@ public class FirebaseDatabaseController {
         return instance;
     }
 
+    public void joinTrip (final String id, String uid, final JoinTripResponse joinTripResponse) {
+        final DocumentReference refProfileTrip = db.collection("perfiles").document(uid).collection("viajesAputnado").document(id);
+        DocumentReference refTrip = db.collection("propuestasViajes").document(id).collection("apuntados").document(uid);
+        Map<String, String> map = new HashMap<>();
+        map.put("ID Dueño", uid);
+        refTrip.set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Map<String,String> map1 = new HashMap<>();
+                map1.put("ID viaje", id);
+                refProfileTrip.set(map1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        joinTripResponse.success();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        joinTripResponse.error();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                joinTripResponse.error();
+            }
+        });
+    }
+
+    public void unjoinTrip (String id, String uid, final JoinTripResponse joinTripResponse) {
+        final DocumentReference refProfileTrip = db.collection("perfiles").document(uid).collection("viajesAputnado").document(id);
+        DocumentReference refTrip = db.collection("propuestasViajes").document(id).collection("apuntados").document(uid);
+
+        refTrip.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                refProfileTrip.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        joinTripResponse.success();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        joinTripResponse.error();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                joinTripResponse.error();
+            }
+        });
+    }
+
+    public void getMembersOfTrip (String id, final GetMembersOfTripResponse getMembersOfTripResponse) {
+        CollectionReference refTrip = db.collection("propuestasViajes").document(id).collection("apuntados");
+
+        refTrip.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().isEmpty()) getMembersOfTripResponse.noUsers();
+                    else {
+                        final List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                        String first = documents.get(0).getId();
+                        String last = documents.get(documents.size()-1).getId();
+
+                        final ArrayList<String> ids = new ArrayList<>();
+                        for (DocumentSnapshot doc : documents) {
+                            ids.add(doc.getId());
+                        }
+
+                        CollectionReference refProfiles = db.collection("perfiles");
+                        refProfiles.whereGreaterThanOrEqualTo("uid", first).whereLessThanOrEqualTo("uid", last).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                ArrayList<Profile> users = new ArrayList<>();
+                                for (QueryDocumentSnapshot documentAux : task.getResult()) {
+                                    if (ids.contains(documentAux.getId())) {
+                                        users.add(documentAux.toObject(Profile.class));
+                                    }
+                                }
+                                getMembersOfTripResponse.success(users);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                getMembersOfTripResponse.error();
+                            }
+                        });
+                    }
+                } else {
+                    getMembersOfTripResponse.error();
+                }
+            }
+        });
+    }
+
     public void searchTrip(String countryName, final SearchTripProposalResponse searchTripProposalResponse) {
         CollectionReference refTrips = db.collection("propuestasViajes");
 
@@ -914,6 +1016,12 @@ public class FirebaseDatabaseController {
         void error();
     }
 
+    public interface GetMembersOfTripResponse {
+        void success(ArrayList<Profile> members);
+        void noUsers();
+        void error();
+    }
+
     public interface SearchTripProposalResponse {
         void success(ArrayList<String> idTrips);
         void noTrips();
@@ -922,6 +1030,11 @@ public class FirebaseDatabaseController {
 
     public interface GetCountriesResponse {
         void success(HashMap<String, String> countries);
+        void error();
+    }
+
+    public interface JoinTripResponse {
+        void success();
         void error();
     }
 }

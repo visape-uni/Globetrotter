@@ -64,5 +64,11 @@
     <string name="presupuesto_del_viaje">Presupuesto del viaje (Opcional)</string>
     <string name="breve_descripcion_del_viaje_opcional">Breve descripcion del viaje (Opcional)</string>
     <string name="fecha_regreso">Fecha regreso:</string>
+    <string name="fecha_inicio_del_viaje">Fecha inicio del viaje:</string>
+    <string name="fecha_de_regreso">Fecha de regreso:</string>
+    <string name="presupuesto_del_viaje2">Presupuesto del viaje:</string>
+    <string name="join_trip">join trip</string>
+    <string name="unjoin_trip">unjoin trip</string>
+    <string name="a_n_no_hay_nadie_apuntado_s_el_primero">Aún no hay nadie apuntado. Sé el primero.</string>
 
 </resources>
