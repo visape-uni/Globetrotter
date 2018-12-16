@@ -283,9 +283,12 @@ public class TripProposalFragment extends Fragment {
                         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
                             @Override
                             public void success(Profile profile) {
-                                profiles.add(profile);
-                                adapter.addItem(profile);
-                                //TODO: MOSTRAR CUANDO SE AÑADE AL VIAJE EN LA LISTA
+                                int insertIndex = profiles.size();
+                                profiles.add(insertIndex, profile);
+                                adapter.notifyItemInserted(insertIndex);
+
+                                recyclerView.setVisibility(View.VISIBLE);
+                                noMembersTxt.setVisibility(View.GONE);
 
                                 Toast.makeText(getContext(), "Te has apuntado al viaje", Toast.LENGTH_LONG).show();
                                 menu.findItem(R.id.action_join_trip).setVisible(false);
@@ -319,8 +322,16 @@ public class TripProposalFragment extends Fragment {
                         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
                             @Override
                             public void success(Profile profile) {
-                                profiles.remove(profile);
-                                adapter.deleteItem(profile);
+                                int removeIndex = profiles.indexOf(profile);
+                                if(removeIndex != -1) {
+                                    profiles.remove(removeIndex);
+                                    adapter.notifyItemRemoved(removeIndex);
+                                }
+
+                                if (profiles.size() == 0) {
+                                    recyclerView.setVisibility(View.GONE);
+                                    noMembersTxt.setVisibility(View.VISIBLE);
+                                }
 
                                 Toast.makeText(getContext(), "Te has desapuntado del viaje", Toast.LENGTH_LONG).show();
                                 menu.findItem(R.id.action_join_trip).setVisible(true);

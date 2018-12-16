@@ -87,13 +87,4 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         return profiles.size();
     }
 
-    public void addItem (Profile profile) {
-        profiles.add(profile);
-        notifyDataSetChanged();
-    }
-
-    public void deleteItem (Profile profile) {
-        profiles.remove(profile);
-        notifyDataSetChanged();
-    }
 }
