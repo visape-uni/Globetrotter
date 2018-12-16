@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -70,6 +71,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
     private ImageView profileImg;
 
+    private TextInputLayout publicationLayout;
     private TextInputEditText publicationTxt;
     private FloatingActionButton publicateBtn;
 
@@ -297,6 +299,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                     seguirBtn.setVisibility(View.GONE);
                     dejarSeguirBtn.setVisibility(View.GONE);
                     editBtn.setVisibility(View.VISIBLE);
+
                 } else {
                     editBtn.setVisibility(View.GONE);
                     firebaseDatabaseController.isFollowing(uid, uidOwner, new FirebaseDatabaseController.IsFollowingResponse() {
@@ -321,6 +324,8 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                             follower = false;
                         }
                     });
+                    publicateBtn.setVisibility(View.GONE);
+                    publicationLayout.setVisibility(View.GONE);
                 }
 
                 nameTxt.setText(activityProfile.getNombreCompleto());
@@ -394,6 +399,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         seguidosLayout = findViewById(R.id.layout_seguidos);
         seguidoresLayout = findViewById(R.id.layout_seguidores);
         paisesLayout = findViewById(R.id.layout_paises);
+        publicationLayout = findViewById(R.id.textInputLayout);
     }
 
     private void bottomBar() {
