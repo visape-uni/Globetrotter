@@ -1,7 +1,11 @@
 package upc.fib.victor.globetrotter.Domain;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class Profile {
 
@@ -116,5 +120,21 @@ public class Profile {
 
     public String getNombreCompletoCapital() {
         return nombre.toUpperCase() + " " + apellidos.toUpperCase();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Profile profile = (Profile) o;
+        return numSeguidores == profile.numSeguidores &&
+                numSeguidos == profile.numSeguidos &&
+                numPaises == profile.numPaises &&
+                uid.equals(profile.getUid()) &&
+                nombre.equals(profile.getNombre()) &&
+                apellidos.equals(profile.getApellidos()) &&
+                descripcion.equals(profile.getDescripcion()) &&
+                nacimiento.equals(profile.getNacimiento()) &&
+                correo.equals(profile.getCorreo());
     }
 }

@@ -102,6 +102,8 @@ public class SearchUserFragment extends Fragment {
                         recyclerView.setVisibility(View.GONE);
                         noResultsTxt.setVisibility(View.VISIBLE);
 
+                        profiles = new ArrayList<>();
+
                         adapter = new ProfileRecyclerAdapter(getContext(), profiles);
                         recyclerView.setAdapter(adapter);
                     }
@@ -111,6 +113,8 @@ public class SearchUserFragment extends Fragment {
                         progressBar.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.GONE);
                         noResultsTxt.setVisibility(View.VISIBLE);
+
+                        profiles = new ArrayList<>();
 
                         adapter = new ProfileRecyclerAdapter(getContext(), profiles);
                         recyclerView.setAdapter(adapter);

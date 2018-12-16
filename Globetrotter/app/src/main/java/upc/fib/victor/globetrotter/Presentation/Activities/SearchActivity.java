@@ -15,6 +15,7 @@ import android.view.View;
 import upc.fib.victor.globetrotter.Presentation.Fragments.AddTripProposalFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.SearchTravelFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.SearchUserFragment;
+import upc.fib.victor.globetrotter.Presentation.Fragments.TripProposalFragment;
 import upc.fib.victor.globetrotter.R;
 
 public class SearchActivity extends AppCompatActivity implements SearchTravelFragment.OnFragmentInteractionListener {
@@ -76,10 +77,14 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
-            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-            profileIntent.putExtra("uidOwner", uid);
-            startActivity(profileIntent);
-            finish();
+            if (currentFragment.equals("addTrip") || currentFragment.equals("tripProposal")) {
+                fragmentManager.popBackStackImmediate();
+            } else {
+                Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                profileIntent.putExtra("uidOwner", uid);
+                startActivity(profileIntent);
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -88,7 +93,7 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        if (currentFragment.equals("addTrip")) {
+        if (currentFragment.equals("addTrip") || currentFragment.equals("tripProposal")) {
             fragmentManager.popBackStackImmediate();
         } else {
             Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
@@ -136,6 +141,11 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
     protected void displayFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         replaceFragment(contentResId, fragment, tag);
+    }
+
+    public void showTrip(TripProposalFragment tripProposalFragment) {
+        currentFragment = "tripProposal";
+        addFragment(R.id.frame_layout, tripProposalFragment, "tripProposal");
     }
 
     @Override
