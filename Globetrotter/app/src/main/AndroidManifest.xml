@@ -15,6 +15,10 @@
         android:roundIcon="@mipmap/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDbpsgSCgQRVdgn9qJmmickGwn54tXZsdQ" />
+
         <activity android:name=".Presentation.Activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,8 +35,9 @@
         <activity android:name=".Presentation.Activities.DiaryActivity" />
         <activity android:name=".Presentation.Activities.DiaryPageActivity" />
         <activity android:name=".Presentation.Activities.SearchActivity" />
-        <activity android:name=".Presentation.Activities.FollowersActivity"/>
-        <activity android:name=".Presentation.Activities.FollowingActivity"/>
+        <activity android:name=".Presentation.Activities.FollowersActivity" />
+        <activity android:name=".Presentation.Activities.FollowingActivity" />
+        <activity android:name=".Presentation.Activities.InterestPointActivity"></activity>
     </application>
 
 </manifest>

@@ -425,6 +425,13 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 finish();
             }
         });
+        recomendarImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent interesPointIntent = new Intent(getApplicationContext(), InterestPointActivity.class);
+                startActivity(interesPointIntent);
+            }
+        });
     }
 
     // adds the given fragment to the front of the fragment stack
