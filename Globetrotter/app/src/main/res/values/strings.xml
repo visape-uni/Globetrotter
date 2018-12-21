@@ -76,5 +76,9 @@
     <string name="tel_fonoLbl">Teléfono:</string>
     <string name="action_add_fav">action add fav</string>
     <string name="action_rmv_fav">action rmv fav</string>
+    <string name="recomendaciones">Recomendaciones</string>
+    <string name="recomendaciones_de_usuarios">Recomendaciones de usuarios</string>
+    <string name="mis_recomendaciones">Mis recomendaciones</string>
+    <string name="mis_puntos_de_inter_s">Mis puntos de interés</string>
 
 </resources>

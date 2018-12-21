@@ -2,23 +2,17 @@ package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
-import upc.fib.victor.globetrotter.Presentation.Fragments.AddTripProposalFragment;
-import upc.fib.victor.globetrotter.Presentation.Fragments.SearchTravelFragment;
-import upc.fib.victor.globetrotter.Presentation.Fragments.SearchUserFragment;
-import upc.fib.victor.globetrotter.Presentation.Fragments.TripProposalFragment;
+import upc.fib.victor.globetrotter.Presentation.Fragments.MyInterestPointsFragment;
 import upc.fib.victor.globetrotter.R;
 
-public class SearchActivity extends AppCompatActivity implements SearchTravelFragment.OnFragmentInteractionListener {
+public class RecommendationsActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
 
@@ -32,7 +26,7 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_recommendations);
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
@@ -48,11 +42,11 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
                     case 0:
-                        loadFragmentUser();
+                        loadFragmentRecommendations();
                         break;
 
                     case 1:
-                        loadFragmentTrip();
+                        loadFragmentMyInterestPoints();
                         break;
                 }
             }
@@ -68,21 +62,16 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
             }
         });
 
-
-        loadFragmentUser();
+        loadFragmentMyInterestPoints();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
-            if (currentFragment.equals("addTrip") || currentFragment.equals("tripProposal")) {
-                fragmentManager.popBackStackImmediate();
-            } else {
-                Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                profileIntent.putExtra("uidOwner", uid);
-                startActivity(profileIntent);
-                finish();
-            }
+        if (item.getItemId() == android.R.id.home) {
+            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+            profileIntent.putExtra("uidOwner", uid);
+            startActivity(profileIntent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -90,27 +79,22 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-        if (currentFragment.equals("addTrip") || currentFragment.equals("tripProposal")) {
-            fragmentManager.popBackStackImmediate();
-        } else {
-            Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-            profileIntent.putExtra("uidOwner", uid);
-            startActivity(profileIntent);
-            finish();
-        }
+        super.onBackPressed();
+        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+        profileIntent.putExtra("uidOwner", uid);
+        startActivity(profileIntent);
+        finish();
     }
 
-    private void loadFragmentUser() {
-        currentFragment = "searchUser";
-        fragment = SearchUserFragment.newInstance(uid);
-        displayFragment(R.id.frame_layout, fragment, "searchUser");
+    private void loadFragmentRecommendations() {
+        currentFragment = "recommendations";
+
     }
 
-    private void loadFragmentTrip() {
-        currentFragment = "searchTrip";
-        fragment = SearchTravelFragment.newInstance(uid);
-        displayFragment(R.id.frame_layout, fragment, "searchTrip");
+    private void loadFragmentMyInterestPoints() {
+        currentFragment = "myPoints";
+        fragment = MyInterestPointsFragment.newInstance(uid);
+        displayFragment(R.id.frame_layout, fragment, "myPoints");
     }
 
     private void findViews() {
@@ -137,16 +121,5 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
     protected void displayFragment(int contentResId, Fragment fragment, String tag) {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         replaceFragment(contentResId, fragment, tag);
-    }
-
-    public void showTrip(TripProposalFragment tripProposalFragment) {
-        currentFragment = "tripProposal";
-        addFragment(R.id.frame_layout, tripProposalFragment, "tripProposal");
-    }
-
-    @Override
-    public void onAddClicked(AddTripProposalFragment addTripProposalFragment) {
-        currentFragment = "addTrip";
-        addFragment(R.id.frame_layout, addTripProposalFragment, "addTrip");
     }
 }
