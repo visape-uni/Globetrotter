@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,7 @@ import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Presentation.Utils.RecommendationRecyclerAdapter;
 import upc.fib.victor.globetrotter.R;
 
-
-public class MyInterestPointsFragment extends Fragment {
+public class RecommendationsFragment extends Fragment {
 
     private String uid;
 
@@ -31,16 +29,16 @@ public class MyInterestPointsFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private RecommendationRecyclerAdapter adapter;
 
-    private ArrayList<String> idsInterestPoints;
+    private ArrayList<String> idsRecommendations;
 
     private FirebaseDatabaseController firebaseDatabaseController;
 
-    public MyInterestPointsFragment() {
+    public RecommendationsFragment() {
         // Required empty public constructor
     }
 
-    public static MyInterestPointsFragment newInstance(String idUser) {
-        MyInterestPointsFragment fragment = new MyInterestPointsFragment();
+    public static RecommendationsFragment newInstance(String idUser) {
+        RecommendationsFragment fragment = new RecommendationsFragment();
         Bundle args = new Bundle();
         args.putString("uid", idUser);
         fragment.setArguments(args);
@@ -60,27 +58,25 @@ public class MyInterestPointsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_my_interest_points, container, false);
+        View view =  inflater.inflate(R.layout.fragment_recommendations, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
-
         progressBar = view.findViewById(R.id.progressBar);
         errorTxt = view.findViewById(R.id.noResultsTxt);
 
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        idsInterestPoints = new ArrayList<>();
+        idsRecommendations = new ArrayList<>();
 
         progressBar.setVisibility(View.VISIBLE);
         errorTxt.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
 
-        firebaseDatabaseController.getIdsMyInterestPoints(uid, new FirebaseDatabaseController.GetIdsRecommendationsResponse() {
+        firebaseDatabaseController.getIdsRecommendations(uid, 20, "", new FirebaseDatabaseController.GetIdsRecommendationsResponse() {
             @Override
-            public void success(ArrayList<String> idsRecommendations) {
-                idsInterestPoints = idsRecommendations;
-
-                adapter = new RecommendationRecyclerAdapter(getContext(), idsInterestPoints, uid);
+            public void success(ArrayList<String> ids) {
+                idsRecommendations = ids;
+                adapter = new RecommendationRecyclerAdapter(getContext(), idsRecommendations, uid);
                 recyclerView.setAdapter(adapter);
 
                 progressBar.setVisibility(View.GONE);
@@ -90,9 +86,8 @@ public class MyInterestPointsFragment extends Fragment {
 
             @Override
             public void noRecommendations() {
-                Log.d("INTEREST", "FEFqweqweE");
-                idsInterestPoints = new ArrayList<>();
-                adapter = new RecommendationRecyclerAdapter(getContext(), idsInterestPoints, uid);
+                idsRecommendations = new ArrayList<>();
+                adapter = new RecommendationRecyclerAdapter(getContext(), idsRecommendations, uid);
                 recyclerView.setAdapter(adapter);
 
                 errorTxt.setText("No se han encontrado resultados.");
@@ -104,8 +99,8 @@ public class MyInterestPointsFragment extends Fragment {
 
             @Override
             public void error() {
-                idsInterestPoints = new ArrayList<>();
-                adapter = new RecommendationRecyclerAdapter(getContext(), idsInterestPoints, uid);
+                idsRecommendations = new ArrayList<>();
+                adapter = new RecommendationRecyclerAdapter(getContext(), idsRecommendations, uid);
                 recyclerView.setAdapter(adapter);
 
                 errorTxt.setText("Error obteniendo datos.");
@@ -117,7 +112,6 @@ public class MyInterestPointsFragment extends Fragment {
                 Toast.makeText(getContext(), "Error obteniendo datos, vuelve a intentarlo...", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         return view;
     }

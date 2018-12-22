@@ -5,7 +5,9 @@ import java.util.Date;
 public class Recommendation {
 
     private String idInterestPoint;
+    private String interesPointName;
     private String uid;
+    private String userName;
     private String comment;
     private Date date;
     private boolean visited;
@@ -13,9 +15,11 @@ public class Recommendation {
     public Recommendation() {
     }
 
-    public Recommendation(String idInterestPoint, String uid, String comment, Date date, boolean visited) {
+    public Recommendation(String idInterestPoint, String interesPointName, String uid, String userName, String comment, Date date, boolean visited) {
         this.idInterestPoint = idInterestPoint;
+        this.interesPointName = interesPointName;
         this.uid = uid;
+        this.userName = userName;
         this.comment = comment;
         this.date = date;
         this.visited = visited;
@@ -59,5 +63,21 @@ public class Recommendation {
 
     public void setVisited(boolean visited) {
         this.visited = visited;
+    }
+
+    public String getInteresPointName() {
+        return interesPointName;
+    }
+
+    public void setInteresPointName(String interesPointName) {
+        this.interesPointName = interesPointName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

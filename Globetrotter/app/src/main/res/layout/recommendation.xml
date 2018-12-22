@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:id="@+id/recommendationLayout"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
     <TextView
-        android:id="@+id/error"
+        android:id="@+id/errorTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/userImage"
@@ -29,7 +30,6 @@
         android:id="@+id/userNameTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="NOMBRE recomienda:"
         android:textSize="16dp"
         android:textColor="@color/colorBlack"
         android:layout_toRightOf="@id/userImage"
@@ -47,9 +47,9 @@
         android:id="@+id/commentTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/userImage"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_below="@id/placeNameTxt"
+        android:layout_toRightOf="@id/userImage"
+        android:layout_toEndOf="@id/userImage"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"/>
     <TextView

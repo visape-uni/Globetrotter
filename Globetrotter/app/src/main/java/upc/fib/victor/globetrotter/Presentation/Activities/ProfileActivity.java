@@ -428,8 +428,8 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         recomendarImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent interesPointIntent = new Intent(getApplicationContext(), InterestPointActivity.class);
-                startActivity(interesPointIntent);
+                Intent recommendationIntent = new Intent(getApplicationContext(), RecommendationsActivity.class);
+                startActivity(recommendationIntent);
             }
         });
     }
