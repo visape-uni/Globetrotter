@@ -33,6 +33,7 @@ import java.util.function.Consumer;
 import upc.fib.victor.globetrotter.Domain.DiaryPage;
 import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Domain.Publication;
+import upc.fib.victor.globetrotter.Domain.Recommendation;
 import upc.fib.victor.globetrotter.Domain.TripProposal;
 import upc.fib.victor.globetrotter.Presentation.Activities.FollowersActivity;
 
@@ -54,7 +55,7 @@ public class FirebaseDatabaseController {
     }
 
     public void joinTrip (final String id, String uid, final JoinTripResponse joinTripResponse) {
-        final DocumentReference refProfileTrip = db.collection("perfiles").document(uid).collection("viajesAputnado").document(id);
+        final DocumentReference refProfileTrip = db.collection("perfiles").document(uid).collection("viajesApuntado").document(id);
         DocumentReference refTrip = db.collection("propuestasViajes").document(id).collection("apuntados").document(uid);
         Map<String, String> map = new HashMap<>();
         map.put("ID Dueño", uid);
@@ -84,7 +85,7 @@ public class FirebaseDatabaseController {
     }
 
     public void unjoinTrip (String id, String uid, final JoinTripResponse joinTripResponse) {
-        final DocumentReference refProfileTrip = db.collection("perfiles").document(uid).collection("viajesAputnado").document(id);
+        final DocumentReference refProfileTrip = db.collection("perfiles").document(uid).collection("viajesApuntado").document(id);
         DocumentReference refTrip = db.collection("propuestasViajes").document(id).collection("apuntados").document(uid);
 
         refTrip.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -246,6 +247,180 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public void getIdsRecommendations (String uid, int limit, final String idRecomStart, final GetIdsRecommendationsResponse getIdsRecommendationsResponse) {
+        CollectionReference refRecommendations = db.collection("perfiles").document(uid).collection("recomendaciones");
+        if (idRecomStart.isEmpty()) {
+            refRecommendations.orderBy("Date", Query.Direction.DESCENDING).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> idsRecommendations = new ArrayList<>();
+                        if (task.getResult().isEmpty()) getIdsRecommendationsResponse.noRecommendations();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsRecommendations.add(document.getId());
+                            }
+                            getIdsRecommendationsResponse.success(idsRecommendations);
+                        }
+                    } else {
+                        getIdsRecommendationsResponse.error();
+                    }
+                }
+            });
+        } else {
+            refRecommendations.orderBy("Date", Query.Direction.DESCENDING).startAt(idRecomStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> idsRecommendations = new ArrayList<>();
+                        if (task.getResult().isEmpty()) getIdsRecommendationsResponse.noRecommendations();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsRecommendations.add(document.getId());
+                            }
+                            getIdsRecommendationsResponse.success(idsRecommendations);
+                        }
+                    } else {
+                        getIdsRecommendationsResponse.error();
+                    }
+                }
+            });
+        }
+    }
+
+    public void getRecommendation (String idRecommendation, final GetRecommendationResponse getRecommendationResponse) {
+        DocumentReference docRef = db.collection("recomendaciones").document(idRecommendation);
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                getRecommendationResponse.success(documentSnapshot.toObject(Recommendation.class));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                getRecommendationResponse.error(e.getMessage());
+            }
+        });
+    }
+
+    public void getIdsMyInterestPoints (String uid, final GetIdsRecommendationsResponse getIdsRecommendationsResponse) {
+        CollectionReference refInterest = db.collection("perfiles").document(uid).collection("misPuntosDeInteres");
+        refInterest.orderBy("date", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> idsPoints = new ArrayList<>();
+                    if (task.getResult().isEmpty()) getIdsRecommendationsResponse.noRecommendations();
+                    else {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            idsPoints.add(document.getId());
+                        }
+                        getIdsRecommendationsResponse.success(idsPoints);
+                    }
+                } else {
+                    getIdsRecommendationsResponse.error();
+                }
+            }
+        });
+    }
+
+    public void storeRecommendation (final Recommendation recommendation, final StoreRecommendationResponse storeRecommendationResponse) {
+
+
+        CollectionReference refUserFollowers = db.collection("perfiles").document(recommendation.getUid()).collection("seguidores");
+
+        final String id = recommendation.getUid().concat(recommendation.getIdInterestPoint());
+
+        final DocumentReference refInterestPoint = db.collection("perfiles").document(recommendation.getUid()).collection("misPuntosDeInteres").document(id);
+        final DocumentReference refRecommendation = db.collection("recomendaciones").document(id);
+
+        refUserFollowers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    refRecommendation.set(recommendation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            refInterestPoint.set(recommendation).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    storeRecommendationResponse.success();
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                setRelationRecommendation(document.getId(), id, recommendation.getDate().getTime());
+                                            }
+                                        }
+                                    }).start();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    storeRecommendationResponse.error();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            storeRecommendationResponse.error();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void deleteRecommendation (final String idPlace, String uidOwner, final DeleteRecommendationResponse deleteRecommendationResponse) {
+        CollectionReference refUsersFollowers = db.collection("perfiles").document(uidOwner).collection("seguidores");
+        final String idRecommendation = idPlace + uidOwner;
+        final DocumentReference refRecommendation = db.collection("recomendaciones").document(idRecommendation);
+        final DocumentReference refInterestPoint = db.collection("perfiles").document(uidOwner).collection("misPuntosDeInteres").document(idRecommendation);
+
+        refUsersFollowers.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
+                refRecommendation.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        refInterestPoint.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                deleteRecommendationResponse.success();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                            deleteRelationRecommendation(document.getId(), idRecommendation);
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                deleteRecommendationResponse.error();
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        deleteRecommendationResponse.error();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                deleteRecommendationResponse.error();
+            }
+        });
+    }
+
     public void getIdsProposals (int limit, String idPropStart, final GetIdsPublicationsResponse getIdsPublicationsResponse) {
         CollectionReference refProposals = db.collection("propuestasViajes");
         if (idPropStart.isEmpty()) {
@@ -338,17 +513,26 @@ public class FirebaseDatabaseController {
         refUserFollowers.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
-                refPublication.delete();
-                deletePublicationResponse.success();
-                //TODO: HACER ASYNCRON
-                new Thread(new Runnable() {
+                refPublication.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void run() {
-                        for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            deleteRelationPublication(document.getId(), idPublication);
-                        }
+                    public void onSuccess(Void aVoid) {
+                        deletePublicationResponse.success();
+                        //TODO: HACER ASYNCRON
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                    deleteRelationPublication(document.getId(), idPublication);
+                                }
+                            }
+                        }).start();
                     }
-                }).start();
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        deletePublicationResponse.error();
+                    }
+                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -356,6 +540,24 @@ public class FirebaseDatabaseController {
                 deletePublicationResponse.error();
             }
         });
+    }
+
+    private void setRelationRecommendation (String uidFollower, String idRecommendation, long date) {
+        Map<String, Long> mapRecommendation = new HashMap<>();
+        mapRecommendation.put("Date", date);
+        db.collection("perfiles")
+                .document(uidFollower)
+                .collection("recomendaciones")
+                .document(idRecommendation)
+                .set(mapRecommendation);
+    }
+
+    private void deleteRelationRecommendation (String uidFollower, String idRecommendation) {
+        db.collection("perfiles")
+                .document(uidFollower)
+                .collection("recomendaciones")
+                .document(idRecommendation)
+                .delete();
     }
 
     private void setRelationPublication(String uidFollower, String idPublication, String idOwner) {
@@ -602,6 +804,26 @@ public class FirebaseDatabaseController {
                 } else {
                     getFollowerUsersIdsResponse.error();
                 }
+            }
+        });
+    }
+
+    public void existsRecommendation(String uid, String idPlace, final ExistsRecommendationResponse existsRecommendationResponse) {
+        final DocumentReference refRecommendation = db.collection("perfiles").document(uid).collection("misPuntosDeInteres").document(uid.concat(idPlace));
+        refRecommendation.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    existsRecommendationResponse.exists();
+                }
+                else {
+                    existsRecommendationResponse.doNotExists();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                existsRecommendationResponse.error();
             }
         });
     }
@@ -931,11 +1153,23 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public interface ExistsRecommendationResponse {
+        void exists();
+        void doNotExists();
+        void error();
+    }
+
     public interface IsFollowingResponse {
         void itIsFollowing();
         void itIsNotFollowing();
         void error();
     }
+
+    public interface DeleteRecommendationResponse {
+        void success();
+        void error();
+    }
+
     public interface DeletePublicationResponse {
         void success();
         void error();
@@ -982,6 +1216,11 @@ public class FirebaseDatabaseController {
         void error();
     }
 
+    public interface StoreRecommendationResponse {
+        void success();
+        void error();
+    }
+
     public interface GetTripProposalResponse {
         void success(TripProposal tripProposal);
         void error(String message);
@@ -996,6 +1235,17 @@ public class FirebaseDatabaseController {
         void success(ArrayList<String> idsPublications);
         void noPublications();
         void error();
+    }
+
+    public interface GetIdsRecommendationsResponse {
+        void success(ArrayList<String> idsRecommendations);
+        void noRecommendations();
+        void error();
+    }
+
+    public interface GetRecommendationResponse {
+        void success(Recommendation recommendation);
+        void error (String message);
     }
 
     public interface GetProfileIdsResponse {

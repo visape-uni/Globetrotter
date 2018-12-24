@@ -70,5 +70,17 @@
     <string name="join_trip">join trip</string>
     <string name="unjoin_trip">unjoin trip</string>
     <string name="a_n_no_hay_nadie_apuntado_s_el_primero">Aún no hay nadie apuntado. Sé el primero.</string>
+    <string name="direcci_n">Dirección:</string>
+    <string name="n_mero_de_tel_fono_lbl">Número de teléfono:</string>
+    <string name="p_gina_webLbl">Página web:</string>
+    <string name="tel_fonoLbl">Teléfono:</string>
+    <string name="action_add_fav">action add fav</string>
+    <string name="action_rmv_fav">action rmv fav</string>
+    <string name="recomendaciones">Recomendaciones</string>
+    <string name="recomendaciones_de_usuarios">Recomendaciones de usuarios</string>
+    <string name="mis_recomendaciones">Mis recomendaciones</string>
+    <string name="mis_puntos_de_inter_s">Mis puntos de interés</string>
+    <string name="action_add_recommendation">action_add_recommendation</string>
+    <string name="introduce_un_mensaje_para_la_recomendaci_n_a_tus_seguidores">Introduce un mensaje para la recomendación a tus seguidores:</string>
 
 </resources>

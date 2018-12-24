@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recommendationLayout"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/errorTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userImage"
+        android:layout_margin="5dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+    <ProgressBar
+        android:id="@+id/recommendationProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/userImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/border_image"
+        android:src="@drawable/silueta"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/userNameTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:textColor="@color/colorBlack"
+        android:layout_toRightOf="@id/userImage"
+        android:layout_toEndOf="@id/userImage"
+        android:layout_alignTop="@id/userImage"/>
+    <TextView
+        android:id="@+id/placeNameTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:layout_below="@id/userNameTxt"
+        android:layout_toRightOf="@id/userImage"
+        android:layout_toEndOf="@id/userImage" />
+    <TextView
+        android:id="@+id/commentTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/placeNameTxt"
+        android:layout_toRightOf="@id/userImage"
+        android:layout_toEndOf="@id/userImage"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"/>
+    <TextView
+        android:id="@+id/dateTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#aaa"
+        android:textSize="13sp"
+        android:layout_margin="5dp"
+        android:layout_below="@id/commentTxt"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

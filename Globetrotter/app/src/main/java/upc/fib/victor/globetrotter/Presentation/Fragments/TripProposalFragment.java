@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Presentation.Fragments;
 
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +31,7 @@ import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Domain.TripProposal;
+import upc.fib.victor.globetrotter.Presentation.Activities.ProfileActivity;
 import upc.fib.victor.globetrotter.Presentation.Utils.ProfileRecyclerAdapter;
 import upc.fib.victor.globetrotter.R;
 
@@ -58,6 +61,8 @@ public class TripProposalFragment extends Fragment {
 
     private ProgressBar progressBar;
     private ProgressBar progressBarMembers;
+
+    private LinearLayout userLayout;
 
     private TextView noMembersTxt;
 
@@ -119,6 +124,7 @@ public class TripProposalFragment extends Fragment {
         comentarioTxt = view.findViewById(R.id.comentarioTxt);
         progressBarMembers = view.findViewById(R.id.progressBarMembers);
         noMembersTxt = view.findViewById(R.id.noMembersTxt);
+        userLayout = view.findViewById(R.id.userLayout);
 
         recyclerView = view.findViewById(R.id.recycler_view);
 
@@ -171,7 +177,7 @@ public class TripProposalFragment extends Fragment {
                 if(tripProposal.getBudget() == -1) {
                      presupuestoTxt.setText("No calculado...");
                 } else {
-                    presupuestoTxt.setText(String.valueOf(tripProposal.getBudget()));
+                    presupuestoTxt.setText(String.valueOf(tripProposal.getBudget() + "€"));
                 }
 
                 if(tripProposal.getMessage().isEmpty()) {
@@ -249,6 +255,14 @@ public class TripProposalFragment extends Fragment {
             }
         });
 
+        userLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+                profileIntent.putExtra("uidOwner", tripProposal.getUidUser());
+                startActivity(profileIntent);
+            }
+        });
 
 
         return view;
