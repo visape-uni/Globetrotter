@@ -6,8 +6,10 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -27,6 +29,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +37,7 @@ import android.widget.Toast;
 
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -92,11 +96,15 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     private Fragment fragment;
     protected FragmentManager fragmentManager;
 
+    private ImageButton pictureBtn;
+
     private boolean follower;
 
     private FirebaseDatabaseController firebaseDatabaseController;
     private FirebaseAuthenticationController firebaseAuthenticationController;
     private FirebaseStorageController firebaseStorageController;
+
+    private final int PICK_IMAGE_REQUEST = 71;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +179,13 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 } else {
                     Toast.makeText(getApplicationContext(), "No has escrito nada", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        pictureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadPicture();
             }
         });
 
@@ -288,6 +303,85 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         displayFragment(R.id.frame_layout, fragment, "wall");
     }
 
+    private void uploadPicture() {
+        Intent photoPickerIntent = new Intent();
+        photoPickerIntent.setType("image/*");
+        photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(photoPickerIntent, "Elige una foto"), PICK_IMAGE_REQUEST);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_REQUEST
+                && data != null && data.getData() != null) {
+            try {
+                final Uri imageUri = data.getData();
+
+                final Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Subiendo...");
+                progressDialog.show();
+
+
+                final String content = publicationTxt.getText().toString().trim();
+                publicationTxt.setText("");
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(publicationTxt.getWindowToken(), 0);
+                firebaseDatabaseController.getUserName(uid, new FirebaseDatabaseController.GetUserNameResponse() {
+                    @Override
+                    public void success(String userName) {
+                        firebaseDatabaseController.storePublicationWithPicture(new Publication(uid, userName, content, Calendar.getInstance().getTime(), true), new FirebaseDatabaseController.StorePublicationWithPictureResponse() {
+                            @Override
+                            public void success(String id) {
+                                firebaseStorageController.uploadPublicationImage(imageUri, id, new FirebaseStorageController.UploadImageResponse() {
+                                    @Override
+                                    public void success() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(), "Foto subida", Toast.LENGTH_SHORT).show();
+
+                                        loadFragment();
+                                    }
+
+                                    @Override
+                                    public void progress(String message) {
+                                        progressDialog.setMessage(message);
+                                    }
+
+                                    @Override
+                                    public void error(String message) {
+                                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void error() {
+                                //Error publicating
+                                Toast.makeText(getApplicationContext(), "No se ha podido publicar, pruebe más tarde", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void error() {
+                        //Error getting userName
+                        Toast.makeText(getApplicationContext(), "No se ha podido publicar, pruebe más tarde", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Ha sucedido un error, pruebe más tarde", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "No has seleccionado ninguna imagen", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void getProfileAndDisplay(final String id) {
 
         firebaseDatabaseController.getProfile(id, new FirebaseDatabaseController.GetProfileResponse() {
@@ -400,6 +494,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         seguidoresLayout = findViewById(R.id.layout_seguidores);
         paisesLayout = findViewById(R.id.layout_paises);
         publicationLayout = findViewById(R.id.textInputLayout);
+        pictureBtn = findViewById(R.id.pictureBtn);
     }
 
     private void bottomBar() {
@@ -478,6 +573,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 nameTxt.setVisibility(View.GONE);
                 nameTxt2.setVisibility(View.VISIBLE);
                 firstCardView.setCardBackgroundColor(getResources().getColor(R.color.colorCardViewAnimation));
+                pictureBtn.setBackgroundColor(getResources().getColor(R.color.colorCardViewAnimation));
                 arrowImg.setVisibility(View.VISIBLE);
             }
         }, 450);

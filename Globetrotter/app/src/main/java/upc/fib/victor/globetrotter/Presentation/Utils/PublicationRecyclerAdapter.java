@@ -55,6 +55,7 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
         public TextView dateTxt;
         public TextView likesTxt;
         public TextView commentsTxt;
+        public ImageView publicationImg;
 
 
         public RecyclerView commentsRecycledView;
@@ -78,6 +79,7 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
             dateTxt = itemView.findViewById(R.id.dateTxt);
             likesTxt = itemView.findViewById(R.id.likesTxt);
             commentsTxt = itemView.findViewById(R.id.comentariosTxt);
+            publicationImg = itemView.findViewById(R.id.publicationImg);
             publication = new Publication();
 
             deleteIcon.setClickable(true);
@@ -145,6 +147,17 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
                                 .into(holder.userImg);
                     }
                 });
+
+                if (holder.publication.getHasImg() != null && holder.publication.getHasImg()) {
+                    firebaseStorageController.loadImageToView("publication/" + holder.publication.getId() + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                        @Override
+                        public void load(StorageReference ref) {
+                            GlideApp.with(context)
+                                    .load(ref)
+                                    .into(holder.publicationImg);
+                        }
+                    });
+                }
 
                 holder.userNameTxt.setText(holder.publication.getUserName());
                 holder.publicationTxt.setText(holder.publication.getMessage());
@@ -223,7 +236,6 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
                 //Delete On Click Listener
                 if(holder.publication.getUidUser().equals(uid)) {
 
-
                     holder.deleteIcon.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -235,21 +247,51 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
                             progressDialog.setMessage("Eliminando publicación...");
                             progressDialog.show();
 
-                            firebaseDatabaseController.deletePublication(holder.publication.getId(), holder.publication.getUidUser(), new FirebaseDatabaseController.DeletePublicationResponse() {
-                                @Override
-                                public void success() {
-                                    publicationIds.remove(holder.publication.getId());
-                                    progressDialog.dismiss();
-                                    Toast.makeText(context, "Publicación eliminada correctamente", Toast.LENGTH_SHORT).show();
-                                    notifyDataSetChanged();
-                                }
+                            if (holder.publication.getHasImg() != null && holder.publication.getHasImg()) {
+                                firebaseStorageController.deletePublicationImage(holder.publication.getId(), new FirebaseStorageController.DeleteImageResponse() {
+                                    @Override
+                                    public void success() {
+                                        firebaseDatabaseController.deletePublication(holder.publication.getId(), holder.publication.getUidUser(), new FirebaseDatabaseController.DeletePublicationResponse() {
+                                            @Override
+                                            public void success() {
+                                                holder.publicationImg.setImageDrawable(null);
+                                                publicationIds.remove(holder.publication.getId());
+                                                progressDialog.dismiss();
+                                                Toast.makeText(context, "Publicación eliminada correctamente", Toast.LENGTH_SHORT).show();
+                                                notifyDataSetChanged();
+                                            }
 
-                                @Override
-                                public void error() {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                                            @Override
+                                            public void error() {
+                                                progressDialog.dismiss();
+                                                Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void error(String message) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                firebaseDatabaseController.deletePublication(holder.publication.getId(), holder.publication.getUidUser(), new FirebaseDatabaseController.DeletePublicationResponse() {
+                                    @Override
+                                    public void success() {
+                                        publicationIds.remove(holder.publication.getId());
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, "Publicación eliminada correctamente", Toast.LENGTH_SHORT).show();
+                                        notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void error() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                         }
                     });
                 } else {

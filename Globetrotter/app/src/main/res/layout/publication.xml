@@ -48,11 +48,18 @@
         android:layout_toEndOf="@+id/userImage"
         android:layout_alignTop="@id/userImage"
         android:layout_marginTop="17dp"/>
+    <ImageView
+        android:id="@+id/publicationImg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/userImage"
+        android:layout_margin="10dp"/>
     <TextView
         android:id="@+id/publicationTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/userImage"
+        android:layout_below="@id/publicationImg"
         android:textSize="16sp"
         android:textColor="@color/colorPublicationText"
         android:layout_marginLeft="10dp"

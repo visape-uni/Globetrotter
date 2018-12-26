@@ -9,6 +9,7 @@ public class Publication {
     private String uidUser;
     private String userName;
     private Date date;
+    private Boolean hasImg;
     private ArrayList<String> answers;
     private ArrayList<String> uidLikes;
 
@@ -20,6 +21,16 @@ public class Publication {
         this.uidUser = uidUser;
         this.userName = userName;
         this.date = date;
+        answers = new ArrayList<>();
+        uidLikes = new ArrayList<>();
+    }
+
+    public Publication(String uidUser, String userName, String message,Date date, Boolean hasImg) {
+        this.message = message;
+        this.uidUser = uidUser;
+        this.userName = userName;
+        this.date = date;
+        this.hasImg = hasImg;
         answers = new ArrayList<>();
         uidLikes = new ArrayList<>();
     }
@@ -100,5 +111,13 @@ public class Publication {
 
     public void removeLike(String uid) {
         uidLikes.remove(uid);
+    }
+
+    public Boolean getHasImg() {
+        return hasImg;
+    }
+
+    public void setHasImg(Boolean hasImg) {
+        this.hasImg = hasImg;
     }
 }
