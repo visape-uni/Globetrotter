@@ -294,7 +294,8 @@ public class FirebaseDatabaseController {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                getRecommendationResponse.success(documentSnapshot.toObject(Recommendation.class));
+                if (documentSnapshot.exists())  getRecommendationResponse.success(documentSnapshot.toObject(Recommendation.class));
+                else getRecommendationResponse.noRecommendation();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -326,7 +327,6 @@ public class FirebaseDatabaseController {
     }
 
     public void storeRecommendation (final Recommendation recommendation, final StoreRecommendationResponse storeRecommendationResponse) {
-
 
         CollectionReference refUserFollowers = db.collection("perfiles").document(recommendation.getUid()).collection("seguidores");
 
@@ -376,7 +376,7 @@ public class FirebaseDatabaseController {
 
     public void deleteRecommendation (final String idPlace, String uidOwner, final DeleteRecommendationResponse deleteRecommendationResponse) {
         CollectionReference refUsersFollowers = db.collection("perfiles").document(uidOwner).collection("seguidores");
-        final String idRecommendation = idPlace + uidOwner;
+        final String idRecommendation = uidOwner.concat(idPlace);
         final DocumentReference refRecommendation = db.collection("recomendaciones").document(idRecommendation);
         final DocumentReference refInterestPoint = db.collection("perfiles").document(uidOwner).collection("misPuntosDeInteres").document(idRecommendation);
 
@@ -1245,6 +1245,7 @@ public class FirebaseDatabaseController {
 
     public interface GetRecommendationResponse {
         void success(Recommendation recommendation);
+        void noRecommendation();
         void error (String message);
     }
 

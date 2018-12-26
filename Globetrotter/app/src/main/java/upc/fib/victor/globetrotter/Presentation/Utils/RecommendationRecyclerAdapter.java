@@ -1,6 +1,7 @@
 package upc.fib.victor.globetrotter.Presentation.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +24,7 @@ import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.Recommendation;
+import upc.fib.victor.globetrotter.Presentation.Activities.InterestPointActivity;
 import upc.fib.victor.globetrotter.R;
 
 public class RecommendationRecyclerAdapter extends  RecyclerView.Adapter<RecommendationRecyclerAdapter.RecommendationViewHolder> {
@@ -118,8 +120,19 @@ public class RecommendationRecyclerAdapter extends  RecyclerView.Adapter<Recomme
                     @Override
                     public void onClick(View view) {
                         //TODO: mostrar recomendacion
+                        Intent interestPointIntent = new Intent(context, InterestPointActivity.class);
+                        interestPointIntent.putExtra("uid", holder.recommendation.getUid());
+                        interestPointIntent.putExtra("idPlace", holder.recommendation.getIdInterestPoint());
+                        context.startActivity(interestPointIntent);
                     }
                 });
+            }
+
+            @Override
+            public void noRecommendation() {
+                holder.progressBar.setVisibility(View.GONE);
+                holder.errorTxt.setVisibility(View.VISIBLE);
+                holder.errorTxt.setText("Error obteniendo la recomendación");
             }
 
             @Override
