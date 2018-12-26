@@ -271,7 +271,7 @@ public class InterestPointActivity extends AppCompatActivity implements OnMapRea
 
         builder.setView(v);
 
-        final EditText commentTxt = v.findViewById(R.id.editText);
+        final EditText commentEditTxt = v.findViewById(R.id.editText);
         final CheckBox visitedCheckBox = v.findViewById(R.id.visitedCheckbox);
         Button aceptarBtn = v.findViewById(R.id.aceptarBtn);
         Button cancelarBtn = v.findViewById(R.id.cancelBtn);
@@ -286,13 +286,21 @@ public class InterestPointActivity extends AppCompatActivity implements OnMapRea
                     firebaseDatabaseController.getUserName(uid, new FirebaseDatabaseController.GetUserNameResponse() {
                         @Override
                         public void success(String userName) {
-                            Recommendation recommendation = new Recommendation(place.getId(), place.getName().toString(), uid, userName, commentTxt.getText().toString(), Calendar.getInstance().getTime(),visitedCheckBox.isChecked());
+                            Recommendation recommendation = new Recommendation(place.getId(), place.getName().toString(), uid, userName, commentEditTxt.getText().toString(), Calendar.getInstance().getTime(),visitedCheckBox.isChecked());
                             firebaseDatabaseController.storeRecommendation(recommendation, new FirebaseDatabaseController.StoreRecommendationResponse() {
                                 @Override
                                 public void success() {
                                     Toast.makeText(getApplicationContext(), "Recomendación creada correctamente", Toast.LENGTH_LONG).show();
                                     menu.findItem(R.id.action_add_fav).setVisible(false);
                                     menu.findItem(R.id.action_rmv_fav).setVisible(true);
+
+                                    if (commentEditTxt.getText().toString().isEmpty()) {
+                                        commentTxt.setText("El usuario no ha añadido comentario");
+                                    } else {
+                                        commentTxt.setText(commentEditTxt.getText());
+                                    }
+                                    commentTxt.setVisibility(View.VISIBLE);
+                                    commentLbl.setVisibility(View.VISIBLE);
                                 }
 
                                 @Override
@@ -398,7 +406,7 @@ public class InterestPointActivity extends AppCompatActivity implements OnMapRea
                             websiteTxt.setText(place.getWebsiteUri().toString());
                         }
                         if (recommendation.getComment() == null || recommendation.getComment().isEmpty()) {
-                            commentTxt.setText("No hay comentario");
+                            commentTxt.setText("El usuario no ha añadido comentario");
                         } else {
                             commentTxt.setText(recommendation.getComment());
                         }
