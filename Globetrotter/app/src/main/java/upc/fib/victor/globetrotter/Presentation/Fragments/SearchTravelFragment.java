@@ -84,7 +84,6 @@ public class SearchTravelFragment extends Fragment {
         searchView.setIconifiedByDefault(false);
         searchView.setQueryHint("Escribe el país");
 
-        //TODO: OBTENER LOS IDS ORDENADOS
         firebaseDatabaseController.getIdsProposals(20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
             @Override
             public void success(ArrayList<String> idsPublications) {
@@ -128,7 +127,6 @@ public class SearchTravelFragment extends Fragment {
             }
         });
 
-        //TODO: setOnQueryTextListener get proposals searched
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -208,7 +206,6 @@ public class SearchTravelFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onAddClicked(AddTripProposalFragment addTripProposalFragment);
     }
 }

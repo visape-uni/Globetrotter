@@ -481,7 +481,6 @@ public class FirebaseDatabaseController {
 
                             storePublicationWithPicture.success(id);
 
-                            //TODO: HACER ASYNCRON
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -524,7 +523,6 @@ public class FirebaseDatabaseController {
 
                             storePublicationResponse.success();
 
-                            //TODO: HACER ASYNCRON
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -560,7 +558,7 @@ public class FirebaseDatabaseController {
                     @Override
                     public void onSuccess(Void aVoid) {
                         deletePublicationResponse.success();
-                        //TODO: HACER ASYNCRON
+
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
