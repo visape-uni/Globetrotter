@@ -62,6 +62,51 @@ public class FirebaseStorageController {
         }
     }
 
+    public void uploadPublicationImage (Uri uri, String id, final UploadImageResponse uploadImageResponse) {
+        if (uri != null) {
+            String profileImagePath = "publication/" + id + ".jpg";
+            StorageReference ref = storageRef.child(profileImagePath);
+
+            ref.putFile(uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            uploadImageResponse.success();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            uploadImageResponse.error("Error " + e.getMessage());
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+                            uploadImageResponse.progress("Subiendo " + (int) progress + "%");
+                        }
+                    });
+        }
+    }
+
+    public void deletePublicationImage (String id, final DeleteImageResponse deleteImageResponse) {
+        String profileImagePath = "publication/" + id + ".jpg";
+        StorageReference ref = storageRef.child(profileImagePath);
+
+        ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                deleteImageResponse.success();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                deleteImageResponse.error("Error eliminando la imagen");
+            }
+        });
+    }
+
     public void getImageLocal(String path, final GetImageLocalResponse getImageResponse) {
         StorageReference ref = storageRef.child(path);
 
@@ -112,6 +157,11 @@ public class FirebaseStorageController {
     public void loadImageToView(String path, GetImageResponse getImageResponse) {
         StorageReference ref = storageRef.child(path);
         getImageResponse.load(ref);
+    }
+
+    public interface DeleteImageResponse {
+        void success();
+        void error(String message);
     }
 
     public interface UploadImageResponse {

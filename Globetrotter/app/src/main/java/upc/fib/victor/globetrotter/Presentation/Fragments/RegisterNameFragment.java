@@ -90,7 +90,6 @@ public class RegisterNameFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onSetNombreApellidos(String nombre, String apellidos);
     }
 }

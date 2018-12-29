@@ -261,7 +261,6 @@ public class EditProfileActivity extends AppCompatActivity {
                             intent.putExtra("uidOwner", uid);
                             startActivity(intent);
                             finish();
-                            //TODO: EVITAR TENER MAS DE 1 INSTANCIA DE PROFILE ACTIVITY Y SOBRETODO HACER QUE SE MUESTREN LOS CAMBIOS!
                         }
 
                         @Override

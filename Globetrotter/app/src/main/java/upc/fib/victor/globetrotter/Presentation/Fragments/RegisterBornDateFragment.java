@@ -105,7 +105,6 @@ public class RegisterBornDateFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onSetNacimiento(Date date);
     }
 

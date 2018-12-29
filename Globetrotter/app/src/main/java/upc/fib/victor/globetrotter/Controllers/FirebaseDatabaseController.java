@@ -462,6 +462,48 @@ public class FirebaseDatabaseController {
         }
     }
 
+    public void storePublicationWithPicture (final Publication publication, final StorePublicationWithPictureResponse storePublicationWithPicture) {
+        final CollectionReference refUserFollowers = db.collection("perfiles").document(publication.getUidUser()).collection("seguidores");
+
+        DocumentReference refPublicationAux = db.collection("publicaciones").document();
+
+        final String id = publication.getDate().getTime() + refPublicationAux.getId() ;
+        publication.setId(id);
+        final DocumentReference refPublication = db.collection("publicaciones").document(id);
+
+        refUserFollowers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    refPublication.set(publication).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+                            storePublicationWithPicture.success(id);
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        setRelationPublication(document.getId(), publication.getId(), publication.getUidUser());
+                                    }
+                                }
+                            }).start();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("DEBUG: ", e.toString());
+                            storePublicationWithPicture.error();
+                        }
+                    });
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
     public void storePublication(final Publication publication, final StorePublicationResponse storePublicationResponse) {
         final CollectionReference refUserFollowers = db.collection("perfiles").document(publication.getUidUser()).collection("seguidores");
 
@@ -481,7 +523,6 @@ public class FirebaseDatabaseController {
 
                             storePublicationResponse.success();
 
-                            //TODO: HACER ASYNCRON
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -517,7 +558,7 @@ public class FirebaseDatabaseController {
                     @Override
                     public void onSuccess(Void aVoid) {
                         deletePublicationResponse.success();
-                        //TODO: HACER ASYNCRON
+
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -1213,6 +1254,11 @@ public class FirebaseDatabaseController {
 
     public interface StorePublicationResponse {
         void success();
+        void error();
+    }
+
+    public interface StorePublicationWithPictureResponse {
+        void success(String id);
         void error();
     }
 

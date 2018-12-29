@@ -119,7 +119,6 @@ public class RecommendationRecyclerAdapter extends  RecyclerView.Adapter<Recomme
                 holder.recommendationLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //TODO: mostrar recomendacion
                         Intent interestPointIntent = new Intent(context, InterestPointActivity.class);
                         interestPointIntent.putExtra("uid", holder.recommendation.getUid());
                         interestPointIntent.putExtra("idPlace", holder.recommendation.getIdInterestPoint());

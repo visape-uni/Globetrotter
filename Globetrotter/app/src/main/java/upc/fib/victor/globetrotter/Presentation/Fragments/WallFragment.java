@@ -89,13 +89,8 @@ public class WallFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         publicationIds = new ArrayList<>();
 
-
-        //TODO: SOLUCIONAR -> E/RecyclerView: No adapter attached; skipping layout!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //TODO: SIRVE ESTO?
         mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
         mRecyclerView.setAdapter(mAdapter);
-
-        //TODO: PODER BORRAR SOLO MIS PUBLICACIONES
 
         firebaseDatabaseController.getIdsPublications(idUserWall, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
             @Override

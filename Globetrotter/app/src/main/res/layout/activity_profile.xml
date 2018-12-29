@@ -177,6 +177,15 @@
                         android:textColor="@color/colorBlack" />
                 </LinearLayout>
             </LinearLayout>
+            <ImageButton
+                android:id="@+id/pictureBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_img"
+                android:backgroundTint="@color/colorWhite"
+                android:layout_alignBottom="@id/send_btn"
+                android:layout_toLeftOf="@id/send_btn"
+                android:layout_toStartOf="@id/send_btn"/>
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/textInputLayout"
                 android:layout_width="match_parent"
@@ -184,8 +193,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/layout_user_info"
-                android:layout_toLeftOf="@+id/send_btn"
-                android:layout_toStartOf="@+id/send_btn"
+                android:layout_toLeftOf="@+id/pictureBtn"
+                android:layout_toStartOf="@+id/pictureBtn"
                 android:layout_marginLeft="5dp"
                 android:focusable="true"
                 android:focusedByDefault="true"
@@ -195,7 +204,7 @@
                     android:id="@+id/publication_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/escribe_una_publicaci_n"/>
+                    android:hint="@string/escribe_una_publicaci_n" />
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/send_btn"
