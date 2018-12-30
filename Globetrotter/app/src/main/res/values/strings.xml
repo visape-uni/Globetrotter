@@ -80,5 +80,12 @@
     <string name="mis_puntos_de_inter_s">Mis puntos de interés</string>
     <string name="action_add_recommendation">action_add_recommendation</string>
     <string name="introduce_un_mensaje_para_la_recomendaci_n_a_tus_seguidores">Introduce un mensaje para la recomendación a tus seguidores:</string>
+    <string name="m_todo_de_contacto">Método de contacto:</string>
+    <string name="m_vil">Móvil</string>
+    <string name="n_mero_de_tel_fono">Número de teléfono</string>
+    <string name="direcci_n_de_correo_electr_nico">Dirección de correo electrónico</string>
+    <string name="direcci_n_email">Dirección email:</string>
+    <string name="n_m_tel_fono">Núm. Teléfono:</string>
+    <string name="contacto">Contacto:</string>
 
 </resources>

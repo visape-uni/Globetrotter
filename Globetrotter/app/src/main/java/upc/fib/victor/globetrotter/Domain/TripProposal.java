@@ -13,10 +13,11 @@ public class TripProposal {
     private Date endDate;
     private int budget;
     private String country;
+    private String contact;
 
     public TripProposal(){}
 
-    public TripProposal(String message, String uidUser, String userName, Date date, Date iniDate, Date endDate, int budget, String country) {
+    public TripProposal(String message, String uidUser, String userName, Date date, Date iniDate, Date endDate, int budget, String country, String contact) {
         this.message = message;
         this.uidUser = uidUser;
         this.userName = userName;
@@ -25,6 +26,7 @@ public class TripProposal {
         this.endDate = endDate;
         this.budget = budget;
         this.country = country;
+        this.contact = contact;
     }
 
     public TripProposal(String id, String message, String uidUser, String userName, Date date, Date iniDate, Date endDate, int budget, String country) {
@@ -113,6 +115,14 @@ public class TripProposal {
 
     public String getPaisCapital() {
         return country.toUpperCase();
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     public long getDuration() {

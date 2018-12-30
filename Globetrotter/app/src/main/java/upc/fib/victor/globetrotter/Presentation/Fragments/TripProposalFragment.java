@@ -52,12 +52,14 @@ public class TripProposalFragment extends Fragment {
     private TextView fechaInicioLbl;
     private TextView fechaRegresoLbl;
     private TextView presupuestoLbl;
+    private TextView contactLbl;
 
     private TextView userNameTxt;
     private TextView countryTxt;
     private TextView fechaInicioTxt;
     private TextView fechaRegresoTxt;
     private TextView presupuestoTxt;
+    private TextView contactTxt;
 
     private ProgressBar progressBar;
     private ProgressBar progressBarMembers;
@@ -114,11 +116,13 @@ public class TripProposalFragment extends Fragment {
         fechaInicioTxt = view.findViewById(R.id.fechaInicioTxt);
         fechaRegresoTxt = view.findViewById(R.id.fechaRegresoTxt);
         presupuestoTxt = view.findViewById(R.id.presupuestoTxt);
+        contactTxt = view.findViewById(R.id.contactTxt);
         progressBar = view.findViewById(R.id.progressBar);
         countryLbl = view.findViewById(R.id.countryLbl);
         fechaInicioLbl = view.findViewById(R.id.fechaInicioLbl);
         fechaRegresoLbl = view.findViewById(R.id.fechaRegresoLbl);
         presupuestoLbl = view.findViewById(R.id.presupuestoLbl);
+        contactLbl = view.findViewById(R.id.contactLbl);
         errorTxt = view.findViewById(R.id.errorTxt);
         comentarioLbl = view.findViewById(R.id.comentarioLbl);
         comentarioTxt = view.findViewById(R.id.comentarioTxt);
@@ -146,6 +150,8 @@ public class TripProposalFragment extends Fragment {
         errorTxt.setVisibility(View.GONE);
         comentarioTxt.setVisibility(View.GONE);
         comentarioLbl.setVisibility(View.GONE);
+        contactLbl.setVisibility(View.GONE);
+        contactTxt.setVisibility(View.GONE);
 
         noMembersTxt.setVisibility(View.GONE);
         progressBarMembers.setVisibility(View.GONE);
@@ -180,6 +186,8 @@ public class TripProposalFragment extends Fragment {
                     presupuestoTxt.setText(String.valueOf(tripProposal.getBudget() + "€"));
                 }
 
+                contactTxt.setText(tripProposal.getContact());
+
                 if(tripProposal.getMessage().isEmpty()) {
                     comentarioTxt.setText("El usuario no ha comentado nada.");
                 } else {
@@ -200,6 +208,8 @@ public class TripProposalFragment extends Fragment {
                 userImage.setVisibility(View.VISIBLE);
                 comentarioTxt.setVisibility(View.VISIBLE);
                 comentarioLbl.setVisibility(View.VISIBLE);
+                contactLbl.setVisibility(View.VISIBLE);
+                contactTxt.setVisibility(View.VISIBLE);
 
 
                 progressBarMembers.setVisibility(View.VISIBLE);

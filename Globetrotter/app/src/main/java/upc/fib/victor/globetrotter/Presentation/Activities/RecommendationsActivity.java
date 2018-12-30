@@ -33,6 +33,8 @@ public class RecommendationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommendations);
 
+        setTitle("Recomendaciones");
+
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
 

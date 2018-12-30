@@ -15,8 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -33,6 +36,8 @@ public class AddTripProposalFragment extends Fragment {
 
     private String uid;
 
+    private Boolean phoneContact;
+
     private EditText countryTxt;
     private EditText publicationTxt;
     private EditText budgetTxt;
@@ -40,6 +45,12 @@ public class AddTripProposalFragment extends Fragment {
     private EditText endDateTxt;
     private Button acceptTxt;
     private Button cancelTxt;
+    private RadioButton emailRdBtn;
+    private RadioButton phoneRdBtn;
+    private EditText emailTxt;
+    private EditText phoneTxt;
+    private TextView phoneLbl;
+    private TextView emailLbl;
 
     private FirebaseDatabaseController firebaseDatabaseController;
 
@@ -62,6 +73,7 @@ public class AddTripProposalFragment extends Fragment {
             uid = getArguments().getString("uid");
         }
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        phoneContact = true;
     }
 
     @Override
@@ -77,6 +89,12 @@ public class AddTripProposalFragment extends Fragment {
         endDateTxt = view.findViewById(R.id.fechaFinEditTxt);
         acceptTxt = view.findViewById(R.id.publishBtn);
         cancelTxt = view.findViewById(R.id.cancelarBtn);
+        emailRdBtn = view.findViewById(R.id.emailRadioBtn);
+        emailTxt = view.findViewById(R.id.emailEditTxt);
+        phoneRdBtn = view.findViewById(R.id.movilRadioBtn);
+        phoneTxt = view.findViewById(R.id.movilEditTxt);
+        phoneLbl = view.findViewById(R.id.movilTextView);
+        emailLbl = view.findViewById(R.id.emailTextView);
 
         iniDateTxt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,12 +147,45 @@ public class AddTripProposalFragment extends Fragment {
             }
         });
 
+        emailRdBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    emailLbl.setVisibility(View.VISIBLE);
+                    emailTxt.setVisibility(View.VISIBLE);
+
+                    phoneLbl.setVisibility(View.INVISIBLE);
+                    phoneTxt.setVisibility(View.INVISIBLE);
+
+                    phoneContact = false;
+                }
+            }
+        });
+
+        phoneRdBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    emailLbl.setVisibility(View.INVISIBLE);
+                    emailTxt.setVisibility(View.INVISIBLE);
+
+                    phoneLbl.setVisibility(View.VISIBLE);
+                    phoneTxt.setVisibility(View.VISIBLE);
+
+                    phoneContact = true;
+                }
+            }
+        });
 
         acceptTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(!iniDateTxt.getText().toString().isEmpty() && !endDateTxt.getText().toString().isEmpty() && !countryTxt.getText().toString().isEmpty()) {
+                Log.d("PHONECONTACT: ", String.valueOf(phoneContact));
+                Log.d("PHONECONTACT: ", phoneTxt.getText().toString().trim());
+                Log.d("PHONECONTACT: ", emailTxt.getText().toString().trim());
+                if(!iniDateTxt.getText().toString().trim().isEmpty() && !endDateTxt.getText().toString().trim().isEmpty() && !countryTxt.getText().toString().trim().isEmpty()
+                        && ((phoneContact && !phoneTxt.getText().toString().trim().isEmpty()) || (!phoneContact && !emailTxt.getText().toString().trim().isEmpty()))) {
 
                     String ini = iniDateTxt.getText().toString();
                     String end = endDateTxt.getText().toString();
@@ -178,7 +229,14 @@ public class AddTripProposalFragment extends Fragment {
 
                                 String country = countryTxt.getText().toString();
 
-                                TripProposal tripProposal = new TripProposal(message, uid, userName, Calendar.getInstance().getTime(), iniDate, endDate, budget, country);
+                                String contact;
+                                if (phoneContact) {
+                                    contact = phoneTxt.getText().toString();
+                                } else {
+                                    contact = emailTxt.getText().toString();
+                                }
+
+                                TripProposal tripProposal = new TripProposal(message, uid, userName, Calendar.getInstance().getTime(), iniDate, endDate, budget, country, contact);
                                 firebaseDatabaseController.storeTripProposal(tripProposal, new FirebaseDatabaseController.StorePublicationResponse() {
                                     @Override
                                     public void success() {

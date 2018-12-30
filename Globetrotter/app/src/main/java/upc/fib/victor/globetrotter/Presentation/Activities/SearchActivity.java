@@ -34,6 +34,8 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        setTitle("Buscador");
+
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
 
@@ -77,6 +79,7 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
         if(item.getItemId() == android.R.id.home) {
             if (currentFragment.equals("addTrip") || currentFragment.equals("tripProposal")) {
                 fragmentManager.popBackStackImmediate();
+                currentFragment = "searchTrip";
             } else {
                 Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
                 profileIntent.putExtra("uidOwner", uid);
@@ -90,9 +93,9 @@ public class SearchActivity extends AppCompatActivity implements SearchTravelFra
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         if (currentFragment.equals("addTrip") || currentFragment.equals("tripProposal")) {
             fragmentManager.popBackStackImmediate();
+            currentFragment = "searchTrip";
         } else {
             Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
             profileIntent.putExtra("uidOwner", uid);
