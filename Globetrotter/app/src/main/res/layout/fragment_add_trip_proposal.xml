@@ -114,12 +114,99 @@
             android:layout_alignStart="@id/fechaFinEditTxt"
             android:layout_alignRight="@id/fechaFinEditTxt"
             android:layout_alignEnd="@id/fechaFinEditTxt"/>
+        <TextView
+            android:id="@+id/contactoLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/m_todo_de_contacto"
+            android:layout_below="@id/budgetTextView"
+            android:layout_marginTop="30dp"
+            android:layout_alignLeft="@id/countryTxtView"
+            android:layout_alignStart="@id/countryTxtView" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contactoLbl"
+            android:layout_marginTop="15dp"
+            android:layout_alignStart="@id/countryTxtView"
+            android:layout_alignLeft="@id/countryTxtView"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <RadioButton
+                android:id="@+id/movilRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/m_vil"
+                android:layout_marginRight="50dp"
+                android:checked="true"/>
+            <RadioButton
+                android:id="@+id/emailRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email"/>
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/movilTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/radioGroup"
+            android:layout_marginTop="30dp"
+            android:text="@string/n_m_tel_fono"
+            android:layout_alignLeft="@id/countryTxtView"
+            android:layout_alignStart="@id/countryTxtView"/>
+        <EditText
+            android:id="@+id/movilEditTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:layout_below="@id/radioGroup"
+            android:layout_toRightOf="@id/budgetTextView"
+            android:layout_toEndOf="@id/budgetTextView"
+            android:layout_alignBaseline="@id/movilTextView"
+            android:hint="@string/n_mero_de_tel_fono"
+            android:textSize="14sp"
+            android:layout_alignLeft="@id/fechaFinEditTxt"
+            android:layout_alignStart="@id/fechaFinEditTxt"
+            android:layout_alignRight="@id/fechaFinEditTxt"
+            android:layout_alignEnd="@id/fechaFinEditTxt" />
+
+        <TextView
+            android:id="@+id/emailTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/radioGroup"
+            android:layout_marginTop="30dp"
+            android:text="@string/direcci_n_email"
+            android:layout_alignLeft="@id/countryTxtView"
+            android:layout_alignStart="@id/countryTxtView"
+            android:visibility="invisible"/>
+        <EditText
+            android:id="@+id/emailEditTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:layout_below="@id/radioGroup"
+            android:layout_toRightOf="@id/budgetTextView"
+            android:layout_toEndOf="@id/budgetTextView"
+            android:layout_alignBaseline="@id/emailTextView"
+            android:hint="@string/direcci_n_de_correo_electr_nico"
+            android:textSize="14sp"
+            android:layout_alignLeft="@id/fechaFinEditTxt"
+            android:layout_alignStart="@id/fechaFinEditTxt"
+            android:layout_alignRight="@id/fechaFinEditTxt"
+            android:layout_alignEnd="@id/fechaFinEditTxt"
+            android:visibility="invisible"/>
 
         <TextView
             android:id="@+id/publicationTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/budgetTextView"
+            android:layout_below="@id/emailTextView"
             android:layout_marginTop="30dp"
             android:text="@string/comentario"
             android:layout_alignLeft="@id/countryTxtView"
@@ -160,8 +247,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_margin="10dp"
-
             android:layout_below="@id/publicationEditTxt"/>
+
 
 
     </RelativeLayout>

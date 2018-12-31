@@ -129,6 +129,27 @@
                     android:layout_toRightOf="@id/presupuestoLbl"
                     android:layout_toEndOf="@id/presupuestoLbl" />
                 <TextView
+                    android:id="@+id/contactLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/contacto"
+                    android:textColor="@color/colorBlack"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@id/presupuestoLbl"/>
+                <TextView
+                    android:id="@+id/contactTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@id/contactLbl"
+                    android:layout_alignStart="@id/presupuestoTxt"
+                    android:layout_alignLeft="@id/presupuestoTxt"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toRightOf="@id/contactLbl"
+                    android:layout_toEndOf="@id/contactLbl" />
+                <TextView
                     android:id="@+id/comentarioLbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -137,7 +158,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_below="@id/presupuestoLbl"/>
+                    android:layout_below="@id/contactLbl"/>
                 <TextView
                     android:id="@+id/comentarioTxt"
                     android:layout_width="match_parent"
