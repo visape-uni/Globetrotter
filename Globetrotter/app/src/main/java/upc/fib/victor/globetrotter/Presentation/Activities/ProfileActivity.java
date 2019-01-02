@@ -82,6 +82,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
     private LinearLayout seguidosLayout;
     private LinearLayout seguidoresLayout;
+    private LinearLayout paisesLayout;
 
     private CardView firstCardView;
     private LinearLayout bornLayout;
@@ -236,6 +237,14 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 intent.putExtra("idOwner", uidOwner);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        paisesLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent webIntent = new Intent(getApplicationContext(), UserMapActivity.class);
+                startActivity(webIntent);
             }
         });
     }
@@ -485,6 +494,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         publicateBtn = findViewById(R.id.send_btn);
         seguidosLayout = findViewById(R.id.layout_seguidos);
         seguidoresLayout = findViewById(R.id.layout_seguidores);
+        paisesLayout = findViewById(R.id.layout_paises);
         publicationLayout = findViewById(R.id.textInputLayout);
         pictureBtn = findViewById(R.id.pictureBtn);
     }

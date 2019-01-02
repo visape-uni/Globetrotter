@@ -270,7 +270,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="6dp"
-                android:src="@drawable/ic_crear_ruta" />
+                android:src="@drawable/ic_paises" />
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
@@ -285,19 +285,6 @@
                 android:layout_gravity="center_vertical"
                 android:layout_margin="6dp"
                 android:src="@drawable/ic_diario"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:background="@android:color/darker_gray"/>
-            <ImageView
-                android:id="@+id/ic_muro"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:layout_gravity="center_vertical"
-                android:src="@mipmap/ic_globe_logo"/>
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
