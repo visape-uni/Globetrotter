@@ -87,5 +87,6 @@
     <string name="direcci_n_email">Dirección email:</string>
     <string name="n_m_tel_fono">Núm. Teléfono:</string>
     <string name="contacto">Contacto:</string>
+    <string name="olvidaste_tu_contrase_a">¿Olvidaste tu contraseña?</string>
 
 </resources>

@@ -9,9 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
+
+import org.w3c.dom.Text;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.R;
@@ -23,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button loginBtn;
     private Button registerBtn;
+
+    private TextView recoverPasswordLbl;
 
     private EditText emailTxt;
     private EditText passwordTxt;
@@ -101,9 +106,35 @@ public class LoginActivity extends AppCompatActivity {
         passwordTxt = findViewById(R.id.password_txt);
         loginBtn = findViewById(R.id.entrar_btn);
         registerBtn = findViewById(R.id.register_btn);
+        recoverPasswordLbl = findViewById(R.id.forgot_password_txt);
     }
 
     private void setListeners() {
+
+        recoverPasswordLbl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = emailTxt.getText().toString().trim();
+                if (email.equals("")) {
+                    Toast.makeText(LoginActivity.this, "Introduce tu email",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    firebaseAuthenticationController.sendPasswordResetEmail(email, new FirebaseAuthenticationController.RecoverPasswordResponse() {
+                        @Override
+                        public void success() {
+                            Toast.makeText(LoginActivity.this, "Email de recuperación de contrasña enviado",
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void error() {
+                            Toast.makeText(LoginActivity.this, "No se ha podido enviar el email, ¿estas seguro de que existe?",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        });
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -85,6 +85,16 @@ public class FirebaseAuthenticationController {
                 });
     }
 
+    public void sendPasswordResetEmail(String emailAddress, final RecoverPasswordResponse recoverPasswordResponse) {
+        mAuth.sendPasswordResetEmail(emailAddress).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) recoverPasswordResponse.success();
+                else recoverPasswordResponse.error();
+            }
+        });
+    }
+
     public void attachAuthListener() {
         mAuth.addAuthStateListener(mAuthListener);
     }
@@ -112,5 +122,10 @@ public class FirebaseAuthenticationController {
     public interface AuthListenerResponse {
         void signedIn();
         void signedOut();
+    }
+
+    public interface RecoverPasswordResponse {
+        void success();
+        void error();
     }
 }
