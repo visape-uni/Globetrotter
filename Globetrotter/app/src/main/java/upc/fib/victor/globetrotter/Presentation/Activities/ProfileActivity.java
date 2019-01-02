@@ -19,7 +19,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +39,6 @@ import com.google.firebase.storage.StorageReference;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
@@ -69,7 +67,6 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
     private ImageView crearRutaImgBtn;
     private ImageView diarioImgBtn;
-    private ImageView muroImgBtn;
     private ImageView buscarImgBtn;
     private ImageView recomendarImgBtn;
 
@@ -85,14 +82,12 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
     private LinearLayout seguidosLayout;
     private LinearLayout seguidoresLayout;
-    private LinearLayout paisesLayout;
 
     private CardView firstCardView;
     private LinearLayout bornLayout;
     private LinearLayout infoLayout;
     private ImageView arrowImg;
 
-    private FrameLayout frameLayout;
     private Fragment fragment;
     protected FragmentManager fragmentManager;
 
@@ -482,17 +477,14 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         seguirBtn = findViewById(R.id.seguirBtn);
         dejarSeguirBtn = findViewById(R.id.dejar_seguir_Btn);
         editBtn = findViewById(R.id.editarBtn);
-        frameLayout = findViewById(R.id.frame_layout);
         buscarImgBtn = findViewById(R.id.ic_buscar);
         crearRutaImgBtn = findViewById(R.id.ic_crear_ruta);
         diarioImgBtn = findViewById(R.id.ic_diario_viajero);
-        muroImgBtn = findViewById(R.id.ic_muro);
         recomendarImgBtn = findViewById(R.id.ic_crear_recomendacion);
         publicationTxt = findViewById(R.id.publication_input);
         publicateBtn = findViewById(R.id.send_btn);
         seguidosLayout = findViewById(R.id.layout_seguidos);
         seguidoresLayout = findViewById(R.id.layout_seguidores);
-        paisesLayout = findViewById(R.id.layout_paises);
         publicationLayout = findViewById(R.id.textInputLayout);
         pictureBtn = findViewById(R.id.pictureBtn);
     }

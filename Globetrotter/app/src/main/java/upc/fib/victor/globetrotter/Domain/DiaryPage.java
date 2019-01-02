@@ -1,6 +1,5 @@
 package upc.fib.victor.globetrotter.Domain;
 
-import java.util.Calendar;
 import java.util.Date;
 
 public class DiaryPage {

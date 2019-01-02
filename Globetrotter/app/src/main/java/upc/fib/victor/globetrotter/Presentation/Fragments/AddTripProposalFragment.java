@@ -3,13 +3,10 @@ package upc.fib.victor.globetrotter.Presentation.Fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -180,10 +177,6 @@ public class AddTripProposalFragment extends Fragment {
         acceptTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Log.d("PHONECONTACT: ", String.valueOf(phoneContact));
-                Log.d("PHONECONTACT: ", phoneTxt.getText().toString().trim());
-                Log.d("PHONECONTACT: ", emailTxt.getText().toString().trim());
                 if(!iniDateTxt.getText().toString().trim().isEmpty() && !endDateTxt.getText().toString().trim().isEmpty() && !countryTxt.getText().toString().trim().isEmpty()
                         && ((phoneContact && !phoneTxt.getText().toString().trim().isEmpty()) || (!phoneContact && !emailTxt.getText().toString().trim().isEmpty()))) {
 

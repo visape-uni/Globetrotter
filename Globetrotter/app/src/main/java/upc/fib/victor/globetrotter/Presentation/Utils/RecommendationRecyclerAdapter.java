@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.google.firebase.storage.StorageReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
@@ -67,7 +65,6 @@ public class RecommendationRecyclerAdapter extends  RecyclerView.Adapter<Recomme
         this.context = context;
         this.recommendationsIds = recommendationsIds;
 
-        Log.d("INTEEEEREST", String.valueOf(recommendationsIds.size()));
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
         firebaseStorageController = FirebaseStorageController.getInstance();
     }

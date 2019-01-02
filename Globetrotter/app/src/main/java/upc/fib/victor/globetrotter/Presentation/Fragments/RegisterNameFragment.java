@@ -12,14 +12,6 @@ import android.widget.Toast;
 
 import upc.fib.victor.globetrotter.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RegisterNameFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RegisterNameFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RegisterNameFragment extends Fragment {
 
     private EditText nombreTxt;

@@ -1,7 +1,6 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,15 +26,9 @@ import upc.fib.victor.globetrotter.R;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceDetectionClient;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -110,7 +102,9 @@ public class InterestPointActivity extends AppCompatActivity implements OnMapRea
                 public void success(final Recommendation recommendation) {
                     googlePlacesController.getPlaceById(recommendation.getIdInterestPoint(), new GooglePlacesController.GetPlaceByIdResponse() {
                         @Override
-                        public void success(Place place) {
+                        public void success(Place p) {
+                            place = p;
+
                             mMap.moveCamera( CameraUpdateFactory.newLatLngBounds(place.getViewport(), 0));
                             mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
 

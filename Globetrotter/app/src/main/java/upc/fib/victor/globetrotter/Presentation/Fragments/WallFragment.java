@@ -19,14 +19,6 @@ import upc.fib.victor.globetrotter.Presentation.Utils.MyRecyclerScroll;
 import upc.fib.victor.globetrotter.Presentation.Utils.PublicationRecyclerAdapter;
 import upc.fib.victor.globetrotter.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link WallFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link WallFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class WallFragment extends Fragment {
 
     private ProgressBar progressBar;

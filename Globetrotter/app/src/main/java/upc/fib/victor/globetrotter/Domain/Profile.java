@@ -1,11 +1,6 @@
 package upc.fib.victor.globetrotter.Domain;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 
 public class Profile {
 

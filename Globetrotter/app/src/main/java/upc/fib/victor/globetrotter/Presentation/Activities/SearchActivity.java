@@ -2,15 +2,12 @@ package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
 import upc.fib.victor.globetrotter.Presentation.Fragments.AddTripProposalFragment;
 import upc.fib.victor.globetrotter.Presentation.Fragments.SearchTravelFragment;

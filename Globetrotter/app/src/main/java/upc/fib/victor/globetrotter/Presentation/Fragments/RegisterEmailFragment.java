@@ -10,17 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import upc.fib.victor.globetrotter.Presentation.Activities.LoginActivity;
 import upc.fib.victor.globetrotter.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RegisterEmailFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RegisterEmailFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RegisterEmailFragment extends Fragment {
 
     private Button siguienteBtn;

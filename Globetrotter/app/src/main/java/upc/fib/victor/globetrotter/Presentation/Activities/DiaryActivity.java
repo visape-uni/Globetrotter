@@ -1,36 +1,28 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
-import upc.fib.victor.globetrotter.Domain.DiaryPage;
 import upc.fib.victor.globetrotter.Presentation.Utils.DiaryListAdapter;
 import upc.fib.victor.globetrotter.R;
 

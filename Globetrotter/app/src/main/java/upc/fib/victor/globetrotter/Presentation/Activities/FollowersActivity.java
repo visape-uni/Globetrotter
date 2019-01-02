@@ -1,14 +1,10 @@
 package upc.fib.victor.globetrotter.Presentation.Activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -17,10 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
-import upc.fib.victor.globetrotter.Domain.Profile;
-import upc.fib.victor.globetrotter.Presentation.Fragments.SearchUserFragment;
 import upc.fib.victor.globetrotter.Presentation.Utils.FollowUsersRecyclerAdapter;
-import upc.fib.victor.globetrotter.Presentation.Utils.ProfileRecyclerAdapter;
 import upc.fib.victor.globetrotter.R;
 
 public class FollowersActivity extends AppCompatActivity {

@@ -2,33 +2,20 @@ package upc.fib.victor.globetrotter.Presentation.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.DatePicker;
 import android.widget.Spinner;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import upc.fib.victor.globetrotter.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RegisterBornDateFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RegisterBornDateFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class RegisterBornDateFragment extends Fragment {
 
     private Spinner daySpinner, monthSpinner, yearSpinner;

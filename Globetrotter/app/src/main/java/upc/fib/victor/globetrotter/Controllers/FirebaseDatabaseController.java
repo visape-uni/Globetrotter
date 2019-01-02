@@ -3,8 +3,6 @@ package upc.fib.victor.globetrotter.Controllers;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.Pair;
-import android.widget.ArrayAdapter;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,17 +23,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import upc.fib.victor.globetrotter.Domain.DiaryPage;
 import upc.fib.victor.globetrotter.Domain.Profile;
 import upc.fib.victor.globetrotter.Domain.Publication;
 import upc.fib.victor.globetrotter.Domain.Recommendation;
 import upc.fib.victor.globetrotter.Domain.TripProposal;
-import upc.fib.victor.globetrotter.Presentation.Activities.FollowersActivity;
 
 import static android.support.constraint.Constraints.TAG;
 
