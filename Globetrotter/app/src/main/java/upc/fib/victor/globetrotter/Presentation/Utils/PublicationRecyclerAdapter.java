@@ -2,6 +2,7 @@ package upc.fib.victor.globetrotter.Presentation.Utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
@@ -29,12 +30,14 @@ import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseStorageController;
 import upc.fib.victor.globetrotter.Controllers.GlideApp;
 import upc.fib.victor.globetrotter.Domain.Publication;
+import upc.fib.victor.globetrotter.Presentation.Activities.ProfileActivity;
 import upc.fib.victor.globetrotter.R;
 
 
 public class PublicationRecyclerAdapter extends RecyclerView.Adapter<PublicationRecyclerAdapter.PublicationViewHolder> {
 
     private Context context;
+    private ProfileActivity profileActivity;
     private String uid;
     private ArrayList<String> publicationIds;
     private FirebaseStorageController firebaseStorageController;
@@ -99,6 +102,7 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
 
     public PublicationRecyclerAdapter(Context context, ArrayList<String> publicationIds, String uid) {
         this.context = context;
+        this.profileActivity = (ProfileActivity) context;
         this.publicationIds = publicationIds;
         firebaseStorageController = FirebaseStorageController.getInstance();
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
@@ -230,6 +234,20 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
                         holder.commentsRecycledView.setVisibility(View.VISIBLE);
                         holder.sendButton.setVisibility(View.VISIBLE);
                         holder.commentInput.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                holder.userImg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        profileActivity.reload(holder.publication.getUidUser());
+                    }
+                });
+
+                holder.userNameTxt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        profileActivity.reload(holder.publication.getUidUser());
                     }
                 });
 

@@ -292,6 +292,20 @@
                 android:layout_marginBottom="4dp"
                 android:background="@android:color/darker_gray"/>
             <ImageView
+                android:id="@+id/ic_home"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="6dp"
+                android:src="@mipmap/ic_globe_logo"/>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@android:color/darker_gray"/>
+            <ImageView
                 android:id="@+id/ic_buscar"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

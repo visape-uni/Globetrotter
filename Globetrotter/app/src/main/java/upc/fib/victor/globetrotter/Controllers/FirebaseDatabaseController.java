@@ -346,7 +346,7 @@ public class FirebaseDatabaseController {
                                         @Override
                                         public void run() {
                                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                                setRelationRecommendation(document.getId(), id, recommendation.getDate().getTime());
+                                                setRelationRecommendation(document.getId(), id, recommendation.getDate().getTime(), recommendation.getUid());
                                             }
                                         }
                                     }).start();
@@ -578,9 +578,10 @@ public class FirebaseDatabaseController {
         });
     }
 
-    private void setRelationRecommendation (String uidFollower, String idRecommendation, long date) {
-        Map<String, Long> mapRecommendation = new HashMap<>();
-        mapRecommendation.put("Date", date);
+    private void setRelationRecommendation (String uidFollower, String idRecommendation, long date, String uid) {
+        Map<String, String> mapRecommendation = new HashMap<>();
+        mapRecommendation.put("Date", String.valueOf(date));
+        mapRecommendation.put("ID Dueño", uid);
         db.collection("perfiles")
                 .document(uidFollower)
                 .collection("recomendaciones")
@@ -925,7 +926,7 @@ public class FirebaseDatabaseController {
         }
     }
 
-    public void setRelationFollowing (String uid, String idFollowing) {
+    public void setRelationFollowing (final String uid, final String idFollowing) {
         Map<String,String> map = new HashMap<>();
         map.put("ID Dueño", idFollowing);
         db.collection("perfiles")
@@ -936,6 +937,7 @@ public class FirebaseDatabaseController {
 
         if(!uid.equals(idFollowing)) {
             final DocumentReference docRef = db.collection("perfiles").document(uid);
+
             db.runTransaction(new Transaction.Function<Void>() {
                 @Nullable
                 @Override
@@ -944,13 +946,42 @@ public class FirebaseDatabaseController {
                     int numSeguidos = snapshot.getLong("numSeguidos").intValue() + 1;
                     transaction.update(docRef, "numSeguidos", numSeguidos);
 
+
+
+
                     return null;
                 }
             });
+
+            //Poner todas las publicaciones del usuario en publicaciones siguiendo
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    CollectionReference refPublications = db.collection("perfiles").document(idFollowing).collection("publicacionesSiguiendo");
+                    refPublications.whereEqualTo("ID Dueño", idFollowing).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                setRelationPublication(uid, document.getId(), idFollowing);
+                            }
+                        }
+                    });
+
+                    CollectionReference refRecommendations = db.collection("perfiles").document(idFollowing).collection("recomendaciones");
+                    refRecommendations.whereEqualTo("ID Dueño", idFollowing).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                setRelationRecommendation(uid, document.getId(), Long.valueOf(String.valueOf(document.get("Date"))), idFollowing);
+                            }
+                        }
+                    });
+                }
+            }).start();
         }
     }
 
-    public void deleteRelationFollowing (String uid, String idFollowing) {
+    public void deleteRelationFollowing (final String uid, final String idFollowing) {
         db.collection("perfiles")
                 .document(uid)
                 .collection("siguiendo")
@@ -969,6 +1000,34 @@ public class FirebaseDatabaseController {
                     return null;
                 }
             });
+
+            //Poner todas las publicaciones del usuario en publicaciones siguiendo
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    CollectionReference refPublications = db.collection("perfiles").document(uid).collection("publicacionesSiguiendo");
+                    refPublications.whereEqualTo("ID Dueño", idFollowing).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference pubRef = db.collection("perfiles").document(uid).collection("publicacionesSiguiendo").document(document.getId());
+                                pubRef.delete();
+                            }
+                        }
+                    });
+
+                    CollectionReference refRecommendations = db.collection("perfiles").document(idFollowing).collection("recomendaciones");
+                    refRecommendations.whereEqualTo("ID Dueño", idFollowing).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference recRef = db.collection("perfiles").document(uid).collection("recomendaciones").document(document.getId());
+                                recRef.delete();
+                            }
+                        }
+                    });
+                }
+            }).start();
         }
     }
 

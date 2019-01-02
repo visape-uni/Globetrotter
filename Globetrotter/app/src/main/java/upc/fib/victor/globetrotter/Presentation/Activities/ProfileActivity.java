@@ -69,6 +69,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     private ImageView diarioImgBtn;
     private ImageView buscarImgBtn;
     private ImageView recomendarImgBtn;
+    private ImageView homeImgBtn;
 
     private ImageView profileImg;
 
@@ -302,6 +303,15 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!uid.equals(uidOwner)) {
+            reload(uid);
+        }
+
+        super.onBackPressed();
+    }
+
     private void loadFragment() {
         fragment = WallFragment.newInstance(uid, uidOwner);
         displayFragment(R.id.frame_layout, fragment, "wall");
@@ -424,6 +434,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                     });
                     publicateBtn.setVisibility(View.GONE);
                     publicationLayout.setVisibility(View.GONE);
+                    pictureBtn.setVisibility(View.GONE);
                 }
 
                 nameTxt.setText(activityProfile.getNombreCompleto());
@@ -488,6 +499,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         editBtn = findViewById(R.id.editarBtn);
         buscarImgBtn = findViewById(R.id.ic_buscar);
         crearRutaImgBtn = findViewById(R.id.ic_crear_ruta);
+        homeImgBtn = findViewById(R.id.ic_home);
         diarioImgBtn = findViewById(R.id.ic_diario_viajero);
         recomendarImgBtn = findViewById(R.id.ic_crear_recomendacion);
         publicationTxt = findViewById(R.id.publication_input);
@@ -512,6 +524,16 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             public void onClick(View view) {
                 Intent diaryIntent = new Intent(getApplicationContext(), DiaryActivity.class);
                 startActivity(diaryIntent);
+            }
+        });
+        homeImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (uidOwner.equals(uid)) {
+                    Toast.makeText(getApplicationContext(), "Ya estas en tu perfil", Toast.LENGTH_SHORT).show();
+                } else {
+                    reload(uid);
+                }
             }
         });
         buscarImgBtn.setOnClickListener(new View.OnClickListener() {
@@ -611,5 +633,12 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
 
         WallFragment wallFragment = (WallFragment) fragmentManager.findFragmentById(R.id.frame_layout);
         wallFragment.showInteraction();
+    }
+
+    public void reload(String id) {
+        finish();
+        Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+        profileIntent.putExtra("uidOwner", id);
+        startActivity(profileIntent);
     }
 }
