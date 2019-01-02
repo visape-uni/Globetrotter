@@ -173,7 +173,7 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
                 holder.tripProposalLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        TripProposalFragment tripFragment = TripProposalFragment.newInstance(holder.tripProposal.getId(), holder.tripProposal.getUidUser());
+                        TripProposalFragment tripFragment = TripProposalFragment.newInstance(holder.tripProposal.getId(), uid);
                         SearchActivity activity = (SearchActivity) context;
                         activity.showTrip(tripFragment);
                     }

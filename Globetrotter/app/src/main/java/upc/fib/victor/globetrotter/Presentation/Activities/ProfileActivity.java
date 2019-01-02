@@ -245,6 +245,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             @Override
             public void onClick(View view) {
                 Intent webIntent = new Intent(getApplicationContext(), UserMapActivity.class);
+                webIntent.putExtra("uidOwner", uidOwner);
                 startActivity(webIntent);
             }
         });
@@ -516,6 +517,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
             @Override
             public void onClick(View view) {
                 Intent webIntent = new Intent(getApplicationContext(), UserMapActivity.class);
+                webIntent.putExtra("uidOwner", uidOwner);
                 startActivity(webIntent);
             }
         });

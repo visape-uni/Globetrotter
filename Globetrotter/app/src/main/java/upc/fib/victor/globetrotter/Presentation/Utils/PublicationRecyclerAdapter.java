@@ -161,6 +161,8 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
                                     .into(holder.publicationImg);
                         }
                     });
+                } else {
+                    holder.publicationImg.setImageDrawable(null);
                 }
 
                 holder.userNameTxt.setText(holder.publication.getUserName());

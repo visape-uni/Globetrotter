@@ -63,8 +63,7 @@ public class UserMapActivity extends AppCompatActivity {
         progressDialog.setMessage("Cargando paises...");
         progressDialog.show();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
-        uid = sharedPreferences.getString("uid", null);
+        uid = getIntent().getExtras().getString("uidOwner");
 
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
 
