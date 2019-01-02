@@ -12,6 +12,7 @@ public class Publication {
     private Boolean hasImg;
     private ArrayList<String> answers;
     private ArrayList<String> uidLikes;
+    private String parentId;
 
     public Publication() {
     }
@@ -119,5 +120,13 @@ public class Publication {
 
     public void setHasImg(Boolean hasImg) {
         this.hasImg = hasImg;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 }

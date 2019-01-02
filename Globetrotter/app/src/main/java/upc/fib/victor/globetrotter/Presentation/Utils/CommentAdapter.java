@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Presentation.Utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.storage.StorageReference;
 
@@ -29,6 +31,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
     private FirebaseStorageController firebaseStorageController;
     private FirebaseDatabaseController firebaseDatabaseController;
     private Context context;
+    private String uid;
     private ArrayList<String> publicationIds;
 
     public static class CommentAdapterViewHolder extends RecyclerView.ViewHolder {
@@ -38,6 +41,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
         public TextView publicationTxt;
         public TextView dateTxt;
         public ImageView likeImg;
+        public ImageView deleteIcon;
 
         public CommentAdapterViewHolder(View itemView) {
             super(itemView);
@@ -46,13 +50,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
             publicationTxt = itemView.findViewById(R.id.publicationTxt);
             dateTxt = itemView.findViewById(R.id.dateTxt);
             likeImg = itemView.findViewById(R.id.likesImg);
+            deleteIcon = itemView.findViewById(R.id.ic_delete_publication);
             likeImg.setVisibility(View.GONE);
+
+            deleteIcon.setClickable(true);
         }
     }
 
-    public CommentAdapter(Context context, ArrayList<String> publicationIds) {
+    public CommentAdapter(Context context, ArrayList<String> publicationIds, String uid) {
         this.context = context;
         this.publicationIds = publicationIds;
+        this.uid = uid;
         firebaseStorageController = FirebaseStorageController.getInstance();
         firebaseDatabaseController = FirebaseDatabaseController.getInstance();
     }
@@ -89,7 +97,41 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
                 layoutParamsDate.bottomMargin = 0;
                 holder.dateTxt.setLayoutParams(layoutParamsDate);
 
+                if (holder.publication.getUidUser().equals(uid)) {
+                    holder.deleteIcon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
+                            if (holder.publication.getParentId() != null) {
+
+                                final ProgressDialog progressDialog = new ProgressDialog(context);
+                                progressDialog.setIndeterminate(true);
+                                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                                progressDialog.setCancelable(false);
+                                progressDialog.setMessage("Eliminando comentario...");
+                                progressDialog.show();
+
+                                firebaseDatabaseController.deleteComment(holder.publication.getParentId(), holder.publication.getId(), new FirebaseDatabaseController.DeletePublicationResponse() {
+                                    @Override
+                                    public void success() {
+                                        publicationIds.remove(holder.publication.getId());
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, "Publicación eliminada correctamente", Toast.LENGTH_SHORT).show();
+                                        notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void error() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, "Error borrando publicación, prueba más tarde", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    holder.deleteIcon.setVisibility(View.GONE);
+                }
 
                 firebaseStorageController.loadImageToView("profiles/" + holder.publication.getUidUser() + ".jpg", new FirebaseStorageController.GetImageResponse() {
                     @Override

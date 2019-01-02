@@ -704,6 +704,7 @@ public class FirebaseDatabaseController {
 
         final DocumentReference refPublication = db.collection("publicaciones").document(id);
 
+        publication.setParentId(idParentPublication);
 
         db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
@@ -721,6 +722,37 @@ public class FirebaseDatabaseController {
             @Override
             public void onSuccess(Void aVoid) {
                 commentPublicationResponse.success(publication.getId());
+            }
+        });
+    }
+
+    public void deleteComment (String idParentPublication, final String idPublication, final DeletePublicationResponse deletePublicationResponse) {
+        final DocumentReference docRef = db.collection("publicaciones").document(idParentPublication);
+
+        final DocumentReference refPublication = db.collection("publicaciones").document(idPublication);
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                ArrayList<String> comments = (ArrayList<String>) snapshot.get("answers");
+                comments.remove(idPublication);
+
+                refPublication.delete();
+
+                transaction.update(docRef, "answers", comments);
+                return null;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                deletePublicationResponse.success();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                deletePublicationResponse.error();
             }
         });
     }
