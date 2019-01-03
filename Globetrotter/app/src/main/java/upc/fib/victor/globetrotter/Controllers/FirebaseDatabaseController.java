@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Controllers;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -38,14 +39,16 @@ public class FirebaseDatabaseController {
 
     private static FirebaseDatabaseController instance;
 
+    private Context context;
     private FirebaseFirestore db;
 
-    private FirebaseDatabaseController() {
+    private FirebaseDatabaseController(Context context) {
+        this.context = context;
         db = FirebaseFirestore.getInstance();
     }
 
-    public static FirebaseDatabaseController getInstance() {
-        if (instance == null) instance = new FirebaseDatabaseController();
+    public static FirebaseDatabaseController getInstance(Context context) {
+        if (instance == null) instance = new FirebaseDatabaseController(context);
         return instance;
     }
 
@@ -1280,6 +1283,39 @@ public class FirebaseDatabaseController {
         });
     }
 
+    public void setPictureTimestamp(String uid, final SetPictureTimestampResponse setPictureTimestampResponse) {
+        DocumentReference ref = db.collection("fotosDePerfil").document(uid);
+        Map<String, Long> map = new HashMap<>();
+        map.put("Timestamp", Calendar.getInstance().getTime().getTime());
+        ref.set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                setPictureTimestampResponse.success();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                setPictureTimestampResponse.error();
+            }
+        });
+    }
+
+    public void getPictureTimestamp(String uid, final GetPictureTimestampResponse getPictureTimestampResponse) {
+        DocumentReference ref = db.collection("fotosDePerfil").document(uid);
+
+        ref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                getPictureTimestampResponse.success(documentSnapshot.getLong("Timestamp"));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                getPictureTimestampResponse.error();
+            }
+        });
+    }
+
     public interface ExistsRecommendationResponse {
         void exists();
         void doNotExists();
@@ -1419,5 +1455,19 @@ public class FirebaseDatabaseController {
     public interface JoinTripResponse {
         void success();
         void error();
+    }
+
+    public interface SetPictureTimestampResponse {
+        void success();
+        void error();
+    }
+
+    public interface GetPictureTimestampResponse {
+        void success(Long time);
+        void error();
+    }
+
+    public void onDestroy() {
+        if (context != null) context = null;
     }
 }

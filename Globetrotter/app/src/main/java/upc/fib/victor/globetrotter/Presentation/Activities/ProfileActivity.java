@@ -34,12 +34,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.UUID;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseAuthenticationController;
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
@@ -123,9 +125,9 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         progressDialog.setMessage("Cargando perfil...");
         progressDialog.show();
 
-        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
-        firebaseStorageController = FirebaseStorageController.getInstance();
+        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance(getApplicationContext());
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
+        firebaseStorageController = FirebaseStorageController.getInstance(getApplicationContext());
 
         findViews();
         bottomBar();
@@ -255,6 +257,14 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     protected void onPostResume() {
         super.onPostResume();
         getProfileAndDisplay(uidOwner);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseStorageController.onDestroy();
+        firebaseDatabaseController.onDestroy();
+        firebaseAuthenticationController.onDestroy();
     }
 
     @Override
@@ -448,13 +458,26 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 bornTxt.setText(dataFormat.format(activityProfile.getNacimiento()));
 
 
-                firebaseStorageController.loadImageToView("profiles/" + uidOwner + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                firebaseDatabaseController.getPictureTimestamp(uidOwner, new FirebaseDatabaseController.GetPictureTimestampResponse() {
                     @Override
-                    public void load(StorageReference ref) {
-                        GlideApp.with(getApplicationContext())
-                                .load(ref)
-                                .placeholder(getResources().getDrawable(R.drawable.silueta))
-                                .into(profileImg);
+                    public void success(final Long time) {
+                        if (time != null) {
+                            firebaseStorageController.loadImageToView("profiles/" + uidOwner + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                                @Override
+                                public void load(StorageReference ref) {
+                                    GlideApp.with(getApplicationContext())
+                                            .load(ref)
+                                            .signature(new ObjectKey(time))
+                                            .placeholder(getResources().getDrawable(R.drawable.silueta))
+                                            .into(profileImg);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void error() {
+                        Toast.makeText(getApplicationContext(), "Error cargando imagen", Toast.LENGTH_SHORT).show();
                     }
                 });
                 setTitle("Perfil de " + profile.getNombre());

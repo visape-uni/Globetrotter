@@ -65,11 +65,17 @@ public class UserMapActivity extends AppCompatActivity {
 
         uid = getIntent().getExtras().getString("uidOwner");
 
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
 
         getViews();
         setMap();
         initializeIds();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
     }
 
     @Override

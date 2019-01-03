@@ -1,7 +1,9 @@
 package upc.fib.victor.globetrotter.Controllers;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -18,30 +20,35 @@ public class FirebaseStorageController {
 
     private static FirebaseStorageController instance;
 
+    private Context context;
     private FirebaseStorage storage;
 
     private StorageReference storageRef;
 
-    private FirebaseStorageController() {
+    private FirebaseStorageController(Context context) {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+        this.context = context;
     }
 
-    public static FirebaseStorageController getInstance() {
-        if (instance == null) instance = new FirebaseStorageController();
+    public static FirebaseStorageController getInstance(Context context) {
+        if (instance == null) instance = new FirebaseStorageController(context);
         return instance;
     }
 
     public void uploadImage(Uri uri, String uid, final UploadImageResponse uploadImageResponse) {
         if (uri != null) {
+            Log.d("STORAGE: ", "1");
             String profileImagePath = "profiles/" + uid + ".jpg";
             StorageReference ref = storageRef.child(profileImagePath);
-
+            Log.d("STORAGE: ", "2");
             ref.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.d("STORAGE: ", "3");
                             uploadImageResponse.success();
+                            Log.d("STORAGE: ", "4");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -181,5 +188,9 @@ public class FirebaseStorageController {
 
     public interface GetImageResponse {
         void load(StorageReference ref);
+    }
+
+    public void onDestroy() {
+        if (context != null) context = null;
     }
 }

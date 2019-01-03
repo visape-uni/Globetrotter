@@ -63,7 +63,7 @@ public class DiaryActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
 
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
 
         diaryList = new ArrayList<>();
 
@@ -74,6 +74,12 @@ public class DiaryActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if (firebaseDatabaseController != null) getList();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
     }
 
     @Override

@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
@@ -98,8 +99,15 @@ public class TripProposalFragment extends Fragment {
             uid = getArguments().getString("uid");
             idPorposal = getArguments().getString("id");
         }
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
-        firebaseStorageController = FirebaseStorageController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getContext());
+        firebaseStorageController = FirebaseStorageController.getInstance(getContext());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
+        firebaseStorageController.onDestroy();
     }
 
     @Override
@@ -162,13 +170,26 @@ public class TripProposalFragment extends Fragment {
 
                 tripProposal = proposal;
 
-                firebaseStorageController.loadImageToView("profiles/" + tripProposal.getUidUser() + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                firebaseDatabaseController.getPictureTimestamp(tripProposal.getUidUser(), new FirebaseDatabaseController.GetPictureTimestampResponse() {
                     @Override
-                    public void load(StorageReference ref) {
-                        GlideApp.with(getContext())
-                                .load(ref)
-                                .placeholder(getContext().getResources().getDrawable(R.drawable.silueta))
-                                .into(userImage);
+                    public void success(final Long time) {
+                        if (time != null) {
+                            firebaseStorageController.loadImageToView("profiles/" + tripProposal.getUidUser() + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                                @Override
+                                public void load(StorageReference ref) {
+                                    GlideApp.with(getContext())
+                                            .load(ref)
+                                            .signature(new ObjectKey(time))
+                                            .placeholder(getContext().getResources().getDrawable(R.drawable.silueta))
+                                            .into(userImage);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void error() {
+                        Toast.makeText(getContext(), "Error cargando imagen", Toast.LENGTH_SHORT).show();
                     }
                 });
 

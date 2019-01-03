@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
@@ -61,8 +62,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
         this.context = context;
         this.publicationIds = publicationIds;
         this.uid = uid;
-        firebaseStorageController = FirebaseStorageController.getInstance();
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseStorageController = FirebaseStorageController.getInstance(context);
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(context);
     }
 
     @NonNull
@@ -133,13 +134,26 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
                     holder.deleteIcon.setVisibility(View.GONE);
                 }
 
-                firebaseStorageController.loadImageToView("profiles/" + holder.publication.getUidUser() + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                firebaseDatabaseController.getPictureTimestamp(holder.publication.getUidUser(), new FirebaseDatabaseController.GetPictureTimestampResponse() {
                     @Override
-                    public void load(StorageReference ref) {
-                        GlideApp.with(context)
-                                .load(ref)
-                                .placeholder(context.getResources().getDrawable(R.drawable.silueta))
-                                .into(holder.userImg);
+                    public void success(final Long time) {
+                        if (time != null) {
+                            firebaseStorageController.loadImageToView("profiles/" + holder.publication.getUidUser() + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                                @Override
+                                public void load(StorageReference ref) {
+                                    GlideApp.with(context)
+                                            .load(ref)
+                                            .signature(new ObjectKey(time))
+                                            .placeholder(context.getResources().getDrawable(R.drawable.silueta))
+                                            .into(holder.userImg);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void error() {
+                        Toast.makeText(context, "Error cargando imagen", Toast.LENGTH_SHORT).show();
                     }
                 });
 

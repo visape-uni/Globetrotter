@@ -84,7 +84,7 @@ public class InterestPointActivity extends AppCompatActivity implements OnMapRea
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         googlePlacesController = new GooglePlacesController(this);
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
 
         try {
             uidRec = getIntent().getExtras().getString("uid");
@@ -194,6 +194,12 @@ public class InterestPointActivity extends AppCompatActivity implements OnMapRea
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
     }
 
     @Override

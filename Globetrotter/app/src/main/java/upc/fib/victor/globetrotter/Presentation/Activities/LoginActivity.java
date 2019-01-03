@@ -58,8 +58,14 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuthenticationController.removeAuthListener();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseAuthenticationController.onDestroy();
+    }
+
     private void setFirebaseAuthenticationController() {
-        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
+        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance(getApplicationContext());
 
         firebaseAuthenticationController.setAuthListener(new FirebaseAuthenticationController.AuthListenerResponse() {
             @Override

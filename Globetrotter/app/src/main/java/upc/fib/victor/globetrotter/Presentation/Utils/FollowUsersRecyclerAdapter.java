@@ -12,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -53,8 +55,8 @@ public class FollowUsersRecyclerAdapter extends RecyclerView.Adapter<FollowUsers
 
     public FollowUsersRecyclerAdapter(Context context, ArrayList<String> idsProfiles, Activity parentActivity) {
         this.parentActivity = parentActivity;
-        firebaseStorageController = FirebaseStorageController.getInstance();
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseStorageController = FirebaseStorageController.getInstance(context);
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(context);
         this.context = context;
         this.idsProfiles = idsProfiles;
     }
@@ -79,15 +81,30 @@ public class FollowUsersRecyclerAdapter extends RecyclerView.Adapter<FollowUsers
             @Override
             public void success(Profile profile) {
                 holder.profile = profile;
-                firebaseStorageController.loadImageToView("profiles/" + holder.profile.getUid() + ".jpg", new FirebaseStorageController.GetImageResponse() {
+
+                firebaseDatabaseController.getPictureTimestamp(holder.profile.getUid(), new FirebaseDatabaseController.GetPictureTimestampResponse() {
                     @Override
-                    public void load(StorageReference ref) {
-                        GlideApp.with(context)
-                                .load(ref)
-                                .placeholder(context.getResources().getDrawable(R.drawable.silueta))
-                                .into(holder.userImg);
+                    public void success(final Long time) {
+                        if (time != null) {
+                            firebaseStorageController.loadImageToView("profiles/" + holder.profile.getUid() + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                                @Override
+                                public void load(StorageReference ref) {
+                                    GlideApp.with(context)
+                                            .load(ref)
+                                            .signature(new ObjectKey(time))
+                                            .placeholder(context.getResources().getDrawable(R.drawable.silueta))
+                                            .into(holder.userImg);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void error() {
+                        Toast.makeText(context, "Error cargando imagen", Toast.LENGTH_SHORT).show();
                     }
                 });
+
                 holder.userName.setText(holder.profile.getNombreCompleto());
                 holder.profileLayout.setOnClickListener(new View.OnClickListener() {
                     @Override

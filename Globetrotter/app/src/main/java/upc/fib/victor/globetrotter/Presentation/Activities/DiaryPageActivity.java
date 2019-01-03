@@ -44,7 +44,7 @@ public class DiaryPageActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
         uid = sharedPreferences.getString("uid", null);
 
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
 
 
         String pageId = getIntent().getStringExtra("pageId");
@@ -129,6 +129,12 @@ public class DiaryPageActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
     }
 
     private void showPage() {
