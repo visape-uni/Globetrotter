@@ -1,5 +1,6 @@
 package upc.fib.victor.globetrotter.Controllers;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -15,16 +16,18 @@ public class FirebaseAuthenticationController {
 
     private static FirebaseAuthenticationController instance;
 
+    private Context context;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
 
-    private FirebaseAuthenticationController() {
+    private FirebaseAuthenticationController(Context context) {
+        this.context = context;
         this.mAuth = FirebaseAuth.getInstance();
     }
 
-    public static FirebaseAuthenticationController getInstance() {
-        if (instance == null) instance = new FirebaseAuthenticationController();
+    public static FirebaseAuthenticationController getInstance(Context context) {
+        if (instance == null) instance = new FirebaseAuthenticationController(context);
         return instance;
     }
 
@@ -127,5 +130,9 @@ public class FirebaseAuthenticationController {
     public interface RecoverPasswordResponse {
         void success();
         void error();
+    }
+
+    public void onDestroy() {
+        if (context != null) context = null;
     }
 }

@@ -56,7 +56,7 @@ public class RegisterActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_register);
 
         setFirebaseAuthenticationController();
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
 
         backgroundLayout = findViewById(R.id.background_layout);
 
@@ -72,6 +72,12 @@ public class RegisterActivity extends AppCompatActivity implements
         currentFragment = NAME;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
+        firebaseAuthenticationController.onDestroy();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -98,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity implements
     }
 
     private void setFirebaseAuthenticationController() {
-        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance();
+        firebaseAuthenticationController = FirebaseAuthenticationController.getInstance(getApplicationContext());
         firebaseAuthenticationController.setAuthListener(new FirebaseAuthenticationController.AuthListenerResponse() {
             @Override
             public void signedIn() {

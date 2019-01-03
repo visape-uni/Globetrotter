@@ -58,7 +58,13 @@ public class SearchTravelFragment extends Fragment {
         if (getArguments() != null) {
             uid = getArguments().getString("uid");
         }
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getContext());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
     }
 
     @Override

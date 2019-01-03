@@ -118,8 +118,14 @@ public class FollowingActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
+    }
+
     private void findViews() {
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
         recyclerView = findViewById(R.id.recycler_view);
         errorTxt = findViewById(R.id.errorTxt);
         progressBar = findViewById(R.id.progressBar);

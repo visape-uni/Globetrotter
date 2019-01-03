@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
@@ -62,6 +63,8 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        setTitle("Editar perfil");
+
         findViews();
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), MODE_PRIVATE);
@@ -70,9 +73,16 @@ public class EditProfileActivity extends AppCompatActivity {
         getDatabaseController(uid);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseDatabaseController.onDestroy();
+        firebaseStorageController.onDestroy();
+    }
+
     private void getDatabaseController(final String uid) {
-        firebaseDatabaseController = FirebaseDatabaseController.getInstance();
-        firebaseStorageController = FirebaseStorageController.getInstance();
+        firebaseDatabaseController = FirebaseDatabaseController.getInstance(getApplicationContext());
+        firebaseStorageController = FirebaseStorageController.getInstance(getApplicationContext());
 
         firebaseDatabaseController.getProfile(uid, new FirebaseDatabaseController.GetProfileResponse() {
             @Override
@@ -90,19 +100,41 @@ public class EditProfileActivity extends AppCompatActivity {
                 int month = Integer.valueOf(date.substring(3,5));
                 int year = Integer.valueOf(date.substring(6,10));
 
-                dayTxt.setText(String.valueOf(day));
-                monthTxt.setText(String.valueOf(month));
+                if (day < 10) {
+                    dayTxt.setText(String.valueOf("0" + day));
+                } else {
+                    dayTxt.setText(String.valueOf(day));
+                }
+
+                if (month < 10) {
+                    monthTxt.setText(String.valueOf("0" + month));
+                } else {
+                    monthTxt.setText(String.valueOf(month));
+                }
                 yearTxt.setText(String.valueOf(year));
 
 
-                firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                firebaseDatabaseController.getPictureTimestamp(uid, new FirebaseDatabaseController.GetPictureTimestampResponse() {
                     @Override
-                    public void load(StorageReference ref) {
+                    public void success(final Long time) {
+                        if (time != null) {
+                            firebaseStorageController.loadImageToView("profiles/" + uid + ".jpg", new FirebaseStorageController.GetImageResponse() {
+                                @Override
+                                public void load(StorageReference ref) {
 
-                        GlideApp.with(getApplicationContext())
-                                .load(ref)
-                                .placeholder(getResources().getDrawable(R.drawable.silueta))
-                                .into(imagenPerfil);
+                                    GlideApp.with(getApplicationContext())
+                                            .load(ref)
+                                            .signature(new ObjectKey(time))
+                                            .placeholder(getResources().getDrawable(R.drawable.silueta))
+                                            .into(imagenPerfil);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void error() {
+                        Toast.makeText(getApplicationContext(), "Error cargando imagen", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -170,20 +202,31 @@ public class EditProfileActivity extends AppCompatActivity {
                 firebaseStorageController.uploadImage(imageUri, uid, new FirebaseStorageController.UploadImageResponse() {
                     @Override
                     public void success() {
-                        progressDialog.dismiss();
-                        Toast.makeText(getApplicationContext(), "Foto subida", Toast.LENGTH_SHORT).show();
-                        imagenPerfil.setImageBitmap(bitmap);
 
-                        Publication publication = new Publication(uid, activityProfile.getNombreCompleto(), activityProfile.getNombreCompleto() + " " + R.string.cambio_de_foto, Calendar.getInstance().getTime());
-                        firebaseDatabaseController.storePublication(publication, new FirebaseDatabaseController.StorePublicationResponse() {
+                        firebaseDatabaseController.setPictureTimestamp(uid, new FirebaseDatabaseController.SetPictureTimestampResponse() {
                             @Override
                             public void success() {
-                                Log.d("EditProfileActivity: ", "Published");
+                                progressDialog.dismiss();
+                                Toast.makeText(getApplicationContext(), "Foto subida", Toast.LENGTH_SHORT).show();
+                                imagenPerfil.setImageBitmap(bitmap);
+
+                                Publication publication = new Publication(uid, activityProfile.getNombreCompleto(), activityProfile.getNombreCompleto() + " " + getResources().getString(R.string.cambio_de_foto), Calendar.getInstance().getTime());
+                                firebaseDatabaseController.storePublication(publication, new FirebaseDatabaseController.StorePublicationResponse() {
+                                    @Override
+                                    public void success() {
+                                        Log.d("EditProfileActivity: ", "Published");
+                                    }
+
+                                    @Override
+                                    public void error() {
+                                        Log.d("EditProfileActivity: ", "Not published");
+                                    }
+                                });
                             }
 
                             @Override
                             public void error() {
-                                Log.d("EditProfileActivity: ", "Not published");
+
                             }
                         });
                     }
