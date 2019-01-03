@@ -661,6 +661,50 @@ public class FirebaseDatabaseController {
         }
     }
 
+    public void getIdsPublicationsUser (String uid, int limit, String idPubStart, final GetIdsPublicationsResponse getIdsPublicationsResponse) {
+        CollectionReference refPublicaciones = db.collection("perfiles").document(uid).collection("publicacionesSiguiendo");
+
+        if (idPubStart.isEmpty()) {
+            refPublicaciones.whereEqualTo("ID Dueño", uid).orderBy("id", Query.Direction.DESCENDING).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> idsPublications = new ArrayList<>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsPublications.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsPublications);
+                        }
+                    } else {
+                        Log.d("CONTROLLER: ", task.getException().getMessage());
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        } else {
+            refPublicaciones.whereEqualTo("ID Dueño", uid).orderBy("id", Query.Direction.DESCENDING).startAt(idPubStart).limit(limit).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> idsPublications = new ArrayList<>();
+                        if (task.getResult().isEmpty()) getIdsPublicationsResponse.noPublications();
+                        else {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idsPublications.add(document.getId());
+                            }
+                            getIdsPublicationsResponse.success(idsPublications);
+                        }
+                    } else {
+                        Log.d("CONTROLLER: ", task.getException().getMessage());
+                        getIdsPublicationsResponse.error();
+                    }
+                }
+            });
+        }
+    }
+
     public void getPublication (String idPublication, final GetPublicationResponse getPublicationResponse) {
         DocumentReference refPublication = db.collection("publicaciones").document(idPublication);
 

@@ -129,6 +129,8 @@ public class EditProfileActivity extends AppCompatActivity {
                                             .into(imagenPerfil);
                                 }
                             });
+                        }else {
+                            imagenPerfil.setImageDrawable(getResources().getDrawable(R.drawable.silueta));
                         }
                     }
 

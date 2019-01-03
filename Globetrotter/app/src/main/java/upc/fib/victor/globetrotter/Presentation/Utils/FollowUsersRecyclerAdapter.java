@@ -96,6 +96,8 @@ public class FollowUsersRecyclerAdapter extends RecyclerView.Adapter<FollowUsers
                                             .into(holder.userImg);
                                 }
                             });
+                        }else {
+                            holder.userImg.setImageDrawable(context.getResources().getDrawable(R.drawable.silueta));
                         }
                     }
 

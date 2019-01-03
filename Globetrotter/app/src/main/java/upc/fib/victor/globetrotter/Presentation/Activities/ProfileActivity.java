@@ -472,6 +472,8 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                                             .into(profileImg);
                                 }
                             });
+                        } else {
+                            profileImg.setImageDrawable(getResources().getDrawable(R.drawable.silueta));
                         }
                     }
 

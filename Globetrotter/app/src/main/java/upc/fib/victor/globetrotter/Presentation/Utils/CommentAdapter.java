@@ -148,6 +148,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentA
                                             .into(holder.userImg);
                                 }
                             });
+                        }else {
+                            holder.userImg.setImageDrawable(context.getResources().getDrawable(R.drawable.silueta));
                         }
                     }
 
