@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,35 +91,67 @@ public class WallFragment extends Fragment {
         mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
         mRecyclerView.setAdapter(mAdapter);
 
-        firebaseDatabaseController.getIdsPublications(idUserWall, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
-            @Override
-            public void success(ArrayList<String> idsPublications) {
-                publicationIds = idsPublications;
-                mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
-                mRecyclerView.setAdapter(mAdapter);
-                progressBar.setVisibility(View.GONE);
-            }
+        if (!idUserWall.equals(uid)) {
+            firebaseDatabaseController.getIdsPublicationsUser(idUserWall, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
+                @Override
+                public void success(ArrayList<String> idsPublications) {
+                    publicationIds = idsPublications;
+                    mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
+                    mRecyclerView.setAdapter(mAdapter);
+                    progressBar.setVisibility(View.GONE);
+                }
 
-            @Override
-            public void noPublications() {
-                progressBar.setVisibility(View.GONE);
-                mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
-                mRecyclerView.setAdapter(mAdapter);
-                errorTxt.setVisibility(View.VISIBLE);
-                errorTxt.setText("No hay publicaciones.");
-                errorTxt.setTextColor(Color.GRAY);
-            }
+                @Override
+                public void noPublications() {
+                    progressBar.setVisibility(View.GONE);
+                    mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
+                    mRecyclerView.setAdapter(mAdapter);
+                    errorTxt.setVisibility(View.VISIBLE);
+                    errorTxt.setText("No hay publicaciones.");
+                    errorTxt.setTextColor(Color.GRAY);
+                }
 
-            @Override
-            public void error() {
-                progressBar.setVisibility(View.GONE);
-                mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
-                mRecyclerView.setAdapter(mAdapter);
-                errorTxt.setVisibility(View.VISIBLE);
-                errorTxt.setText("Error cargando las publicaciones...");
-                errorTxt.setTextColor(Color.parseColor("#ff0000"));
-            }
-        });
+                @Override
+                public void error() {
+                    progressBar.setVisibility(View.GONE);
+                    mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
+                    mRecyclerView.setAdapter(mAdapter);
+                    errorTxt.setVisibility(View.VISIBLE);
+                    errorTxt.setText("Error cargando las publicaciones...");
+                    errorTxt.setTextColor(Color.parseColor("#ff0000"));
+                }
+            });
+        } else {
+            firebaseDatabaseController.getIdsPublications(idUserWall, 20, "", new FirebaseDatabaseController.GetIdsPublicationsResponse() {
+                @Override
+                public void success(ArrayList<String> idsPublications) {
+                    publicationIds = idsPublications;
+                    mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
+                    mRecyclerView.setAdapter(mAdapter);
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void noPublications() {
+                    progressBar.setVisibility(View.GONE);
+                    mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
+                    mRecyclerView.setAdapter(mAdapter);
+                    errorTxt.setVisibility(View.VISIBLE);
+                    errorTxt.setText("No hay publicaciones.");
+                    errorTxt.setTextColor(Color.GRAY);
+                }
+
+                @Override
+                public void error() {
+                    progressBar.setVisibility(View.GONE);
+                    mAdapter = new PublicationRecyclerAdapter(getContext(), publicationIds, uid);
+                    mRecyclerView.setAdapter(mAdapter);
+                    errorTxt.setVisibility(View.VISIBLE);
+                    errorTxt.setText("Error cargando las publicaciones...");
+                    errorTxt.setTextColor(Color.parseColor("#ff0000"));
+                }
+            });
+        }
 
         myRecyclerScroll = new MyRecyclerScroll() {
             @Override

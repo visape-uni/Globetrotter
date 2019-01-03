@@ -184,6 +184,8 @@ public class TripProposalFragment extends Fragment {
                                             .into(userImage);
                                 }
                             });
+                        }else {
+                            userImage.setImageDrawable(getResources().getDrawable(R.drawable.silueta));
                         }
                     }
 

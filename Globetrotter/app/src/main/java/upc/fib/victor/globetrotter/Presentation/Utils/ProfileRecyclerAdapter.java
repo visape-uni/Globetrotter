@@ -81,6 +81,8 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
                                     .into(holder.userImg);
                         }
                     });
+                }else {
+                    holder.userImg.setImageDrawable(context.getResources().getDrawable(R.drawable.silueta));
                 }
             }
 

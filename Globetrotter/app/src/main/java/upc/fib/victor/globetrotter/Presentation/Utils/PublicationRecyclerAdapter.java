@@ -162,6 +162,8 @@ public class PublicationRecyclerAdapter extends RecyclerView.Adapter<Publication
                                                 .into(holder.userImg);
                                     }
                                 });
+                            } else {
+                                holder.userImg.setImageDrawable(context.getResources().getDrawable(R.drawable.silueta));
                             }
                         }
 

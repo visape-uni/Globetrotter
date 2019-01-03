@@ -111,6 +111,8 @@ public class RecommendationRecyclerAdapter extends  RecyclerView.Adapter<Recomme
                                             .into(holder.userImg);
                                 }
                             });
+                        }else {
+                            holder.userImg.setImageDrawable(context.getResources().getDrawable(R.drawable.silueta));
                         }
                     }
 

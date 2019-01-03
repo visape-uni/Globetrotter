@@ -123,6 +123,8 @@ public class TripProposalRecyclerAdapter extends RecyclerView.Adapter<TripPropos
                                             .into(holder.userImage);
                                 }
                             });
+                        }else {
+                            holder.userImage.setImageDrawable(context.getResources().getDrawable(R.drawable.silueta));
                         }
                     }
 
