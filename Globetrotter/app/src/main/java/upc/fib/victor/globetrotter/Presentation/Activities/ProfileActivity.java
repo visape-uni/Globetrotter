@@ -63,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
     private TextView nameTxt;
     private TextView nameTxt2;
     private TextView bornTxt;
+    private TextView descriptionTxt;
     private TextView seguidosTxt;
     private TextView seguidoresTxt;
     private TextView paisesTxt;
@@ -457,6 +458,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
                 DateFormat dataFormat = new SimpleDateFormat("dd/MM/yyyy");
                 bornTxt.setText(dataFormat.format(activityProfile.getNacimiento()));
 
+                descriptionTxt.setText(activityProfile.getDescripcion());
 
                 firebaseDatabaseController.getPictureTimestamp(uidOwner, new FirebaseDatabaseController.GetPictureTimestampResponse() {
                     @Override
@@ -516,6 +518,7 @@ public class ProfileActivity extends AppCompatActivity implements WallFragment.O
         nameTxt = findViewById(R.id.nameLbl);
         nameTxt2 = findViewById(R.id.nameLbl2);
         bornTxt = findViewById(R.id.bornLbl);
+        descriptionTxt = findViewById(R.id.descripcionLbl);
         profileImg = findViewById(R.id.profileImageView);
         paisesTxt = findViewById(R.id.paisesVisitadosTxt);
         seguidoresTxt = findViewById(R.id.seguidoresTxt);

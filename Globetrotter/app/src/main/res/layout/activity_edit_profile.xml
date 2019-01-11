@@ -135,6 +135,7 @@
         android:layout_below="@id/layout4"
         android:backgroundTint="@color/colorAccent"
         android:layout_margin="20dp"
+        android:textColor="@color/colorWhite"
         android:text="@string/aceptar"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />

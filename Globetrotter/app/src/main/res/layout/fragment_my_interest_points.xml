@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Presentation.Fragments.MyInterestPointsFragment">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,6 +23,19 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
-
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addRecommendationBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:tint="@color/colorWhite"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_margin="7dp"
+            android:fitsSystemWindows="false"
+            android:scaleType="center"
+            android:src="@drawable/ic_recommend"
+            app:fabSize="normal"/>
     </RelativeLayout>
 </FrameLayout>

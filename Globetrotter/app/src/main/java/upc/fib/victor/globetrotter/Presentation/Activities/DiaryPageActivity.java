@@ -93,10 +93,11 @@ public class DiaryPageActivity extends AppCompatActivity {
                     if (diaryPage.getDateModified() != null) {
                         firebaseDatabaseController.deletePage(uid, String.valueOf(diaryPage.getDateModified().getTime()));
                     }
-                    DiaryPage page = new DiaryPage(uid, titleTxt.getText().toString().trim(), contentTxt.getText().toString().trim(), Calendar.getInstance().getTime());
+                    final DiaryPage page = new DiaryPage(uid, titleTxt.getText().toString().trim(), contentTxt.getText().toString().trim(), Calendar.getInstance().getTime());
                     firebaseDatabaseController.storePage(uid, page, new FirebaseDatabaseController.StorePageResponse() {
                         @Override
                         public void success() {
+                            diaryPage = page;
                             Toast.makeText(getApplicationContext(), "Página guardada correctamente", Toast.LENGTH_LONG).show();
                         }
 

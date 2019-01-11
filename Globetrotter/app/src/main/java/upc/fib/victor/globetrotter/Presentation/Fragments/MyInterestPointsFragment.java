@@ -1,7 +1,9 @@
 package upc.fib.victor.globetrotter.Presentation.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import upc.fib.victor.globetrotter.Controllers.FirebaseDatabaseController;
+import upc.fib.victor.globetrotter.Presentation.Activities.InterestPointActivity;
 import upc.fib.victor.globetrotter.Presentation.Utils.RecommendationRecyclerAdapter;
 import upc.fib.victor.globetrotter.R;
 
@@ -22,6 +25,8 @@ import upc.fib.victor.globetrotter.R;
 public class MyInterestPointsFragment extends Fragment {
 
     private String uid;
+
+    private FloatingActionButton recommendBtn;
 
     private TextView errorTxt;
     private ProgressBar progressBar;
@@ -71,6 +76,15 @@ public class MyInterestPointsFragment extends Fragment {
 
         progressBar = view.findViewById(R.id.progressBar);
         errorTxt = view.findViewById(R.id.noResultsTxt);
+        recommendBtn = view.findViewById(R.id.addRecommendationBtn);
+
+        recommendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent interestPointIntent = new Intent(getContext(), InterestPointActivity.class);
+                startActivity(interestPointIntent);
+            }
+        });
 
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
