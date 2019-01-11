@@ -132,4 +132,19 @@ public class Profile {
                 nacimiento.equals(profile.getNacimiento()) &&
                 correo.equals(profile.getCorreo());
     }
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "uid='" + uid + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellidos='" + apellidos + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", nacimiento=" + nacimiento +
+                ", correo='" + correo + '\'' +
+                ", numSeguidores=" + numSeguidores +
+                ", numSeguidos=" + numSeguidos +
+                ", numPaises=" + numPaises +
+                '}';
+    }
 }

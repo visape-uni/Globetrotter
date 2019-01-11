@@ -296,10 +296,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     firebaseDatabaseController.editProfile(profile, new FirebaseDatabaseController.EditProfileResponse() {
                         @Override
                         public void success() {
-                            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                            intent.putExtra("uidOwner", uid);
-                            startActivity(intent);
-                            finish();
+                            Toast.makeText(getApplicationContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
